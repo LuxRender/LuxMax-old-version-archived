@@ -13,10 +13,12 @@ public:
    HWND hSystemPanel;
    HWND hPresetsPanel;
    HWND hAboutPanel;
+   HWND hEnvMapPanel;
 
    BOOL prog;
    HFONT hFont;
    TSTR workFileName;
+   TSTR workEnvironmentFileName;
    int SelectedPreset;
 
    void AcceptParams();

@@ -24,7 +24,8 @@ TSTR PRESET_PREVIEW()
 \"float colorspace_red\" [0.630000 0.340000]\n\t\
 \"float colorspace_green\" [0.310000 0.595000]\n\t\
 \"float colorspace_blue\" [0.155000 0.070000]\n\t\
-\"float gamma\" [2.200000]\n\t\
+\"float gamma\" [1.000000]\n\t\
+//\"float gamma\" [2.200000]\n\t\
 \n\t\
 PixelFilter \"mitchell\"\n\t\
 \"float B\" [0.750000]\n\t\
@@ -74,7 +75,8 @@ TSTR PRESET_FINAL_INTERIOR()
 \"float colorspace_red\" [0.630000 0.340000] \n\t\
 \"float colorspace_green\" [0.310000 0.595000] \n\t\
 \"float colorspace_blue\" [0.155000 0.070000] \n\t\
-\"float gamma\" [2.200000] \n\t\
+// \"float gamma\" [2.200000] \n\t\
+\"float gamma\" [1.000000] \n\t\
 \n\t\
 PixelFilter \"mitchell\" \n\t\
 \"float B\" [0.750000] \n\t\
@@ -124,7 +126,8 @@ TSTR PRESET_FINAL_EXTERIOR()
 \"float colorspace_red\" [0.630000 0.340000] \n\t\
 \"float colorspace_green\" [0.310000 0.595000] \n\t\
 \"float colorspace_blue\" [0.155000 0.070000] \n\t\
-\"float gamma\" [2.200000] \n\t\
+//\"float gamma\" [2.200000] \n\t\
+\"float gamma\" [1.000000] \n\t\
  \n\t\
 PixelFilter \"mitchell\" \n\t\
 \"float B\" [0.750000] \n\t\

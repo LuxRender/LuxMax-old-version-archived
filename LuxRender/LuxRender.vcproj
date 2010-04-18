@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="shift_jis"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="Luxrender"
 	ProjectGUID="{6D9022E3-EEAC-4C34-89D2-D4DDAFB02C5A}"
 	RootNamespace="LuxRender"
@@ -199,7 +199,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="$(3dsmax2010Path)\maxsdk\include"
+				AdditionalIncludeDirectories="&quot;C:\Development\3dsmax 2010 x32 x64 sdk\maxsdk\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LUXRENDER_EXPORTS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -221,7 +221,7 @@
 				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib bmm.lib core.lib geom.lib maxutil.lib mesh.lib paramblk2.lib"
 				OutputFile="c:\projects\LuxMax_Release\LuxMax2010.dlr"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(3dsmax2010Path)\maxsdk\lib"
+				AdditionalLibraryDirectories="C:\Development\3dsmax 2010 x32 x64 sdk\maxsdk\lib"
 				ModuleDefinitionFile=".\LuxMax.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -1234,5 +1234,9 @@
 		</Filter>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="Luxrender.rc"
+		/>
 	</Globals>
 </VisualStudioProject>
