@@ -87,6 +87,7 @@ public:
 	float FOV;
 	int width;
 	int height;
+	double focaldistance;
 
 	TSTR FileName;
 	FILE *file;
@@ -121,7 +122,9 @@ public:
 
 	void WriteCamera();
 	void WriteDefaultLights();
-
+	
+	void WriteEnvorimentMaterial(INode* root);
+	
 	void WriteMeshesProc(INode* root);
 
 	void WriteLightMaterial(INode* p_node);
@@ -133,6 +136,7 @@ public:
 	void WriteNullMaterial(INode* p_node);
 	void WriteCarPaintMaterial(INode* p_node);
 	void WriteWireColorMaterial(INode* p_node);
+	void WriteEnviromentMaterial(INode* P_node);
 
 	void WritePortals(INode* p_node);
 

@@ -98,7 +98,7 @@ LuxMaxMesh::LuxMaxMesh(INode* p_node)
 			c += 3;
 		}
 
-		OptimizeFaceIndices();
+		//OptimizeFaceIndices();
 	}
 }
 

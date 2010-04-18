@@ -3,6 +3,26 @@
 #include "Math.h"
 #include "LuxParams.h"
 #include "LuxPresets.h"
+//#include "util.h"
+#include "utilapi.h"
+#include "istdplug.h"
+#include "modstack.h"
+#include "stdmat.h"
+#include "bmmlib.h"
+#include "SetKeyMode.h"
+#include "iparamb2.h"
+#include "AssetManagement/iassetmanager.h"
+#include "maxscrpt/maxscrpt.h"
+#include <iostream>
+#include <string>
+#include <iostream>
+#include <Path.h> 
+//#include "AssetType.h"
+#include "IFileResolutionManager.h"
+
+using namespace MaxSDK::AssetManagement;
+
+
 
 static LuxMaxClassDesc LuxMaxDesc;
 ClassDesc2* GetLuxMaxDesc() { return &LuxMaxDesc; }
@@ -43,6 +63,7 @@ LuxMaxDefaultLight::LuxMaxDefaultLight(DefaultLight* l)
 int LuxMax::Open(INode *scene, INode *vnode, ViewParams *viewPar, RendParams &rp, HWND hwnd, DefaultLight* defaultLights, int numDefLights, RendProgressCallback* prog)
 {
 	int i;
+	
 
 	deflights.ZeroCount();
 	deflights.Shrink();
@@ -111,18 +132,24 @@ int LuxMax::Render(TimeValue t, Bitmap *tobm, FrameRendParams &frp, HWND hwnd, R
 					m3_camera = p_camera->GetNodeTM(t);
 
 					FOV = cam->GetFOV(t) * 360 / ( 2*PI );
+					break;
 				}
 		}
 	}
-	else
-	{
-		Matrix3 worldToCam = view.affineTM;
-		m3_camera = Inverse(worldToCam);
+	//else
+	//{
+	//	/*Matrix3 worldToCam = view.affineTM;
+	//	m3_camera = Inverse(worldToCam);
 
-		FOV = (view.fov * 360 / ( 2*PI ));
-
-		projection = view.projType;
-	}
+	//	FOV = (view.fov * 360 / ( 2*PI ));
+	//	
+	//	projection = view.projType;
+	//	std::cout << ("Projection: " + projection);*/
+	//	Interface *ip;
+	//	MessageBox(ip->GetMAXHWnd(),"Please Create a LuxCamera!",_T("info"),MB_ICONINFORMATION);
+	//	end;
+	//	return 1;
+	//}
 
 	// Check if we are rendering a material
 
@@ -158,10 +185,16 @@ int LuxMax::Render(TimeValue t, Bitmap *tobm, FrameRendParams &frp, HWND hwnd, R
 
 	return 0;
 }
+   
+
 
 int LuxMax::WriteScene()
 {
-	Interface* ip = GetCOREInterface();
+	
+GenCamera* cam;// = GenCamera();
+
+Interface* ip = GetCOREInterface();
+
 
 	time_t aclock;
 	time(&aclock); // get time in seconds
@@ -180,12 +213,22 @@ int LuxMax::WriteScene()
 	fprintf(s_pStream, "# Date: %s\n", asctime(localtime(&aclock)));
 
 	// Camera
-
+	if (!p_camera)
+	{
+		MessageBox(ip->GetMAXHWnd(),"Please Create a LuxCamera!",_T("ERROR!"),MB_ICONINFORMATION);
+		return 0;
+		
+	}
 	WriteCamera();
 
 	// Image format
 
 	fprintf(s_pStream, "Film \"fleximage\" \"integer xresolution\" [%i] \"integer yresolution\" [%i]\n", width, height);
+
+
+
+
+	
 
 	// Insert preset
 	if (selectedpreset == 0)
@@ -202,6 +245,142 @@ int LuxMax::WriteScene()
 	// World
 
 	fprintf(s_pStream, "\nWorldBegin\n\n");
+
+
+
+//environment map begin
+
+	//Enviroment map
+
+	fprintf(s_pStream, "\n# Enviromentmap goes here\n");
+fprintf(s_pStream, "AttributeBegin \n");
+fprintf(s_pStream, "LightGroup \"environment\" \n");
+fprintf(s_pStream, "LightSource \"infinite\" \n");
+fprintf(s_pStream, "\"string mapping\" [\"angular\"] \n");
+//fprintf(s_pStream, "\"string mapname\" [\"[%i]\"] \n", my_String);
+
+//--------------------------------------------------------------------------------------------------------------------
+
+Interface* ip2 = GetCOREInterface7();
+	Interface* ip8 = GetCOREInterface8();
+	Interface* ip9 = GetCOREInterface9();
+	
+//Interface* ip = GetCOREInterface();
+	Texmap* texmap;
+
+	FilterList* filterlist;
+	BitmapManager* bmgr ;//= BitmapManager();
+	BitmapFileInputDialog* bfdlg;
+
+	BOOL two;
+   float utile, vtile;
+   MCHAR* name;
+   MSTR name2;
+   TSTR buf;
+
+
+		std::string temp2 = "";
+
+	 Texmap *tmap; // = ip2->GetEnvironmentMap(); //m->GetSubTexmap(ID_DI);
+	 if (ip2->GetUseEnvironmentMap())
+	 {
+//		tmap = ip2->GetEnvironmentMap();
+		if (tmap = ip2->GetEnvironmentMap())
+		{
+		//MessageBox(ip->GetMAXHWnd(),"EnvironmentMap = active",_T("info"),MB_ICONINFORMATION);
+			//}
+		//      cout << "Exception raised: " << str << '\n';
+
+		if (tmap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
+		{
+		// It is -- Access the UV tiling settings at time 0.
+		BitmapTex *bmt = (BitmapTex*) tmap;
+		  StdUVGen *uv = bmt->GetUVGen();
+		// utile = uv->GetUScl(0);
+		//vtile = uv->GetVScl(0);
+		INT32	envRadians = uv->GetAng(0);
+
+
+		name = bmt->GetMapName();
+			
+		std::string namestring = std::string(name);
+
+		//std::string tempNameString = namestring;
+		//for (int i = 0; i < tempNameString.length(); ++i)
+		//if (tempNameString[i] == '\\')
+		//{
+		//	tempNameString.insert(i, 1, '//');
+		//++i; // Skip inserted char
+		//temp2 = temp;
+		//}
+
+		//buf.printf(_T("Two sided=%d, U Tile = %.1f, V Tile = %.1f, Name = %s"),
+		//two, utile, vtile, temp2); // name works..
+		//MessageBox(ip->GetMAXHWnd(), buf, _T("Info..."),
+		//MB_ICONINFORMATION);
+
+//buf.printf(_T("EnvMapangle in radians = %s"),
+//		envRadians); // name works..
+//		MessageBox(ip->GetMAXHWnd(), buf, _T("Info..."),
+//		MB_ICONINFORMATION);
+
+
+		MaxSDK::Util::Path path(_M(name));
+		std::string filePath = path.GetString();
+
+		for (int i = 0; i < filePath.length(); ++i)
+		if (filePath[i] == '\\')
+		{
+			filePath.insert(i, 1, '\\');	
+		++i; // Skip inserted char
+		//temp2 = temp;
+
+		}
+		//fprintf(s_pStream, "#path test after replace %s\n", test4.data());
+
+		fprintf(s_pStream, "\"string mapname\" [\"%s\"] \n", filePath.data());
+		}
+	 }
+	  
+	// else if {fprintf(s_pStream, "#No environmentmap\n");};
+	 
+		}
+		else
+		{
+		//MessageBox(ip->GetMAXHWnd(),"EnvironmentMap = cannot get",_T("info"),MB_ICONINFORMATION);
+		}
+		//{
+		//MessageBox(ip->GetMAXHWnd(),"error",_T("info"),MB_ICONINFORMATION);
+
+		
+	
+	
+//--------------------------------------------------------------------------------------------------------------------
+
+	 
+
+//fprintf(s_pStream, "\"string mapname\" [\"EnvironmentMap.jpg\"] \n");
+
+//UtilExport::printf(s_pStream, concatStr);
+//fprintf(s_pStream, string_x);
+
+fprintf(s_pStream, " \n\n");
+fprintf(s_pStream, "\"float gamma\" [1.000000] \n");
+fprintf(s_pStream, "\"float gain\" [1.000000] \n");
+fprintf(s_pStream, "AttributeEnd \n\n");
+
+
+	//AttributeBegin
+//    LightGroup "environment"
+//    LightSource "infinite"
+//        "string mapping" ["angular"]
+//        "string mapname" ["..\\textures\\rnl_probe.exr"]
+//        "float gamma" [1.000000]
+//        "float gain" [1.00000]
+//AttributeEnd
+
+
+	//environment map end
 
 	useDefaultLights = TRUE;
 	noValidLightSources(n_sceneRoot);
@@ -235,6 +414,8 @@ IOResult LuxMax::Save(ISave *isave)
 	return IO_OK;
 }
 
+
+
 IOResult LuxMax::Load(ILoad *iload)
 {
 	int id;
@@ -242,8 +423,19 @@ IOResult LuxMax::Load(ILoad *iload)
 	IOResult res;
 	ULONG nb;
 
+	
+	
+
 	while (IO_OK==(res=iload->OpenChunk()))
 	{
+		Interface* ip = GetCOREInterface();
+		//MessageBox(ip->GetMAXHWnd(),"Loading Luxmax plugin..",_T("info"),MB_ICONINFORMATION);
+
+//------------create menu...-----
+// http://area.autodesk.com/forum/autodesk-3ds-max/sdk/how-to-create-menu-with-the-sdk/		
+		
+//------------create menu...-----
+
 		switch(id = iload->CurChunkID())
 		{
 			case LXS_FILENAME_CHUNKID:	

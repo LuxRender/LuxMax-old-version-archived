@@ -4,7 +4,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 	(
 		lens type:#float default:43.456 ui:m_lens
 		fov type:#float default:49 ui:m_fov
-		
+		enableAfocus type:#boolean default:false
 		ortho type:#boolean default:false ui:m_ortho
 		
 		clip type:#boolean default:false ui:m_clip
@@ -13,7 +13,9 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 	)
 	parameters main rollout:dofparams
 	(
-		usedof type:#boolean default:false ui:m_use
+		usedof type:#boolean default:true ui:m_use
+		lensradius type:#float default:0.0 UI:m_lensradius
+		focaldistance type:#float default:0.1 UI:m_dofdistance
 	)
 
 	rollout params "Lux Parameters"
@@ -102,18 +104,50 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		)
 	)
 	
-	rollout dofparams "Depth of Field" rolledup:true
+	rollout dofparams "Depth of Field" width:160 height:336
 	(
-		checkbox m_use "Enable"
-		checkbutton m_usefstop "Use f/stop" width:148 enabled:false
-		spinner m_fstop "fstop" enabled:false
-		spinner m_lensradius "Lens-Radius" enabled:false
-		dropdownlist m_doftype "Focus Type:" items:#("Auto", "Target", "Manual", "Object") enabled:false
-		pickbutton m_dofobject "None" width:148 enabled:false
-		spinner m_dofdistance "Distance:" align:#right width:100 enabled:false
-		spinner m_dofaperture "Aperture Blades:" align:#right width:132 enabled:false
-		spinner m_dofpower "Power:" align:#right width:91 enabled:false
-		dropdownlist m_distribution "Distribution:" items:#("Uniform", "Exponential", "Inverse Exponential", "Gaussian", "Inverse Gaussian") enabled:false
+		checkbox m_use "Enable" pos:[13,7] width:57 height:15 visible:false
+		checkbutton m_usefstop "Use f/stop" pos:[7,27] width:148 height:21 enabled:true visible:false
+		spinner m_fstop "fstop" pos:[56,53] width:93 height:16 enabled:true visible:false
+		spinner m_lensradius "" pos:[16,96] width:136 height:16 enabled:true range:[0,100,0.001] scale:0.001
+ 
+		dropdownList m_doftype "Focus Type:" pos:[16,120] width:136 height:40 enabled:true items:#("Auto", "Target", "Manual", "Object") visible:false
+		pickbutton m_dofobject "Pic Focus Object" pos:[8,160] width:148 height:21 enabled:true visible:true
+		spinner m_dofdistance "" pos:[8,208] width:140 height:16 enabled:true type:#worldunits scale:0.001
+		spinner m_dofaperture "Aperture Blades:" pos:[8,232] width:142 height:16 enabled:true visible:false
+		spinner m_dofpower "Power:" pos:[56,248] width:91 height:16 enabled:true visible:false
+		dropdownList m_distribution "Distribution:" pos:[8,264] width:144 height:40 enabled:true items:#("Uniform", "Exponential", "Inverse Exponential", "Gaussian", "Inverse Gaussian") visible:false
+		label lbl1 "Lens radius (0=no dof):" pos:[8,72] width:136 height:16
+		label lbl3 "Focus Plane Distance:" pos:[8,184] width:136 height:16
+		
+		on m_use changed s do
+		(
+		--musedof
+			--m_use.enabled = s
+		
+		)
+		on m_doftype selected sel do
+		(
+		--focus dropbox
+			if (m_doftype.selected == "Auto")then
+			(
+				print "enable autofocus = true"
+				enableAfocus = true
+			)
+			else
+			(
+				print "enable enable autofocus = false"
+				enableAfocus = false
+			)
+		)
+		on m_dofobject picked obj do
+		(
+		-- distance object a b obj
+			--messagebox ("distance between cam and obj is: " + (distance $ obj) as string)
+			m_dofdistance.value = (distance $ obj)
+			m_dofobject.text = "Focus obj = " + obj.name
+			
+		)
 	)
 	rollout architecturallens "Architectural & Aspect" rolledup:true
 	(

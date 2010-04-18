@@ -301,10 +301,15 @@ void LuxMax::WriteGlassMaterial(INode* p_node)
 	TSTR pr1 = "kttexture";
 	TSTR pr2 = "kr";
 	TSTR pr3 = "krtexture";
+	TSTR pr4 = "ior";
+	TSTR pr5 = "iorActive";
 
+	
 	Point3 Kt;
 	Point3 Kr;
-
+	float val4;
+	int	var5;
+	
 	Texmap* tex0 = NULL;
 	Texmap* tex1 = NULL;
 
@@ -326,15 +331,27 @@ void LuxMax::WriteGlassMaterial(INode* p_node)
 	if (tex0)
 		fprintf(s_pStream, " \"texture Kt\" [\"%s\"]\n", tex0->GetName());
 	else
-		fprintf(s_pStream, " \"color Kt\" [%s %s %s]\n", Format(Kt.x), Format(Kt.y), Format(Kt.z));
+		fprintf(s_pStream, " \"color Kr\" [%s %s %s]\n", Format(Kt.x), Format(Kt.y), Format(Kt.z));
 
 	if (tex1)
 		fprintf(s_pStream, " \"texture Kr\" [\"%s\"]\n", tex1->GetName());
-	else
-		fprintf(s_pStream, " \"color Kr\" [%s %s %s]\n", Format(Kr.x), Format(Kr.y), Format(Kr.z));
+	else//KT was KR
+		fprintf(s_pStream, " \"color Kt\" [%s %s %s]\n", Format(Kr.x), Format(Kr.y), Format(Kr.z));
 
-	fprintf(s_pStream, " \"float index\" [1.500000]");
-	fprintf(s_pStream, " \"bool architectural\" [\"true\"]");
+//	fprintf(s_pStream, " \"float index\" [1.500000]\n");
+	val4 = Mtl_GetFloat((MtlBase*)m, pr4, 0);
+	fprintf(s_pStream, " \"float index\" [%s]\n", Format(val4));
+	
+	var5 = Mtl_GetInt((MtlBase*)m, pr5, 0);
+	//code for checkbox goes here..
+	if (var5 == 1)
+	{
+		fprintf(s_pStream, " \"bool architectural\" [\"true\"]\n");
+	}
+	else
+	{
+		fprintf(s_pStream, " \"bool architectural\" [\"false\"]\n");
+	}
 }
 
 /*
@@ -379,6 +396,25 @@ void LuxMax::WriteMetalMaterial(INode* p_node)
 	fprintf(s_pStream, "Material \"metal\" \n");
 	fprintf(s_pStream, "\t\"string name\" [\"%s\"]\n", names[val0 - 1]);
 }
+
+/*
+=============================================================================
+WriteEnviromentMap
+
+=============================================================================
+*/
+void LuxMax::WriteEnviromentMaterial(INode* p_node){ fprintf(s_pStream, "test"); }
+
+	//TSTR pr0 = "enviroment";
+
+	//int val0;
+
+	//TSTR names[4] = {"aluminium", "amorphous carbon", "gold", "copper"};
+
+	//Mtl* m = "test"; //p_node->GetMtl();
+
+	//val0 = Mtl_GetInt((MtlBase*)m, pr0, 0);
+
 
 /*
 =============================================================================
@@ -432,6 +468,9 @@ void LuxMax::WriteMaterials(INode* p_node)
 {
 	Mtl *p_material = p_node->GetMtl();
 	
+	
+
+
 	if (p_material)
 	{
 		if (p_material->ClassID() == LUXRENDER_LIGHTMATERIAL_ID)
@@ -451,10 +490,14 @@ void LuxMax::WriteMaterials(INode* p_node)
 		else if (p_material->ClassID() == LUXRENDER_CARPAINTMATERIAL_ID)
 			WriteCarPaintMaterial(p_node);
 		else if (p_material->ClassID() == LUXRENDER_PORTALMATERIAL_ID)
+		
 			return;
 		else
+
 			fprintf(s_pStream, "Material \"matte\" \"color Kd\" [1 1 1]\n");
+		
 	}
 	else
 		WriteWireColorMaterial(p_node);
+		
 }
