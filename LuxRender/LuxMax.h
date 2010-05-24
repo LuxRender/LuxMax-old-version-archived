@@ -20,6 +20,9 @@
 #define LUXRENDER_NULLMATERIAL_ID Class_ID(0x128af87a, 0x6e0169dc)
 #define LUXRENDER_CARPAINTMATERIAL_ID Class_ID(0x4d900917, 0x6546d259)
 #define LUXRENDER_PORTALMATERIAL_ID Class_ID(0x6b0906a2, 0x159a3fc0)
+#define LUXRENDER_MIRRORMATERIAL_ID Class_ID(0x35fa878, 0x324a4aca)
+#define LUXRENDER_TESTMATERIAL_ID Class_ID(0x3686056d, 0x66e575a8)
+#define LUXRENDER_MATTETRANSLUCENT_ID Class_ID(0x40755a6a, 0x4f0109c6)
 
 // Texture map types
 #define LUXRENDER_CONSTANTTEXTURE_ID Class_ID(0x251e0d83, 0x7d6a5c67)
@@ -128,6 +131,7 @@ public:
 	void WriteMeshesProc(INode* root);
 
 	void WriteLightMaterial(INode* p_node);
+	void WriteMirrorMaterial(INode* p_node);
 	void WriteMatteMaterial(INode* p_node);
 	void WriteGlossyMaterial(INode* p_node);
 	void WriteGlassMaterial(INode* p_node);
@@ -137,6 +141,8 @@ public:
 	void WriteCarPaintMaterial(INode* p_node);
 	void WriteWireColorMaterial(INode* p_node);
 	void WriteEnviromentMaterial(INode* P_node);
+	void writeTestMaterial(INode* p_node);
+	void writeMatteTranslucent(INode* p_node);
 
 	void WritePortals(INode* p_node);
 

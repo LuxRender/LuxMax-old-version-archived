@@ -96,7 +96,7 @@ plugin TextureMap LuxrenderCheckboard name:"LR Checkboard" classID:#(0x6be51c96,
 -- // =======================================================================================================================================================
 -- // ImageMap
 
-plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x39e50806) extends:Bitmaptexture replaceUI:true version:1
+plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x39e50806) extends:Bitmaptexture replaceUI:false version:1 
 ( 
 	parameters main rollout:params
 	(

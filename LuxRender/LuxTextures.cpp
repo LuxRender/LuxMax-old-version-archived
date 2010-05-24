@@ -1,4 +1,5 @@
 #include "LuxMax.h"
+#include <stdmat.h>
 
 /*
 =============================================================================
@@ -84,7 +85,12 @@ Write a ImageMap texture map to the output file
 void LuxMax::WriteImageMapTexture(Texmap* tex, TSTR type)
 {
 	int len = 0;
-
+	/*tex->gettex(ID_DI);
+		BitmapTex *bmt = (BitmapTex *) tex;
+		MCHAR* diffname = bmt->GetMapName();
+		fprintf(s_pStream, "#BitmapName:  [%s] \n", diffname);
+	*/
+	
 	TSTR pr0 = "filename";
 	TSTR pr1 = "wrap";
 	TSTR pr2 = "uv";

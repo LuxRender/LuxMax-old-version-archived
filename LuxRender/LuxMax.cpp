@@ -19,6 +19,7 @@
 #include <Path.h> 
 //#include "AssetType.h"
 #include "IFileResolutionManager.h"
+#include "render.h"
 
 using namespace MaxSDK::AssetManagement;
 
@@ -32,11 +33,6 @@ RefResult LuxMax::NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget,
 {
 	return (REF_SUCCEED);
 }
-
-//RendParamDlg* LuxMax::CreateParamDialog(IRendParams *ir, BOOL prog)
-//{
-//	return 0;
-//}
 
 LuxMaxDefaultLight::LuxMaxDefaultLight(DefaultLight* l)
 {
@@ -64,18 +60,8 @@ int LuxMax::Open(INode *scene, INode *vnode, ViewParams *viewPar, RendParams &rp
 {
 	int i;
 	
-
 	deflights.ZeroCount();
 	deflights.Shrink();
-
-	//close
-	//for (idx=0; idx<lightTab.Count(); idx++) {
-	//delete lightTab[idx];
-	//}
-	//lightTab.ZeroCount();
-	//lightTab.Shrink();
-
-	// Setup Scene
 
 	if (_tcslen(FileName)==0) return 0;
 
@@ -85,8 +71,6 @@ int LuxMax::Open(INode *scene, INode *vnode, ViewParams *viewPar, RendParams &rp
 
 	width = rp.width;
 	height = rp.height;
-
-	//defLights = defaultLights;
 	n_defLights = numDefLights;
 
 	if (deflights.Count() == 0 && defaultLights)
@@ -97,29 +81,17 @@ int LuxMax::Open(INode *scene, INode *vnode, ViewParams *viewPar, RendParams &rp
 		}
 	}
 
-	//RP = rp;	
-	//vuefile = NULL;
-	//if (_tcslen(vueFileName)==0) return 0;
-	//if (FileExists(vueFileName)) {
-	//	TSTR buf;
-	//	buf.printf(GetString(IDS_FILE_ALREADY_EXISTS),vueFileName);
-	//	int ret = MessageBox(NULL, buf, GetString(IDS_VRENDTITLE), MB_YESNO|MB_ICONEXCLAMATION|MB_TASKMODAL);
-	//	if (ret!=IDYES)  return 0;  
-	//	}
-	//vuefile =(FILE *)fopen(vueFileName,"w");
-	//if (vuefile==0) {
-	//	TSTR buf;
-	//	buf.printf(GetString(IDS_CANT_OPEN),vueFileName);
-	//	MessageBox(NULL, buf, GetString(IDS_RENDER_ERR), MB_OK|MB_ICONEXCLAMATION|MB_TASKMODAL);
-	//	return(0);
-	//	}
-
 	return 1;
 }
 
 int LuxMax::Render(TimeValue t, Bitmap *tobm, FrameRendParams &frp, HWND hwnd, RendProgressCallback *prog, ViewParams *viewPar)
 {
-	if (p_camera)
+	tobm->UnDisplay();
+	prog->Progress(0,100);
+	prog->SetTitle("Starting export..");
+	tobm->SetWindowTitle("LuxRender rendered to lxs file.");
+tobm->UnDisplay();
+		if (p_camera)
 	{
 		const ObjectState& os = p_camera->EvalWorldState(t);
 
@@ -132,29 +104,18 @@ int LuxMax::Render(TimeValue t, Bitmap *tobm, FrameRendParams &frp, HWND hwnd, R
 					m3_camera = p_camera->GetNodeTM(t);
 
 					FOV = cam->GetFOV(t) * 360 / ( 2*PI );
+					prog->SetTitle("Getting FOV from camera.");
+					prog->Progress(5,100);
 					break;
 				}
 		}
 	}
-	//else
-	//{
-	//	/*Matrix3 worldToCam = view.affineTM;
-	//	m3_camera = Inverse(worldToCam);
-
-	//	FOV = (view.fov * 360 / ( 2*PI ));
-	//	
-	//	projection = view.projType;
-	//	std::cout << ("Projection: " + projection);*/
-	//	Interface *ip;
-	//	MessageBox(ip->GetMAXHWnd(),"Please Create a LuxCamera!",_T("info"),MB_ICONINFORMATION);
-	//	end;
-	//	return 1;
-	//}
-
-	// Check if we are rendering a material
 
 	if (n_sceneRoot)
 	{
+		prog->Progress(10,100);
+		prog->SetTitle("Checking materials..");
+
 		isMaterialSlot = FALSE;
 
 		CheckMaterialSlot(n_sceneRoot);
@@ -175,14 +136,21 @@ int LuxMax::Render(TimeValue t, Bitmap *tobm, FrameRendParams &frp, HWND hwnd, R
 	if ((s_pStream = fopen(f, "w")) == NULL)
 		return 0;
 
+	prog->Progress(20,100);
+	prog->SetTitle("Exporting models..");
+	
 	if (!WriteScene())
 	{
+		prog->Progress(70,100);
+		prog->SetTitle("Done exporting models..");
+		
 		fclose(s_pStream);
 		return 0;
 	}
 
 	fclose(s_pStream);
-
+	prog->Progress(100,100);
+	prog->SetTitle("Done exporting..");
 	return 0;
 }
    
@@ -190,7 +158,6 @@ int LuxMax::Render(TimeValue t, Bitmap *tobm, FrameRendParams &frp, HWND hwnd, R
 
 int LuxMax::WriteScene()
 {
-	
 GenCamera* cam;// = GenCamera();
 
 Interface* ip = GetCOREInterface();
@@ -226,10 +193,6 @@ Interface* ip = GetCOREInterface();
 	fprintf(s_pStream, "Film \"fleximage\" \"integer xresolution\" [%i] \"integer yresolution\" [%i]\n", width, height);
 
 
-
-
-	
-
 	// Insert preset
 	if (selectedpreset == 0)
 	{
@@ -257,8 +220,6 @@ fprintf(s_pStream, "AttributeBegin \n");
 fprintf(s_pStream, "LightGroup \"environment\" \n");
 fprintf(s_pStream, "LightSource \"infinite\" \n");
 fprintf(s_pStream, "\"string mapping\" [\"angular\"] \n");
-//fprintf(s_pStream, "\"string mapname\" [\"[%i]\"] \n", my_String);
-
 //--------------------------------------------------------------------------------------------------------------------
 
 Interface* ip2 = GetCOREInterface7();
@@ -273,7 +234,7 @@ Interface* ip2 = GetCOREInterface7();
 	BitmapFileInputDialog* bfdlg;
 
 	BOOL two;
-   float utile, vtile;
+   float utile, vtile , ang;
    MCHAR* name;
    MSTR name2;
    TSTR buf;
@@ -284,101 +245,49 @@ Interface* ip2 = GetCOREInterface7();
 	 Texmap *tmap; // = ip2->GetEnvironmentMap(); //m->GetSubTexmap(ID_DI);
 	 if (ip2->GetUseEnvironmentMap())
 	 {
-//		tmap = ip2->GetEnvironmentMap();
 		if (tmap = ip2->GetEnvironmentMap())
 		{
-		//MessageBox(ip->GetMAXHWnd(),"EnvironmentMap = active",_T("info"),MB_ICONINFORMATION);
-			//}
-		//      cout << "Exception raised: " << str << '\n';
-
 		if (tmap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
 		{
-		// It is -- Access the UV tiling settings at time 0.
+		
 		BitmapTex *bmt = (BitmapTex*) tmap;
 		  StdUVGen *uv = bmt->GetUVGen();
-		// utile = uv->GetUScl(0);
-		//vtile = uv->GetVScl(0);
+		  
 		INT32	envRadians = uv->GetAng(0);
-
+		INT32 envuang = uv->GetUAng(0);
+		float vang = uv->GetVAng(0);
+		INT32 axis = uv->GetAxis();
+		
+		fprintf(s_pStream, "#\"Env radian\" [\"%i\"] \n", envRadians);
+		fprintf(s_pStream, "#\"Env uang\" [\"%i\"] \n", envuang);
+		fprintf(s_pStream, "#\"Env vang\" [\"%f\"] \n", vang);
+		fprintf(s_pStream, "#\"Env axis\" [\"%i\"] \n", axis);
 
 		name = bmt->GetMapName();
 			
 		std::string namestring = std::string(name);
-
-		//std::string tempNameString = namestring;
-		//for (int i = 0; i < tempNameString.length(); ++i)
-		//if (tempNameString[i] == '\\')
-		//{
-		//	tempNameString.insert(i, 1, '//');
-		//++i; // Skip inserted char
-		//temp2 = temp;
-		//}
-
-		//buf.printf(_T("Two sided=%d, U Tile = %.1f, V Tile = %.1f, Name = %s"),
-		//two, utile, vtile, temp2); // name works..
-		//MessageBox(ip->GetMAXHWnd(), buf, _T("Info..."),
-		//MB_ICONINFORMATION);
-
-//buf.printf(_T("EnvMapangle in radians = %s"),
-//		envRadians); // name works..
-//		MessageBox(ip->GetMAXHWnd(), buf, _T("Info..."),
-//		MB_ICONINFORMATION);
-
-
 		MaxSDK::Util::Path path(_M(name));
 		std::string filePath = path.GetString();
 
 		for (int i = 0; i < filePath.length(); ++i)
-		if (filePath[i] == '\\')
-		{
-			filePath.insert(i, 1, '\\');	
-		++i; // Skip inserted char
-		//temp2 = temp;
+			if (filePath[i] == '\\')
+			{
+				filePath.insert(i, 1, '\\');	
+				++i; // Skip inserted char
+			}
+		fprintf(s_pStream, "\"string mapname\" [\"%s\"] \n", filePath.data());	
+	}
+ }
+}
+else
+{
 
-		}
-		//fprintf(s_pStream, "#path test after replace %s\n", test4.data());
-
-		fprintf(s_pStream, "\"string mapname\" [\"%s\"] \n", filePath.data());
-		}
-	 }
-	  
-	// else if {fprintf(s_pStream, "#No environmentmap\n");};
-	 
-		}
-		else
-		{
-		//MessageBox(ip->GetMAXHWnd(),"EnvironmentMap = cannot get",_T("info"),MB_ICONINFORMATION);
-		}
-		//{
-		//MessageBox(ip->GetMAXHWnd(),"error",_T("info"),MB_ICONINFORMATION);
-
-		
-	
-	
-//--------------------------------------------------------------------------------------------------------------------
-
-	 
-
-//fprintf(s_pStream, "\"string mapname\" [\"EnvironmentMap.jpg\"] \n");
-
-//UtilExport::printf(s_pStream, concatStr);
-//fprintf(s_pStream, string_x);
+}
 
 fprintf(s_pStream, " \n\n");
 fprintf(s_pStream, "\"float gamma\" [1.000000] \n");
 fprintf(s_pStream, "\"float gain\" [1.000000] \n");
 fprintf(s_pStream, "AttributeEnd \n\n");
-
-
-	//AttributeBegin
-//    LightGroup "environment"
-//    LightSource "infinite"
-//        "string mapping" ["angular"]
-//        "string mapname" ["..\\textures\\rnl_probe.exr"]
-//        "float gamma" [1.000000]
-//        "float gain" [1.00000]
-//AttributeEnd
-
 
 	//environment map end
 
@@ -392,7 +301,7 @@ fprintf(s_pStream, "AttributeEnd \n\n");
 	WriteMeshesProc(n_sceneRoot);
 
 	fprintf(s_pStream, "\nWorldEnd\n");
-
+	
 	return 1;
 }
 
@@ -423,17 +332,14 @@ IOResult LuxMax::Load(ILoad *iload)
 	IOResult res;
 	ULONG nb;
 
-	
-	
-
 	while (IO_OK==(res=iload->OpenChunk()))
 	{
 		Interface* ip = GetCOREInterface();
 		//MessageBox(ip->GetMAXHWnd(),"Loading Luxmax plugin..",_T("info"),MB_ICONINFORMATION);
 
 //------------create menu...-----
-// http://area.autodesk.com/forum/autodesk-3ds-max/sdk/how-to-create-menu-with-the-sdk/		
-		
+// http://area.autodesk.com/forum/autodesk-3ds-max/sdk/how-to-create-menu-with-the-sdk/	
+
 //------------create menu...-----
 
 		switch(id = iload->CurChunkID())

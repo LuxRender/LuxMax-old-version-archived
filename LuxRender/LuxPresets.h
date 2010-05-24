@@ -9,7 +9,7 @@ TSTR PRESET_PREVIEW()
 \"integer displayinterval\" [4]\n\t\
 \"integer writeinterval\" [120]\n\t\
 \"string ldr_clamp_method\" [\"lum\"]\n\t\
-\"bool write_exr\" [\"false\"]\n\t\
+\"bool write_exr\" [\"true\"]\n\t\
 \"bool write_png\" [\"true\"]\n\t\
 \"string write_png_channels\" [\"RGB\"]\n\t\
 \"bool write_png_16bit\" [\"false\"]\n\t\
@@ -24,10 +24,9 @@ TSTR PRESET_PREVIEW()
 \"float colorspace_red\" [0.630000 0.340000]\n\t\
 \"float colorspace_green\" [0.310000 0.595000]\n\t\
 \"float colorspace_blue\" [0.155000 0.070000]\n\t\
-\"float gamma\" [1.000000]\n\t\
-//\"float gamma\" [2.200000]\n\t\
+\"float gamma\" [2.200000] \n\t\
 \n\t\
-PixelFilter \"mitchell\"\n\t\
+PixelFilter \"mitchell\" \n\t\
 \"float B\" [0.750000]\n\t\
 \"float C\" [0.125000]\n\t\
 \n\t\
@@ -60,7 +59,7 @@ TSTR PRESET_FINAL_INTERIOR()
 \"integer displayinterval\" [8] \n\t\
 \"integer writeinterval\" [120] \n\t\
 \"string ldr_clamp_method\" [\"lum\"] \n\t\
-\"bool write_exr\" [\"false\"] \n\t\
+\"bool write_exr\" [\"true\"] \n\t\
 \"bool write_png\" [\"true\"] \n\t\
 \"string write_png_channels\" [\"RGB\"] \n\t\
 \"bool write_png_16bit\" [\"false\"] \n\t\
@@ -75,8 +74,7 @@ TSTR PRESET_FINAL_INTERIOR()
 \"float colorspace_red\" [0.630000 0.340000] \n\t\
 \"float colorspace_green\" [0.310000 0.595000] \n\t\
 \"float colorspace_blue\" [0.155000 0.070000] \n\t\
-// \"float gamma\" [2.200000] \n\t\
-\"float gamma\" [1.000000] \n\t\
+\"float gamma\" [2.200000] \n\t\
 \n\t\
 PixelFilter \"mitchell\" \n\t\
 \"float B\" [0.750000] \n\t\
@@ -111,7 +109,7 @@ TSTR PRESET_FINAL_EXTERIOR()
 \"integer displayinterval\" [8] \n\t\
 \"integer writeinterval\" [120] \n\t\
 \"string ldr_clamp_method\" [\"lum\"] \n\t\
-\"bool write_exr\" [\"false\"] \n\t\
+\"bool write_exr\" [\"true\"] \n\t\
 \"bool write_png\" [\"true\"] \n\t\
 \"string write_png_channels\" [\"RGB\"] \n\t\
 \"bool write_png_16bit\" [\"false\"] \n\t\
@@ -126,8 +124,7 @@ TSTR PRESET_FINAL_EXTERIOR()
 \"float colorspace_red\" [0.630000 0.340000] \n\t\
 \"float colorspace_green\" [0.310000 0.595000] \n\t\
 \"float colorspace_blue\" [0.155000 0.070000] \n\t\
-//\"float gamma\" [2.200000] \n\t\
-\"float gamma\" [1.000000] \n\t\
+\"float gamma\" [2.200000] \n\t\
  \n\t\
 PixelFilter \"mitchell\" \n\t\
 \"float B\" [0.750000] \n\t\

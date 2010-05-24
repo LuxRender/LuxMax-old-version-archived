@@ -197,9 +197,9 @@ LuxMaxParamDlg::LuxMaxParamDlg(LuxMax *rdr, IRendParams *irp, BOOL prog)
 		//hEnvMapPanel = irp->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_ENV_PARAMS), LuxMaxOutputParamDlgProc, _T("Environment"), (LPARAM)this);//IDD_ENV_PARAMS
 		//hSystemPanel = irp->AddTabRollupPage(LUXRENDER_LUXSYSTEM_ID, hInstance, MAKEINTRESOURCE(IDD_SYSTEM_PARAMS), LuxMaxSystemParamDlgProc, _T("System"), (LPARAM)this);
 		hOutputPanel = irp->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_OUTPUT_PARAMS), LuxMaxOutputParamDlgProc, _T("Output"), (LPARAM)this);
-		
 		hAboutPanel = irp->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_ABOUT_PARAMS), LuxMaxOutputParamDlgProc, _T("About Luxrender"), (LPARAM)this);
-		
+
+		//hserverPanel = irp->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_SRV_PARAMS), LuxMaxOutputParamDlgProc, _T("Network render"), (LPARAM)this);
 	}
 }
 
@@ -208,8 +208,6 @@ void LuxMaxParamDlg::InitParamDialog(HWND hWnd)
 	workFileName = renderer->FileName;
 	SetDlgItemText(hWnd, IDC_LXSOUTPUT, workFileName);
 	//SetDlgItemText(hWnd, IDC_STATIC_ENV_MAP_PATH, workFileName);
-	
-	
 	// Init all the rollouts
 	PresetsRollout_CreateControls(hWnd, renderer->selectedpreset);
 }
