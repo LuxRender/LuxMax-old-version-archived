@@ -7,6 +7,8 @@
 #define IDD_PRESETS_PARAMS              103
 #define IDD_ABOUT_PARAMS                104
 #define IDD_ENV_PARAMS                  105
+#define IDD_FORMVIEW                    107
+#define IDD_SRV_PARAMS                  107
 #define IDC_LXSOUTPUT_BUTTON            1001
 #define IDC_LXSOUTPUT                   1002
 #define IDC_COMBO1                      1003
@@ -30,6 +32,7 @@
 #define IDC_CHECK2                      1013
 #define IDC_AUTOFOCUS                   1013
 #define IDC_CHECK3                      1014
+#define IDC_LIST1                       1014
 #define IDC_EDIT4                       1017
 #define IDC_SPIN4                       1018
 #define IDC_CHECK4                      1022
@@ -67,9 +70,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        106
+#define _APS_NEXT_RESOURCE_VALUE        108
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1014
+#define _APS_NEXT_CONTROL_VALUE         1015
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

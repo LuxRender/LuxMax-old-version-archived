@@ -77,7 +77,7 @@ LuxMaxMesh::LuxMaxMesh(INode* p_node)
 
 			// fill face index
 			faces[i] = Point3(c , c + 1, c + 2);
-
+			
 			Face* p_face = &p_trimesh->faces[i];
 			TVFace*	p_tvface = &p_trimesh->tvFace[i];
 
@@ -99,6 +99,7 @@ LuxMaxMesh::LuxMaxMesh(INode* p_node)
 		}
 
 		//OptimizeFaceIndices();
+	
 	}
 }
 
@@ -250,10 +251,15 @@ void LuxMaxMesh::WriteUvs(FILE* p_Stream)
 	int i;
 	// UV
 	fprintf(p_Stream, "\"float uv\"[\n");
-	for (i = 0; i < numuvs; i++)
+	//for (i = 0; i < numuvs; i++)
+		for (i = 0; i < numuvs; i++)
 	{
 		Point3 v = uvs[i];
-		fprintf(p_Stream, "%s %s\n", Format(v.x), Format(v.y));
+//		fprintf(p_Stream, "%s %s\n", Format(v.x), Format(v.y));
+		//To fix this i turned the v.y to a negative number.
+		fprintf(p_Stream, "%s %s\n", Format(v.x), Format(-1 * v.y));
+		
+
 	}
 	fprintf(p_Stream, "]\n");
 }

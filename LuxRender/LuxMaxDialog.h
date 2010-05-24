@@ -14,6 +14,7 @@ public:
    HWND hPresetsPanel;
    HWND hAboutPanel;
    HWND hEnvMapPanel;
+   HWND hserverPanel;
 
    BOOL prog;
    HFONT hFont;

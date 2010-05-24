@@ -257,6 +257,7 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="0"
+			DeleteExtensionsOnClean="*.obj;*.ilk;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;$(TargetPath);.exp;.lib;.pdb;"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -416,6 +417,7 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="0"
+			DeleteExtensionsOnClean="*.obj;*.ilk;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;$(TargetPath);.exp;.lib;.pdb;"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -575,6 +577,7 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="0"
+			DeleteExtensionsOnClean="*.obj;*.ilk;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;$(TargetPath);.exp;.lib;.pdb;"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -1232,6 +1235,11 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\..\..\..\..\projects\LuxMax_Release\Supported Features.txt"
+			DeploymentContent="true"
+			>
+		</File>
 	</Files>
 	<Globals>
 		<Global
