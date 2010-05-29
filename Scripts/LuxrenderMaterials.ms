@@ -485,6 +485,8 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 	parameters main rollout:params
 	(
 		metalname type:#integer ui:mname default:1
+		nkdatapath type:#string ui:lbl7 default:""
+		usenkdata type:#integer default:0
 		
 		useBumpmap type:#boolean ui:museBumpmap
 		bumpmap type:#float ui:mbumpmap
@@ -508,62 +510,40 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 	)
 
 	
-	rollout params "Metal Parameters"
+	rollout params "Metal Parameters" width:160 height:416
 	(
-		dropdownlist mname "Name:"  items:#("Aluminium", "Amorphous carbon", "Gold", "Copper")
+		dropdownList mname "Name:" pos:[8,8] width:136 height:40 items:#("Aluminium", "Amorphous carbon", "Gold", "Copper", "NK Data")
 		
-		group "Advanced Parameters"
-		(
-			label lb_exponentu "U-Exponent . . . . . . " across:3 enabled:true
-			spinner spn_exponentu "" width:68  range:[0.000,1,0.001] type:#float align:#left enabled:true scale:0.001
-			mapbutton spn_exponentuTexture "None" width:120 height:18 align:#right enabled:false
-			label lb_exponentv "V-Exponent . . . . . . " across:3 enabled:true
-			spinner spn_exponentv ""  width:68 range:[0.000,1,0.001] type:#float align:#left enabled:true scale:0.001
-			mapbutton spn_exponentvTexture "None" width:120 height:18 align:#right enabled:false
+		groupBox grp1 "Advanced Parameters" pos:[4,69] width:154 height:112
+		label lb_exponentu "U-Exponent . . . . . . " pos:[-12,88] width:95 height:13 enabled:true across:3
+		spinner spn_exponentu "" pos:[58,88] width:68 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001
+		mapButton spn_exponentuTexture "None" pos:[28,88] width:120 height:18 enabled:false align:#right
+		label lb_exponentv "V-Exponent . . . . . . " pos:[-12,111] width:94 height:13 enabled:true across:3
+		spinner spn_exponentv "" pos:[58,111] width:68 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001
+		mapButton spn_exponentvTexture "None" pos:[28,111] width:120 height:18 enabled:false
 
 			-- Bumpmap parameters
-			checkbox museBumpmap "Bumpmap . . . ." across:3 enabled:false
-			spinner mbumpmap "" scale:0.01 range:[0,1,0] width:68 align:#left
-			mapbutton mbumpmapTexture "T" width:120 height:18 align:#right
+		checkbox museBumpmap "Bumpmap . . . ." pos:[13,134] width:95 height:15 enabled:false across:3
+		spinner mbumpmap "" pos:[58,134] width:68 height:16 range:[0,1,0] scale:0.01
+		mapButton mbumpmapTexture "T" pos:[28,134] width:120 height:18
 
 			-- Emission paramters
-			checkbox memission "Emission Texture . . . . . . . . . . " across:2 enabled:false
-			mapbutton memissionTexture "T" width:120 height:18 align:#right
-		)
-		on museBumpmap changed s do
-		(
-			mbumpmap.enabled = s
-			mbumpmapTexture.enabled = s
-		)
-		on memission changed s do
-		(
-			memissionTexture.enabled = s
-		)			
-		group "Subdivision Parameters"
-		(
-			checkbox museSubdivision "Subdivision . . ." across:3 enabled:true
-			spinner msubdivision "" scale:1 range:[0,12,0] type:#integer width:50 align:#left  enabled:false
-			label lb0 ""
-			checkbox mSharpenBounds "Sharpen Bounds" enabled:false
-			checkbox mSmooth "Smooth" enabled:false
-		)
-		on museSubdivision changed s do
-		(
-			msubdivision.enabled = s
-			mSharpenBounds.enabled = s
-			mSmooth.enabled = s
-		)
-		group "Displacement Map Parameters"
-		(
-			checkbox museDisplacement "Displacement . ." across:3  enabled:true
-			spinner mdisplacement "" scale:0.1 range:[-10,10,0] width:50 align:#left
-			mapbutton mDisplacementTexture "T" width:120 height:18 align:#right
-		)
-		on museDisplacement changed s do
-		(
-			mdisplacement.enabled = s
-			mDisplacementTexture.enabled = s
-		)
+		checkbox memission "Emission Texture . . . . . . . . . . " pos:[13,157] width:167 height:15 enabled:false across:2
+		mapButton memissionTexture "T" pos:[29,157] width:120 height:18
+		
+
+		groupBox grp2 "Subdivision Parameters" pos:[4,186] width:154 height:81
+		checkbox museSubdivision "Subdivision . . ." pos:[13,205] width:96 height:15 enabled:true across:3
+		spinner mSubdivision "" pos:[58,205] width:50 height:16 enabled:false range:[0,12,0] type:#integer scale:1
+		label lb0 "" pos:[125,205] width:0 height:13
+		checkbox mSharpenBounds "Sharpen Bounds" pos:[13,226] width:103 height:15 enabled:false
+		checkbox mSmooth "Smooth" pos:[13,246] width:60 height:15 enabled:false
+		groupBox grp3 "Displacement Map Parameters" pos:[4,272] width:154 height:43
+		checkbox museDisplacement "Displacement . ." pos:[13,291] width:100 height:15 enabled:true across:3
+		spinner mdisplacement "" pos:[58,291] width:50 height:16 range:[-10,10,0] scale:0.1
+		mapButton mdisplacementTexture "T" pos:[28,291] width:120 height:18
+		label lbl7 "NkData" pos:[8,56] width:144 height:16
+		
 		on params open do
 		(
 			mbumpmap.enabled = museBumpmap.state
@@ -577,6 +557,61 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 			
 			mdisplacement.enabled = museDisplacement.state
 			mDisplacementTexture.enabled = museDisplacement.state
+			lbl7.text = nkdatapath
+		)
+		on mname selected i do
+		(
+			usenkdata = 0
+			
+			format "You selected '%'!\n" mname.items[i]
+			if (mname.items[i] == "NK Data")then
+			(
+				--print "NkData selection works!!!!!!"
+				
+				f = getOpenFileName types:"NkData(*.nk)|*.nk" caption:"Open A NK Data File:" --\ 
+				--filename:"c:/test/test.nk"
+				if (f != undefined)then
+				(
+					nkdatapath = f
+					lbl7.text =f as string
+					print f
+					usenkdata = 1
+					print usenkdata as string					
+					
+				)
+				else
+				(
+						usenkdata = 1
+					nkdatapath = "No Nk file selected"
+					lbl7.text =nkdatapath as string
+				)
+				
+
+				
+				
+			)
+			print usenkdata as string
+			
+		)
+		on museBumpmap changed s do
+		(
+			mbumpmap.enabled = s
+			mbumpmapTexture.enabled = s
+		)
+		on memission changed s do
+		(
+			memissionTexture.enabled = s
+		)
+		on museSubdivision changed s do
+		(
+			msubdivision.enabled = s
+			mSharpenBounds.enabled = s
+			mSmooth.enabled = s
+		)
+		on museDisplacement changed s do
+		(
+			mdisplacement.enabled = s
+			mDisplacementTexture.enabled = s
 		)
 	)
 )
@@ -1128,36 +1163,48 @@ parameters main rollout:paramsEm
 )
 
 
-	/* plugin material LuxMix name:"LR Mix" classID:#(0x166c0818, 0x1c027268) extends:Standard replaceUI:true version:1
+	 plugin material LuxMix name:"LR Mix" classID:#(0x166c0818, 0x1c027268) extends:Standard replaceUI:true version:1
 	(
 		parameters main rollout:main
 		(
 			--TransmissionTexture type:#textureMap ui:mTransmissionTexture
-			namedmaterial1 type:#textureMap ui:mnamedmaterial1
-			namedmaterial2 type:#textureMap ui:mnamedmaterial2
+			namedmaterial1 type:#textureMap --ui:btn3
+			namedmaterial2 type:#textureMap --ui:btn10
 			mixmat type:#float ui:spn_mix default:0.5
 			
 		)
-		rollout main "Settings" width:160 height:104
+		rollout main "Settings" width:264 height:328
 		(
-			mapButton mnamedmaterial1 "T" pos:[13,7] width:120 height:18 enabled:true
-			spinner spn_mix "Mix amount:" pos:[46,30] width:68 height:16 enabled:true range:[0,1,0.1] type:#float default:0.5
-			mapButton mnamedmaterial2 "T" pos:[13,51] width:120 height:18 enabled:false
+			spinner spn_mix "Mix amount:" pos:[16,152] width:106 height:16 enabled:true range:[0,1,1] type:#float default:0.5
+			listbox lbx1 "ListBox" pos:[8,32] width:248 height:6 items:(for o in  scenematerials collect o.name)
+			listbox lbx2 "ListBox" pos:[8,184] width:248 height:8 items:(for o in  scenematerials collect o.name)
 			
-			on mnamedmaterial1 picked texmap do
+			on lbx1 selected sel do
 			(
-			--picked
-				
-				mtlBrowser.browseFrom #scene #mats
-				
+			--lbx1 selection changed
+				print lbx1.selected as string
 			)
-			
-			on mnamedmaterial2 picked texmap do
-			(
-				mtlBrowser.browseFrom #scene #mats
-				
-			)
-			
 		)
+		-->print lbx1.selected as string
 		
-	) */
+		
+	) 
+	
+	plugin material LuxNullMaterial name:"LR NullMaterial" classID:#(0x128af87a, 0x6e0169dc) extends:Standard replaceUI:true version:1
+(
+	parameters main rollout:paramsEm
+	(
+		
+	)
+	
+ 	rollout paramsEm "settings" width:160 height:104
+ 	(
+ 		
+ 	)
+	on paramsEm open do
+	(
+		--AreaLightSourceMap = LuxrenderBlackbody()
+		
+	)
+)
+	

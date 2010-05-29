@@ -1,5 +1,5 @@
 #include "LuxMax.h"
-
+#include <string>
 class LuxMaxMaterial
 {
 public:
@@ -473,26 +473,55 @@ void LuxMax::WriteMetalMaterial(INode* p_node)
 	TSTR pr0 = "metalname";
 	TSTR pr1 = "uexponent";
 	TSTR pr2 = "vexponent";
+	TSTR pr3 = "nkdatapath";
+	TSTR pr4 = "usenkdata";
 
+	//TSTR nkpath;
 	int val0;
 	float val1;
 	float val2;
+	TSTR val4;
 
-	TSTR names[4] = {"aluminium", "amorphous carbon", "gold", "copper"};
+	int val5;
+	
+//std::string namestring = std::string(pr3.data());
+
+	TSTR names[5] = {"aluminium", "amorphous carbon", "gold", "copper", "NKData"};
 
 	Mtl* m = p_node->GetMtl();
 
 	val0 = Mtl_GetInt((MtlBase*)m, pr0, 0);
 	val1 = Mtl_GetFloat((MtlBase*)m,pr1,0);
 	val2 = Mtl_GetFloat((MtlBase*)m,pr2,0);
+	val4 = Mtl_GetStr((MtlBase*)m,pr3,0);
+	val5 = Mtl_GetInt((MtlBase*)m,pr4,0);
 
-
-
+	fprintf(s_pStream, "#Nk Data path :  %s \n", val4);
 	fprintf(s_pStream, "Material \"metal\" \n");
-	fprintf(s_pStream, "\t\"string name\" [\"%s\"]\n", names[val0 - 1]);
-	fprintf(s_pStream, "\"float vroughness\" [%s]\n", Format(val1));
-	fprintf(s_pStream, "\"float uroughness\" [%s]\n", Format(val2));
+	//fprintf(s_pStream, "Material \"metal\" \n");
 
+	if (val5 == 0)
+	{
+		fprintf(s_pStream, "#Not using NKData \n");
+		fprintf(s_pStream, "\t\"string name\" [\"%s\"]\n", names[val0 - 1]);
+		fprintf(s_pStream, "\"float vroughness\" [%s]\n", Format(val1));
+		fprintf(s_pStream, "\"float uroughness\" [%s]\n", Format(val2));
+	}
+	else
+	{
+		std::string filePath = val4;
+		for (int i = 0; i < filePath.length(); ++i)
+			if (filePath[i] == '\\')
+			{
+				filePath.insert(i, 1, '\\');
+				++i; // Skip inserted char
+			}
+
+		fprintf(s_pStream, "#using NKData \n");
+		fprintf(s_pStream, "\t\"string name\" [\"%s\"]\n", filePath.data());
+		fprintf(s_pStream, "\"float vroughness\" [%s]\n", Format(val1));
+		fprintf(s_pStream, "\"float uroughness\" [%s]\n", Format(val2));
+	}
 }
 
 /*
