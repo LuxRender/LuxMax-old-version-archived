@@ -86,11 +86,19 @@ int LuxMax::Open(INode *scene, INode *vnode, ViewParams *viewPar, RendParams &rp
 
 int LuxMax::Render(TimeValue t, Bitmap *tobm, FrameRendParams &frp, HWND hwnd, RendProgressCallback *prog, ViewParams *viewPar)
 {
+	//hides the bitmap render dialog window so that you do not have to close it all the time while exporting.
 	tobm->UnDisplay();
+
+	//set the progress to '0'
 	prog->Progress(0,100);
+	//set the title 
 	prog->SetTitle("Starting export..");
 	tobm->SetWindowTitle("LuxRender rendered to lxs file.");
-tobm->UnDisplay();
+	
+	//makes sure it's getting closed.
+	tobm->UnDisplay();
+
+	//If it's a camera then proceed
 		if (p_camera)
 	{
 		const ObjectState& os = p_camera->EvalWorldState(t);
