@@ -510,35 +510,35 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 	)
 
 	
-	rollout params "Metal Parameters" width:160 height:416
+	rollout params "Metal Parameters" width:260 height:416
 	(
 		dropdownList mname "Name:" pos:[8,8] width:136 height:40 items:#("Aluminium", "Amorphous carbon", "Gold", "Copper", "NK Data")
 		
-		groupBox grp1 "Advanced Parameters" pos:[4,69] width:154 height:112
-		label lb_exponentu "U-Exponent . . . . . . " pos:[-12,88] width:95 height:13 enabled:true across:3
-		spinner spn_exponentu "" pos:[58,88] width:68 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001
-		mapButton spn_exponentuTexture "None" pos:[28,88] width:120 height:18 enabled:false align:#right
-		label lb_exponentv "V-Exponent . . . . . . " pos:[-12,111] width:94 height:13 enabled:true across:3
-		spinner spn_exponentv "" pos:[58,111] width:68 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001
-		mapButton spn_exponentvTexture "None" pos:[28,111] width:120 height:18 enabled:false
+		GroupBox grp1 "Advanced Parameters" pos:[4,69] width:252 height:112
+		label lb_exponentu "U-Exponent . . . . . . " pos:[8,88] width:95 height:13 enabled:true across:3
+		spinner spn_exponentu "" pos:[80,88] width:68 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001
+		mapButton spn_exponentuTexture "None" pos:[152,88] width:96 height:18 enabled:false
+		label lb_exponentv "V-Exponent . . . . . . " pos:[8,112] width:94 height:13 enabled:true across:3
+		spinner spn_exponentv "" pos:[80,111] width:68 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001
+		mapButton spn_exponentvTexture "None" pos:[152,112] width:96 height:18 enabled:false
 
 			-- Bumpmap parameters
-		checkbox museBumpmap "Bumpmap . . . ." pos:[13,134] width:95 height:15 enabled:false across:3
-		spinner mbumpmap "" pos:[58,134] width:68 height:16 range:[0,1,0] scale:0.01
-		mapButton mbumpmapTexture "T" pos:[28,134] width:120 height:18
+		checkbox museBumpmap "Bumpmap . . . ." pos:[8,136] width:95 height:15 enabled:false across:3
+		spinner mbumpmap "" pos:[80,136] width:68 height:16 range:[0,1,0] scale:0.01
+		mapButton mbumpmapTexture "T" pos:[152,136] width:96 height:18
 
 			-- Emission paramters
-		checkbox memission "Emission Texture . . . . . . . . . . " pos:[13,157] width:167 height:15 enabled:false across:2
-		mapButton memissionTexture "T" pos:[29,157] width:120 height:18
+		checkbox memission "Emission Texture . . . . . . . . . . " pos:[8,160] width:167 height:15 enabled:false across:2
+		mapButton memissionTexture "T" pos:[152,160] width:96 height:18
 		
 
-		groupBox grp2 "Subdivision Parameters" pos:[4,186] width:154 height:81
-		checkbox museSubdivision "Subdivision . . ." pos:[13,205] width:96 height:15 enabled:true across:3
-		spinner mSubdivision "" pos:[58,205] width:50 height:16 enabled:false range:[0,12,0] type:#integer scale:1
+		GroupBox grp2 "Subdivision Parameters" pos:[4,186] width:154 height:81
+		checkbox museSubdivision "Subdivision . . ." pos:[8,200] width:96 height:15 enabled:true across:3
+		spinner mSubdivision "" pos:[104,200] width:50 height:16 enabled:false range:[0,12,0] type:#integer scale:1
 		label lb0 "" pos:[125,205] width:0 height:13
 		checkbox mSharpenBounds "Sharpen Bounds" pos:[13,226] width:103 height:15 enabled:false
 		checkbox mSmooth "Smooth" pos:[13,246] width:60 height:15 enabled:false
-		groupBox grp3 "Displacement Map Parameters" pos:[4,272] width:154 height:43
+		GroupBox grp3 "Displacement Map Parameters" pos:[0,272] width:154 height:43
 		checkbox museDisplacement "Displacement . ." pos:[13,291] width:100 height:15 enabled:true across:3
 		spinner mdisplacement "" pos:[58,291] width:50 height:16 range:[-10,10,0] scale:0.1
 		mapButton mdisplacementTexture "T" pos:[28,291] width:120 height:18
@@ -585,10 +585,6 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 					nkdatapath = "No Nk file selected"
 					lbl7.text =nkdatapath as string
 				)
-				
-
-				
-				
 			)
 			print usenkdata as string
 			
@@ -1090,7 +1086,7 @@ plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x65
 --plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x6546d259) extends:Standard replaceUI:true version:1
 plugin material LuxTest name:"LR Rough Glass" classID:#(0x3686056d, 0x66e575a8) extends:Standard replaceUI:true version:1
 (
-parameters main rollout:luxrough
+	parameters main rollout:luxrough
  	(
 		transmissioncolor type:#color default:[100,100,100] ui:mTransmission
 		roughreflectioncolor type:#color default:[100,100,100] ui:mroughReflection
@@ -1109,11 +1105,11 @@ parameters main rollout:luxrough
 	rollout luxrough "Settings:" width:336 height:264
 	(
 		colorpicker mTransmission "Transmission color:" height:18
-		checkbox mUseTransmissionMap "Transmission Texture . . . . ." across:2 enabled:true
+		checkbox mUseTransmissionMap "Transmission Texture . . . . ." across:2 enabled:false
 		mapbutton mTransmissionTexture "None" width:120 height:18 align:#right enabled:false
 		
 		colorpicker mroughreflection "RoughReflection color:" height:18
-		checkbox mUseReflectionMap "Transmission Texture . . . . ." across:2 enabled:true
+		checkbox mUseReflectionMap "Transmission Texture . . . . ." across:2 enabled:false
 		mapbutton mReflectionTexture "T" width:120 height:18 align:#right enabled:false
 		
 		spinner spn_exponentu "U-roughness" width:88  range:[0.000,1.000,0.001] type:#float align:#left enabled:true scale:0.001 default:0.001
@@ -1139,12 +1135,9 @@ plugin material LuxMatteTrans name:"LR MatteTranslucent" classID:#(0x40755a6a, 0
 parameters main rollout:paramsEm
 	(
 		--AreaLightSourceMap type:#textureMap ui:m_emissionTexture
-		
 		diffusecolor type:#color default:[100,100,100] ui:mDiffuse
 		transmitivitycolor type:#color default:[100,100,100] ui:mTransmission
 		sigma type:#float default:1.5 ui:spn_sigma
-		
-	
 	)
 	
 	rollout paramsEm "settings" width:160 height:104
@@ -1163,48 +1156,49 @@ parameters main rollout:paramsEm
 )
 
 
-	 plugin material LuxMix name:"LR Mix" classID:#(0x166c0818, 0x1c027268) extends:Standard replaceUI:true version:1
-	(
-		parameters main rollout:main
-		(
-			--TransmissionTexture type:#textureMap ui:mTransmissionTexture
-			namedmaterial1 type:#textureMap --ui:btn3
-			namedmaterial2 type:#textureMap --ui:btn10
-			mixmat type:#float ui:spn_mix default:0.5
-			
-		)
-		rollout main "Settings" width:264 height:328
-		(
-			spinner spn_mix "Mix amount:" pos:[16,152] width:106 height:16 enabled:true range:[0,1,1] type:#float default:0.5
-			listbox lbx1 "ListBox" pos:[8,32] width:248 height:6 items:(for o in  scenematerials collect o.name)
-			listbox lbx2 "ListBox" pos:[8,184] width:248 height:8 items:(for o in  scenematerials collect o.name)
-			
-			on lbx1 selected sel do
-			(
-			--lbx1 selection changed
-				print lbx1.selected as string
-			)
-		)
-		-->print lbx1.selected as string
-		
-		
-	) 
+/* 	 plugin material LuxMix name:"LR Mix" classID:#(0x166c0818, 0x1c027268) extends:Standard replaceUI:true version:1
+* 	(
+* 		parameters main rollout:main
+* 		(
+* 			--TransmissionTexture type:#textureMap ui:mTransmissionTexture
+* 			namedmaterial1 type:#textureMap --ui:btn3
+* 			namedmaterial2 type:#textureMap --ui:btn10
+* 			mixmat type:#float ui:spn_mix default:0.5
+* 			
+* 		)
+* 		rollout main "Settings" width:264 height:328
+* 		(
+* 			spinner spn_mix "Mix amount:" pos:[16,152] width:106 height:16 enabled:true range:[0,1,1] type:#float default:0.5
+* 			listbox lbx1 "ListBox" pos:[8,32] width:248 height:6 items:(for o in  scenematerials collect o.name)
+* 			listbox lbx2 "ListBox" pos:[8,184] width:248 height:8 items:(for o in  scenematerials collect o.name)
+* 			
+* 			on lbx1 selected sel do
+* 			(
+* 			--lbx1 selection changed
+* 				print lbx1.selected as string
+* 			)
+* 		)
+* 		-->print lbx1.selected as string
+* 		
+* 		
+* 	) 
+*/
 	
 	plugin material LuxNullMaterial name:"LR NullMaterial" classID:#(0x128af87a, 0x6e0169dc) extends:Standard replaceUI:true version:1
-(
-	parameters main rollout:paramsEm
 	(
+		parameters main rollout:paramsEm
+		(
+			
+		)
 		
+		rollout paramsEm "settings" width:160 height:104
+		(
+			
+		)
+		on paramsEm open do
+		(
+			--AreaLightSourceMap = LuxrenderBlackbody()
+			
+		)
 	)
-	
- 	rollout paramsEm "settings" width:160 height:104
- 	(
- 		
- 	)
-	on paramsEm open do
-	(
-		--AreaLightSourceMap = LuxrenderBlackbody()
-		
-	)
-)
 	

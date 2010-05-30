@@ -1,5 +1,6 @@
 #include "LuxMax.h"
 #include <string>
+#include <imtl.h>
 class LuxMaxMaterial
 {
 public:
@@ -690,12 +691,8 @@ void LuxMax::WriteRoughGlassMaterial(INode* p_node)
 
 void LuxMax::writeTestMaterial(INode* p_node)
 {
-//TSTR pr0 = "kdcolor";
-//Point3	var0;
-//Mtl* m = p_node->GetMtl();
-//var0 = Mtl_GetColor((MtlBase*)m, pr0, 0);
-//fprintf(s_pStream, "# TESTMaterial \"color\" \"color Kr\" [%s %s %s]\n", Format(var0.x), Format(var0.y), Format(var0.z));
-	Mtl* m = p_node->GetMtl();
+
+	
 
 	TSTR pr0 = "roughreflectioncolor";
 	TSTR pr1 =	"transmissioncolor";
@@ -720,6 +717,8 @@ void LuxMax::writeTestMaterial(INode* p_node)
 
 	int mUseTransmissionMap;
 	int mUseReflectionMap;
+	
+	Mtl* m = p_node->GetMtl();
 
 	var0 = Mtl_GetColor((MtlBase*)m, pr0, 0);
 	var1 =Mtl_GetColor((MtlBase*)m, pr1, 0);
@@ -728,17 +727,25 @@ void LuxMax::writeTestMaterial(INode* p_node)
 	var4 =Mtl_GetFloat((MtlBase*)m, pr4,0);
 	var5 =Mtl_GetFloat((MtlBase*)m, pr5,0);
 	
+	Texmap*	transmissionmap = NULL;
+	Texmap*	reflectionmap = NULL;
+
 	mUseTransmissionMap =Mtl_GetInt((MtlBase*)m,pr6,0);
 	mUseReflectionMap = Mtl_GetInt((MtlBase*)m,pr7,0);
 
-	Texmap*	transmissionmap = NULL;
-	Texmap*	reflectionmap = NULL;
-	//var12 = Mtl_GetTexmap((MtlBase*)m, pr12, 0);
+
+	
 	transmissionmap = Mtl_GetTexmap((MtlBase*)m,pr8,0);
 	reflectionmap = Mtl_GetTexmap((MtlBase*)m,pr9,0);
 	
 
 	fprintf(s_pStream, "Material \"roughglass\"\n");
+	//fprintf(s_pStream, "#begin\"transtexture map\"\n");
+	//WriteTexture(transmissionmap, "color");
+	//fprintf(s_pStream, "#\"texturemapname: \" [%s]\n", transmissionmap->GetName());
+
+	//fprintf(s_pStream, "#end\"transtexture map\"\n");
+	
 	//fprintf(s_pStream, "#Material \"roughglass\" \"color Kd\" [%s %s %s]\n", Format(var0.x), Format(var0.y), Format(var0.z));
 
 //	if (transmissionmap)
