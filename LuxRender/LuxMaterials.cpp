@@ -34,7 +34,9 @@ void LuxMaxMaterial::WriteBumpmap(FILE* s_pStream, Mtl* p_material)
 		if (var2)
 			fprintf(s_pStream, "\"texture bumpmap\" [\"%s\"]\n", var2->GetName());
 		else
+		{
 			fprintf(s_pStream, "\"float bumpmap\" [%s]\n", Format(var1));
+		}
 	}
 }
 
@@ -476,13 +478,13 @@ void LuxMax::WriteMetalMaterial(INode* p_node)
 	TSTR pr2 = "vexponent";
 	TSTR pr3 = "nkdatapath";
 	TSTR pr4 = "usenkdata";
+	TSTR pr6 = "bumpmaptexture";
 
 	//TSTR nkpath;
 	int val0;
 	float val1;
 	float val2;
 	TSTR val4;
-
 	int val5;
 	
 //std::string namestring = std::string(pr3.data());
@@ -496,9 +498,12 @@ void LuxMax::WriteMetalMaterial(INode* p_node)
 	val2 = Mtl_GetFloat((MtlBase*)m,pr2,0);
 	val4 = Mtl_GetStr((MtlBase*)m,pr3,0);
 	val5 = Mtl_GetInt((MtlBase*)m,pr4,0);
-
+	Texmap* var6 = NULL;
+	var6 = Mtl_GetTexmap((MtlBase*)m,pr6,0);
+	
 	fprintf(s_pStream, "#Nk Data path :  %s \n", val4);
 	fprintf(s_pStream, "Material \"metal\" \n");
+	
 	//fprintf(s_pStream, "Material \"metal\" \n");
 
 	if (val5 == 0)
@@ -519,9 +524,17 @@ void LuxMax::WriteMetalMaterial(INode* p_node)
 			}
 
 		fprintf(s_pStream, "#using NKData \n");
-		fprintf(s_pStream, "\t\"string name\" [\"%s\"]\n", filePath.data());
+		fprintf(s_pStream, "\t\"string filename\" [\"%s\"]\n", filePath.data());
 		fprintf(s_pStream, "\"float vroughness\" [%s]\n", Format(val1));
 		fprintf(s_pStream, "\"float uroughness\" [%s]\n", Format(val2));
+
+	}
+	//--get bumpslot material..
+	//WriteTexture(var6,"color");
+	if(var6)
+	{
+	WriteTexture(var6, "float");
+	LuxMaxMaterial::WriteBumpmap(s_pStream, m);
 	}
 }
 
@@ -669,19 +682,16 @@ void LuxMax::WriteNullMaterial(INode* p_node)
 void LuxMax::WriteRoughGlassMaterial(INode* p_node)
 { 
 	Mtl* m = p_node->GetMtl();
-
 	TSTR pr0 = "Ktcolor";
 	
 	Point3	var01;
-	
-
-	
 
 	var01 = Mtl_GetColor((MtlBase*)m, pr0, 0);
 	
 
 	fprintf(s_pStream, "Material \"roughglass\"\n");
 	//fprintf(s_pStream, "#Material \"roughglass\" \"color Kd\" [%s %s %s]\n", Format(var0.x), Format(var0.y), Format(var0.z));
+
 	fprintf(s_pStream, "#Material \"roughglass\" \"color Kd\" [%s %s %s]\n", Format(var01.x), Format(var01.y), Format(var01.z));
 	
 	
@@ -691,9 +701,6 @@ void LuxMax::WriteRoughGlassMaterial(INode* p_node)
 
 void LuxMax::writeTestMaterial(INode* p_node)
 {
-
-	
-
 	TSTR pr0 = "roughreflectioncolor";
 	TSTR pr1 =	"transmissioncolor";
 	TSTR pr2 = "uroughness";
@@ -702,10 +709,10 @@ void LuxMax::writeTestMaterial(INode* p_node)
 	TSTR pr5 = "cauchyb";
 
 	TSTR pr6 = "useTransmissionmap";
-	TSTR pr7 = "mUseReflectionMap";
+	TSTR pr7 = "useReflectionmap";
 
-	TSTR pr8 = "TransmissionTexture";
-	TSTR pr9 = "ReflectionTexture";
+	TSTR pr8 = "kttexture";
+	TSTR pr9 = "krtexture";
 	
 	Point3 var0;
 	Point3	var1;
@@ -715,8 +722,8 @@ void LuxMax::writeTestMaterial(INode* p_node)
 	float var4;
 	float var5;
 
-	int mUseTransmissionMap;
-	int mUseReflectionMap;
+	int var6;
+	int var7;
 	
 	Mtl* m = p_node->GetMtl();
 
@@ -727,39 +734,40 @@ void LuxMax::writeTestMaterial(INode* p_node)
 	var4 =Mtl_GetFloat((MtlBase*)m, pr4,0);
 	var5 =Mtl_GetFloat((MtlBase*)m, pr5,0);
 	
-	Texmap*	transmissionmap = NULL;
-	Texmap*	reflectionmap = NULL;
+	Texmap*	var8 = NULL;
+	Texmap*	var9 = NULL;
 
-	mUseTransmissionMap =Mtl_GetInt((MtlBase*)m,pr6,0);
-	mUseReflectionMap = Mtl_GetInt((MtlBase*)m,pr7,0);
+	var6 =Mtl_GetInt((MtlBase*)m,pr6,0);
+	var7 = Mtl_GetInt((MtlBase*)m,pr7,0);
 
-
-	
-	transmissionmap = Mtl_GetTexmap((MtlBase*)m,pr8,0);
-	reflectionmap = Mtl_GetTexmap((MtlBase*)m,pr9,0);
+	var8 = Mtl_GetTexmap((MtlBase*)m,pr8,0);
+	var9 = Mtl_GetTexmap((MtlBase*)m,pr9,0);
 	
 
 	fprintf(s_pStream, "Material \"roughglass\"\n");
-	//fprintf(s_pStream, "#begin\"transtexture map\"\n");
-	//WriteTexture(transmissionmap, "color");
-	//fprintf(s_pStream, "#\"texturemapname: \" [%s]\n", transmissionmap->GetName());
-
-	//fprintf(s_pStream, "#end\"transtexture map\"\n");
 	
-	//fprintf(s_pStream, "#Material \"roughglass\" \"color Kd\" [%s %s %s]\n", Format(var0.x), Format(var0.y), Format(var0.z));
+	if (var8)
+	{
+		WriteTexture(var8,"color");
+		fprintf(s_pStream, "Material \"roughglass\" \"texture Kt\" [\"%s\"]\n", var8->GetName());
+	}
+	else
+	{
+		fprintf(s_pStream, "\"color Kt\" [%s %s %s]\n", Format(var1.x), Format(var1.y), Format(var1.z));
+	}
 
-//	if (transmissionmap)
-	//	WriteTexture(transmissionmap, "color");
-	//if (transmissionmap)
-	//	fprintf(s_pStream, "Material \"matte\" \"texture Kd\" [\"%s\"]\n", transmissionmap->GetName());
-//	else
-	//{
-		
-		fprintf(s_pStream, "\"color Kr\" [%s %s %s]\n", Format(var0.x), Format(var0.y), Format(var0.z));
-	//}
+	if (var9)
+	{
+		WriteTexture(var9,"color");
+		fprintf(s_pStream, "Material \"roughglass\" \"texture Kr\" [\"%s\"]\n", var9->GetName());
+	}
+	else
+	{
+	fprintf(s_pStream, "\"color Kr\" [%s %s %s]\n", Format(var0.x), Format(var0.y), Format(var0.z));
+	}
 	
 
-	fprintf(s_pStream, "\"color Kt\" [%s %s %s]\n", Format(var1.x), Format(var1.y), Format(var1.z));
+	//fprintf(s_pStream, "\"color Kt\" [%s %s %s]\n", Format(var1.x), Format(var1.y), Format(var1.z));
 
 	fprintf(s_pStream, "\"float vroughness\" [%s]\n", Format(var2));
 	fprintf(s_pStream, "\"float uroughness\" [%s]\n", Format(var3));
@@ -778,19 +786,119 @@ void LuxMax::writeMatteTranslucent(INode* p_node)
 
 TSTR pr0 = "diffusecolor";
 TSTR pr1 = "transmitivitycolor";
-TSTR pr2 = "sigma";
+TSTR pr3 = "kdtexture";
+TSTR pr4 = "kttexture";
+TSTR pr5 = "usesigma";
+TSTR pr6 = "sigma";
+TSTR pr7 = "sigmatexture";
+
 
 Point3 var0 = Mtl_GetColor((MtlBase*)m,pr0,0);
 Point3 var1 = Mtl_GetColor((MtlBase*)m,pr1,0);
-float	var2 = Mtl_GetFloat((MtlBase*)m,pr2,0);
+
+Texmap* var3 = NULL;
+Texmap* var4 = NULL;
+int var5;
+float var6;
+Texmap* var7 = NULL;
+
+var3 = Mtl_GetTexmap((MtlBase*)m, pr3, 0);
+var4 = Mtl_GetTexmap((MtlBase*)m, pr4, 0);
+
+var5 = Mtl_GetInt((MtlBase*)m, pr5, 0);
+var6 = Mtl_GetFloat((MtlBase*)m, pr6, 0);
+var7 = Mtl_GetTexmap((MtlBase*)m, pr7, 0);
 
 fprintf(s_pStream, "Material \"mattetranslucent\"\n");
-fprintf(s_pStream, "\"color Kr\" [%s %s %s]\n", Format(var0.x), Format(var0.y), Format(var0.z));
-fprintf(s_pStream, "\"color Kt\" [%s %s %s]\n", Format(var1.x), Format(var1.y), Format(var1.z));
-fprintf(s_pStream, "\"float sigma\" [%s]\n", Format(var2));
 
+if(var3)
+	{
+		WriteTexture(var3,"color");
+		fprintf(s_pStream, "#Found KRtexture..\n");
+		fprintf(s_pStream, "Material \"mattetranslucent\" \"texture Kr\" [\"%s\"]\n", var3->GetName());
+	}
+else
+{
+	fprintf(s_pStream, "#Did not find KrTexture..\n");
+	fprintf(s_pStream, "\"color Kr\" [%s %s %s]\n", Format(var0.x), Format(var0.y), Format(var0.z));
 }
 
+if(var4)
+{
+	fprintf(s_pStream, "#Found KtTexture..\n");
+	WriteTexture(var4,"color");	
+	fprintf(s_pStream, "Material \"mattetranslucent\" \"texture Kt\" [\"%s\"]\n", var4->GetName());
+}
+else
+{
+	fprintf(s_pStream, "\"color Kt\" [%s %s %s]\n", Format(var1.x), Format(var1.y), Format(var1.z));
+}
+	if (var5 == 1)
+		WriteTexture(var7, "float");
+		if (var5)
+	{
+		if (var7)
+			fprintf(s_pStream, "\"texture sigma\" [\"%s\"]\n", var7->GetName());
+		else
+			fprintf(s_pStream, "\"float sigma\" [%s]\n", Format(var6));
+	}
+}
+
+void LuxMax::writeGlass2(INode* p_node)
+{
+//fprintf(s_pStream, "Material \"matte\" \"color Kd\" [%s %s %s]\n", Format(var0.x), Format(var0.y), Format(var0.z));
+	Mtl* m = p_node->GetMtl();
+
+TSTR pr0 = "ior";
+TSTR pr1 = "abscolor";
+TSTR pr2 = "preset";
+TSTR pr3 = "type";
+TSTR pr4 = "volumeproperty";
+
+TSTR pr5 = "abscolorr";
+TSTR pr6 = "abscolorg";
+TSTR pr7 = "abscolorb";
+
+float var0 = Mtl_GetFloat((MtlBase*)m,pr0,0);
+Point3 var1 = Mtl_GetColor((MtlBase*)m,pr1,0);
+MSTR var2 = Mtl_GetStr((MtlBase*)m,pr2,0);
+MSTR var3 = Mtl_GetStr((MtlBase*)m,pr3,0);
+MSTR var4 = Mtl_GetStr((MtlBase*)m,pr4,0);
+
+float var5 = Mtl_GetFloat((MtlBase*)m,pr5,0);
+float var6 = Mtl_GetFloat((MtlBase*)m,pr6,0);
+float var7 = Mtl_GetFloat((MtlBase*)m,pr7,0);
+
+fprintf(s_pStream, "#setting up material Glass2\n");
+
+    //Texture "my_ior" "fresnel" "constant" "float value" [1.5]
+
+var1.x =(255.000000 - var1.x);
+var1.y = (255.000000 - var1.y);
+var1.z = (255.000000 - var1.z);
+fprintf(s_pStream, "Texture \"my_ior\" \"fresnel\" \"%s\" \"float value\" [%s]\n", var2, Format(var0));
+
+//    MakeNamedVolume "my_volume" "clean" "texture fresnel" ["my_ior"] "color absorption" [0.1 15 0.0]
+
+//newR=255-oldR
+//newG=255-oldG
+//newB=255-oldB
+
+
+
+//fprintf(s_pStream, "MakeNamedVolume \"my_volume\" \"%s\" \"texture fresnel\" [\"my_ior\"] \"color absorption\" [%s %s %s]\n", var4, Format(var1.x), Format(var1.y), Format(var1.z));
+fprintf(s_pStream, "MakeNamedVolume \"my_volume\" \"%s\" \"texture fresnel\" [\"my_ior\"] \"color absorption\" [%s %s %s]\n", var4, Format(var5), Format(var6), Format(var7));
+
+//    MakeNamedMaterial "mymaterial" "string type" ["glass2"]
+fprintf(s_pStream, "MakeNamedMaterial \"mymaterial\" \"string type\" [\"glass2\"] \n");
+
+//Interior "my_volume"
+fprintf(s_pStream, "Interior \"my_volume\" \n");
+
+fprintf(s_pStream, "NamedMaterial \"mymaterial\" \n");
+
+
+}
 
 
 void LuxMax::WriteMaterials(INode* p_node)
@@ -820,6 +928,8 @@ void LuxMax::WriteMaterials(INode* p_node)
 			writeTestMaterial(p_node);
 		else if (p_material->ClassID() == LUXRENDER_MATTETRANSLUCENT_ID)
 			writeMatteTranslucent(p_node);
+		else if (p_material->ClassID() == LUXRENDER_GLASS2_ID)
+			writeGlass2(p_node);
 		else if (p_material->ClassID() == LUXRENDER_PORTALMATERIAL_ID)
 			return;
 		else

@@ -140,6 +140,14 @@ Texmap* Mtl_GetTexmap(MtlBase* base, TSTR pr, TimeValue t)
 	return tm;
 }
 
+
+TSTR Obj_GetStr(Object* base, TSTR pr, TimeValue t)
+{
+
+}
+
+
+
 void LuxMax::CheckMaterialSlot(INode* n)
 {
 	int i, c;
