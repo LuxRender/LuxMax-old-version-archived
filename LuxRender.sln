@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Luxrender", "LuxRender\LuxRender.vcproj", "{6D9022E3-EEAC-4C34-89D2-D4DDAFB02C5A}"
 EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug 2009|Win32 = Debug 2009|Win32
 		Debug 2009|x64 = Debug 2009|x64

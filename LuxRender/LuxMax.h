@@ -29,6 +29,7 @@
 #define LUXRENDER_CHECKERBOARDTEXTURE_ID Class_ID(0x6be51c96, 0x5fe65d5e)
 #define LUXRENDER_IMAGEMAPTEXTURE_ID Class_ID(0x1bbf1b50, 0x39e50806)
 #define LUXRENDER_BLACKBODY_ID Class_ID(0x48d3ea0a, 0x760c9178)
+#define LUXRENDER_GLASS2_ID Class_ID(0x1a82153d, 0x7175d56)
 
 // Camera types
 #define LUXRENDER_FREECAMERA_ID Class_ID(0x3465725b, 0x7a7b54a6)
@@ -39,6 +40,11 @@
 #define LUXRENDER_LUXSYSTEM_ID Class_ID(0x22910308, 0x57825ba6)
 #define LUXRENDER_LUXOUTPUT_ID Class_ID(0x4b8f0b9b, 0x36de4710)
 #define LUXRENDER_LUXCAMENV_ID Class_ID(0x6c253ce3, 0x4b742b51)
+
+//other types..
+//(0x42905cfe, 0x20037237)
+//from 3dsmax report of class id is : #(1116757246, 537096759)
+#define LUXRENDER_SKY_ID Class_ID(1116757246, 537096759)
 
 class LuxMaxDefaultLight
 {
@@ -113,7 +119,8 @@ public:
 	void WriteSpotLight(INode* p_node);
 	void WriteDirectLight(INode* p_node);
 	void WriteLights(INode* p_node);
-	void WriteSunSky(INode* n);
+	void WriteSky(INode* n);
+//	void WriteSky(INode* n);
 
 	// Lxs output functions
 	static FILE* s_pStream;
@@ -143,6 +150,7 @@ public:
 	void WriteEnviromentMaterial(INode* P_node);
 	void writeTestMaterial(INode* p_node);
 	void writeMatteTranslucent(INode* p_node);
+	void writeGlass2(INode* p_node);
 
 	void WritePortals(INode* p_node);
 

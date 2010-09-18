@@ -1,5 +1,6 @@
 -- Luxrender Materials plug-ins for 3dsmax
-
+dxshadermanager.SetVisible false
+mental_ray_Preferences.mrExtensionsActive =  false
 --// Matte
 
 plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72) extends:Standard replaceUI:true version:1
@@ -7,6 +8,7 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 	parameters main rollout:params
 	(
 		kdColor type:#color default:[90,90,90] ui:mkdColor
+		
 		kdTexture type:#textureMap ui:mkdTexture
 		
 		useSigma type:#boolean ui:museSigma
@@ -19,6 +21,8 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 		
 		emission type:#boolean ui:memission
 		emissionTexture type:#textureMap ui:memissionTexture
+		
+		on kdColor set val do delegate.diffuse_color = val
 	)
 	
 	rollout params "Matte Parameters"
@@ -87,6 +91,8 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 	parameters main rollout:params
 	(
 		kdcolor type:#color default:[90,90,90] ui:mDiffuse
+		on kdColor set val do delegate.diffuse_color = val
+			
 		kdtexture type:#textureMap ui:mDiffuseTexture
 		kscolor type:#color default:[90,90,90] ui:mSpec
 		kstexture type:#textureMap ui:mSpecTexture
@@ -233,6 +239,7 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 	parameters main rollout:params
 	(
 		Kt type:#color default:[255,255,255] ui:mTransmission
+		on Kt set val do delegate.diffuse_color = val
 		KtTexture type:#textureMap ui:mTransmissionTexture
 		Kr type:#color default:[255,255,255] ui:mReflection
 		KrTexture type:#textureMap ui:mReflectionTexture
@@ -490,8 +497,8 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		
 		useBumpmap type:#boolean ui:museBumpmap
 		bumpmap type:#float ui:mbumpmap
-		bumpmapTexture type:#textureMap ui:mbumpmapTexture
-		
+		kttexture type:#textureMap ui:mbumpmapTexture
+		bumpmaptexture type:#textureMap --ui:mbumpmapTexture
 		emission type:#boolean ui:memission
 		emissionTexture type:#textureMap ui:memissionTexture
 		
@@ -524,8 +531,8 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 
 			-- Bumpmap parameters
 		checkbox museBumpmap "Bumpmap . . . ." pos:[8,136] width:95 height:15 enabled:false across:3
-		spinner mbumpmap "" pos:[80,136] width:68 height:16 range:[0,1,0] scale:0.01
-		mapButton mbumpmapTexture "T" pos:[152,136] width:96 height:18
+		spinner mbumpmap "" pos:[80,136] width:68 height:16 range:[0,1,0] scale:0.01 enabled:false
+		mapButton mbumpmapTexture "T" pos:[152,136] width:96 height:18 enabled:false
 
 			-- Emission paramters
 		checkbox memission "Emission Texture . . . . . . . . . . " pos:[8,160] width:167 height:15 enabled:false across:2
@@ -534,7 +541,7 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 
 		GroupBox grp2 "Subdivision Parameters" pos:[4,186] width:154 height:81
 		checkbox museSubdivision "Subdivision . . ." pos:[8,200] width:96 height:15 enabled:true across:3
-		spinner mSubdivision "" pos:[104,200] width:50 height:16 enabled:false range:[0,12,0] type:#integer scale:1
+		spinner mSubdivision "" pos:[104,200] width:50 height:16 enabled:false range:[0,1,20] type:#integer scale:1
 		label lb0 "" pos:[125,205] width:0 height:13
 		checkbox mSharpenBounds "Sharpen Bounds" pos:[13,226] width:103 height:15 enabled:false
 		checkbox mSmooth "Smooth" pos:[13,246] width:60 height:15 enabled:false
@@ -546,6 +553,7 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		
 		on params open do
 		(
+			bumpmaptexture = kttexture
 			mbumpmap.enabled = museBumpmap.state
 			mbumpmapTexture.enabled = museBumpmap.state
 			
@@ -557,7 +565,7 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 			
 			mdisplacement.enabled = museDisplacement.state
 			mDisplacementTexture.enabled = museDisplacement.state
-			lbl7.text = nkdatapath
+			--lbl7.text = nkdatapath
 		)
 		on mname selected i do
 		(
@@ -593,6 +601,10 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		(
 			mbumpmap.enabled = s
 			mbumpmapTexture.enabled = s
+		)
+		on mbumpmapTexture picked texmap do
+		(
+		bumpmaptexture = kttexture
 		)
 		on memission changed s do
 		(
@@ -1089,40 +1101,38 @@ plugin material LuxTest name:"LR Rough Glass" classID:#(0x3686056d, 0x66e575a8) 
 	parameters main rollout:luxrough
  	(
 		transmissioncolor type:#color default:[100,100,100] ui:mTransmission
+		on transmissioncolor set val do delegate.diffuse_color = val
 		roughreflectioncolor type:#color default:[100,100,100] ui:mroughReflection
 		uroughness type:#float default:0.001 ui:spn_exponentu
 		vroughness type:#float default:0.001  ui:spn_exponentv
 		ior type:#float default:1.5 ui:spn_index
 		cauchyb type:#float default:0.0 ui:spn_cauchyb
-		
-		useTransmissionmap type:#boolean ui:mUseTransmissionMap
-		useReflectionmap type:#boolean ui:mUseReflectionMap
-		
-		TransmissionTexture type:#textureMap ui:mTransmissionTexture
-		ReflectionTexture type:#textureMap ui:mReflectionTexture
+		--useTransmissionmap type:#boolean ui:mUseTransmissionMap
+		--useReflectionmap type:#boolean ui:mUseReflectionMap
+		kttexture type:#textureMap ui:mTransmissionTexture
+		krtexture type:#textureMap ui:mReflectionTexture
  	)
 	
 	rollout luxrough "Settings:" width:336 height:264
 	(
-		colorpicker mTransmission "Transmission color:" height:18
-		checkbox mUseTransmissionMap "Transmission Texture . . . . ." across:2 enabled:false
-		mapbutton mTransmissionTexture "None" width:120 height:18 align:#right enabled:false
-		
-		colorpicker mroughreflection "RoughReflection color:" height:18
-		checkbox mUseReflectionMap "Transmission Texture . . . . ." across:2 enabled:false
-		mapbutton mReflectionTexture "T" width:120 height:18 align:#right enabled:false
-		
-		spinner spn_exponentu "U-roughness" width:88  range:[0.000,1.000,0.001] type:#float align:#left enabled:true scale:0.001 default:0.001
-		spinner spn_exponentv "V-roughness" width:88  range:[0.000,1.000,0.001] type:#float align:#left enabled:true scale:0.001 default:0.001
-		spinner spn_index "IOR:" width:68  range:[0.0,100.0,0.1] type:#float align:#left enabled:true --default:1.5
-		spinner spn_cauchyb "cauchyb" width:68  range:[0.0,100.0,0.1] type:#float align:#left enabled:true default:0.0
+		colorPicker mTransmission "Transmission color:" pos:[13,7] width:134 height:18
+		--checkbox mUseTransmissionMap "Transmission Texture . . . . ." across:2 
+		mapButton mTransmissionTexture "None" pos:[200,8] width:120 height:18
+		colorPicker mroughReflection "RoughReflection color:" pos:[32,56] width:153 height:18
+	--	checkbox mUseReflectionMap "Transmission Texture . . . . ." across:2 
+		mapButton mReflectionTexture "T" pos:[200,48] width:120 height:18 
+ 
+		spinner spn_exponentu "U-roughness" pos:[42,80] width:88 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001 default:0.001
+		spinner spn_exponentv "V-roughness" pos:[42,96] width:88 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001 default:0.001
+		spinner spn_index "IOR:" pos:[48,112] width:68 height:16 enabled:true range:[0,100,0.1] type:#float --default:1.5
+ --default:1.5
+		spinner spn_cauchyb "cauchyb" pos:[48,128] width:68 height:16 enabled:true range:[0,100,0.1] type:#float default:0
 	)
 	
 	on useTransmissionmap changed s do
 	(
 		useTransmissionmap.enabled = s
 	)
-	
 		on mUseReflectionMap changed s do
 	(
 		mUseReflectionMap.enabled = s
@@ -1136,17 +1146,36 @@ parameters main rollout:paramsEm
 	(
 		--AreaLightSourceMap type:#textureMap ui:m_emissionTexture
 		diffusecolor type:#color default:[100,100,100] ui:mDiffuse
+		kdtexture type:#textureMap ui:mkdTexture
+		
+		on diffusecolor set val do delegate.diffuse_color = val
 		transmitivitycolor type:#color default:[100,100,100] ui:mTransmission
-		sigma type:#float default:1.5 ui:spn_sigma
+		--sigma type:#float default:1.5 ui:spn_sigma
+		--KtTexture
+		KtTexture type:#textureMap ui:mTransmissionTexture
+		
+			useSigma type:#boolean ui:museSigma
+			sigma type:#float ui:msigma
+			sigmaTexture type:#textureMap ui:msigmaTexture
+		
 	)
 	
-	rollout paramsEm "settings" width:160 height:104
+	rollout paramsEm "settings" width:296 height:96
 	(
 		--mapButton m_emissionTexture "T" pos:[-69,7] width:300 height:20
-		colorpicker mDiffuse "diffuse color:" height:18
-		colorpicker mTransmission "Transmission color:" height:18
-		spinner spn_sigma "sigma" width:68  range:[0.0,100.0,0.1] type:#float align:#left enabled:true default:0.0
-		
+		colorPicker mDiffuse "diffuse color:" pos:[32,8] width:104 height:18
+		colorPicker mTransmission "Transmission color:" pos:[0,30] width:134 height:18
+		mapButton mkdTexture "MKDTexture" pos:[144,8] width:128 height:16
+		mapButton mTransmissionTexture "transmission Texture" pos:[144,32] width:128 height:16
+		checkbox museSigma "Sigma ..........." pos:[0,56] width:89 height:15 across:3
+		spinner msigma "" pos:[88,56] width:50 height:16 range:[0,100,0]
+		mapButton msigmaTexture "T" pos:[144,56] width:128 height:16
+			
+		on museSigma changed s do
+		(
+			msigma.enabled = s
+			msigmaTexture.enabled = s
+		)
 	)
 	on paramsEm open do
 	(
@@ -1156,33 +1185,33 @@ parameters main rollout:paramsEm
 )
 
 
-/* 	 plugin material LuxMix name:"LR Mix" classID:#(0x166c0818, 0x1c027268) extends:Standard replaceUI:true version:1
-* 	(
-* 		parameters main rollout:main
-* 		(
-* 			--TransmissionTexture type:#textureMap ui:mTransmissionTexture
-* 			namedmaterial1 type:#textureMap --ui:btn3
-* 			namedmaterial2 type:#textureMap --ui:btn10
-* 			mixmat type:#float ui:spn_mix default:0.5
-* 			
-* 		)
-* 		rollout main "Settings" width:264 height:328
-* 		(
-* 			spinner spn_mix "Mix amount:" pos:[16,152] width:106 height:16 enabled:true range:[0,1,1] type:#float default:0.5
-* 			listbox lbx1 "ListBox" pos:[8,32] width:248 height:6 items:(for o in  scenematerials collect o.name)
-* 			listbox lbx2 "ListBox" pos:[8,184] width:248 height:8 items:(for o in  scenematerials collect o.name)
-* 			
-* 			on lbx1 selected sel do
-* 			(
-* 			--lbx1 selection changed
-* 				print lbx1.selected as string
-* 			)
-* 		)
-* 		-->print lbx1.selected as string
-* 		
-* 		
-* 	) 
-*/
+--  	 plugin material LuxMix name:"LR Mix" classID:#(0x166c0818, 0x1c027268) extends:Blend replaceUI:false version:1
+--  	(
+--  		parameters main rollout:main
+--  		(
+--  			--TransmissionTexture type:#textureMap ui:mTransmissionTexture
+--  			namedmaterial1 type:#textureMap --ui:btn3
+--  			namedmaterial2 type:#textureMap --ui:btn10
+--  			mixmat type:#float ui:spn_mix default:0.5
+--  			
+--  		)
+--  		rollout main "Settings" width:264 height:328
+--  		(
+--  			spinner spn_mix "Mix amount:" pos:[16,152] width:106 height:16 enabled:true range:[0,1,1] type:#float default:0.5
+--  			listbox lbx1 "ListBox" pos:[8,32] width:248 height:6 items:(for o in  scenematerials collect o.name)
+--  			listbox lbx2 "ListBox" pos:[8,184] width:248 height:8 items:(for o in  scenematerials collect o.name)
+--  			
+--  			on lbx1 selected sel do
+--  			(
+--  			--lbx1 selection changed
+--  				print lbx1.selected as string
+--  			)
+--  		)
+--  		-->print lbx1.selected as string
+--  		
+--  		
+--  	) 
+
 	
 	plugin material LuxNullMaterial name:"LR NullMaterial" classID:#(0x128af87a, 0x6e0169dc) extends:Standard replaceUI:true version:1
 	(
@@ -1200,5 +1229,72 @@ parameters main rollout:paramsEm
 			--AreaLightSourceMap = LuxrenderBlackbody()
 			
 		)
+	)
+	--Class_ID(0x1a82153d, 0x7175d56)
+	Plugin material LuxGlass2 name:"LR Glass2" classID:#(0x1a82153d,0x7175d56)extends:standard replaceUI:true version:1
+	(
+		
+		--  Texture "my_ior" "fresnel" "constant" "float value" [1.5]
+		--  MakeNamedVolume "my_volume" "clean" "texture fresnel" ["my_ior"] "color absorption" [0.1 15 0.0]
+		--  MakeNamedMaterial "mymaterial" "string type" ["glass2"]
+		-- 
+		--	Interior "my_volume"
+		--	NamedMaterial "my_material"
+		-- "constant", "cauchy", "sellmeier", "luxpop", "sopra", "preset"
+		
+		parameters main rollout:paramsEm
+		(
+			ior type:#float default:1.5 ui:spn1
+		--kdcolor type:#color default:[90,90,90] ui:mDiffuse
+			abscolor type:#color default:[90,90,90] ui:cp1
+			abscolorr type:#float
+			abscolorg type:#float
+			abscolorb type:#float
+			abscolorinverted type:#color
+			preset type:#string default:"constant"
+			type type:#string default:"glass2"
+			volumeproperty type:#string default:"clear"
+			
+			on abscolor set val do (
+				delegate.diffuse_color = val
+				abscolorinverted = val
+				print abscolor as string
+			)
+		)
+		
+		rollout paramsEm "settings" width:160 height:152
+		(
+			spinner spn1 "IOR" pos:[8,72] width:136 height:16
+			colorPicker cp1 "abs Color" pos:[8,96] width:144 height:32
+			dropdownList ddl1 "DropDownList" pos:[8,8] width:144 height:40 items:#("constant", "cauchy", "sellmeier", "luxpop", "sopra", "preset")
+		
+
+			on cp1 changed col do
+			(
+			-- cp changed
+				print "changed"
+				temp = abscolor as point3
+				print temp[1] as string
+				--abscolor = (255 - temp[1]) (255 - temp[2]) (255 - temp[3])
+				abscolorr =  255 - temp[1]
+				abscolorg = 255 - temp[2]
+				abscolorb = 255 - temp[3]
+				print abscolorr as string
+				print temp[1] as string
+			)
+			on ddl1 selected i do
+			(
+				format "You selected '%'!\n" ddl1.items[i]
+				preset = ddl1.items[i]
+				--if (mname.items[i] == "NK Data")then
+				--(
+				
+			--	)
+				--print usenkdata as string
+				
+			)
+		)
+		
+		
 	)
 	

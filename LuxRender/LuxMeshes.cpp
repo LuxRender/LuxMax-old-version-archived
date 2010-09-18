@@ -88,8 +88,9 @@ LuxMaxMesh::LuxMaxMesh(INode* p_node)
 				int i_vertex = p_face->getVert(vert);
 				vertices[id] = (p_trimesh->getVert(i_vertex)) * m3_nodeTransform;
 
-				normals[id] = GetVertexNormal(p_trimesh, i, p_trimesh->getRVertPtr(i_vertex));
-				normals[id].Normalize();
+				normals[id] = GetVertexNormal(p_trimesh, i, p_trimesh->getRVertPtr(i_vertex)) * m3_nodeTransform;
+				normals[id] = normals[id] - m3_nodeTransform.GetTrans();
+				normals[id] = normals[id].Normalize();
 
 				if (p_trimesh->numTVerts > 0)
 					uvs[id] = p_trimesh->getTVert(p_tvface->getTVert(vert));
@@ -258,8 +259,6 @@ void LuxMaxMesh::WriteUvs(FILE* p_Stream)
 //		fprintf(p_Stream, "%s %s\n", Format(v.x), Format(v.y));
 		//To fix this i turned the v.y to a negative number.
 		fprintf(p_Stream, "%s %s\n", Format(v.x), Format(-1 * v.y));
-		
-
 	}
 	fprintf(p_Stream, "]\n");
 }

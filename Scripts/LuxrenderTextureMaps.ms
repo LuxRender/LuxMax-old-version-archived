@@ -96,12 +96,14 @@ plugin TextureMap LuxrenderCheckboard name:"LR Checkboard" classID:#(0x6be51c96,
 -- // =======================================================================================================================================================
 -- // ImageMap
 
-plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x39e50806) extends:Bitmaptexture replaceUI:false version:1 
+plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x39e50806) extends:Bitmaptexture replaceUI:true version:1 
 ( 
 	parameters main rollout:params
 	(
 		filename type:#string default:"" ui:m_filename
 		wrap type:#integer default:1 ui:m_wrap
+		filenametemp type:#string default:"" 
+		on filenametemp set val do delegate.filename  = val
 	)
 
 	parameters main rollout:paramsCoordinates
@@ -124,6 +126,8 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 			f = getOpenFileName types:"Image(*.*)|*.*"
 			if (f != undefined) do
 			(
+				--messagebox (f as string)
+				filenametemp = f
 				f = filterstring f "\\"
 				
 				r = ""

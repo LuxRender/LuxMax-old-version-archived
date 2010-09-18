@@ -28,6 +28,7 @@ void PresetsRollout_CreateControls(HWND hWnd, int selection)
 	SendMessage(cb_preset, CB_ADDSTRING,0,(LPARAM)"Preview - Direct Lighting");
 	SendMessage(cb_preset, CB_ADDSTRING,0,(LPARAM)"Final - MLT/BIDIR Path Tracing (interior) (Recommended)");
 	SendMessage(cb_preset, CB_ADDSTRING,0,(LPARAM)"Final - MLT/BIDIR Path Tracing (exterior)");
+	SendMessage(cb_preset, CB_ADDSTRING,0,(LPARAM)"Custom Settings");
 	SendMessage(cb_preset, CB_SETCURSEL, selection, 0);
 }
 

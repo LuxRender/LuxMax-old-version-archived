@@ -1,3 +1,10 @@
+#include "LuxMax.h"
+#include "LuxMeshes.h"
+#include "windows.h"
+//#include "LuxMeshes.h"
+#include "Math.h"
+
+
 TSTR PRESET_PREVIEW()
 {
 	return	"\t\"integer haltspp\" [0]\n\t\
@@ -147,3 +154,10 @@ Accelerator \"tabreckdtree\" \n\t\
 \"integer maxprims\" [1] \n\t\
 \"integer maxdepth\" [-1] \n";
 }
+
+	TSTR PRESET_CUSTOM()
+	{
+		
+		return	"\t\"custom data..\" [0] \n\t\
+				\"custom data 2..\" [-1] \n";
+	}
