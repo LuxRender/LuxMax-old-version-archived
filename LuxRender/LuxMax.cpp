@@ -270,6 +270,7 @@ TimeToString(GetCOREInterface()->GetTime(),timestring);// CurrentTime;
 		MSTR halttime;
 
 		BOOL usemaxwhite;
+		BOOL useautolinear;
 
 		if (ip->GetINodeByName(p_camera->GetName()))
 		{
@@ -354,6 +355,15 @@ if (node->UserPropExists("tonemapkernel"))
 			fprintf(s_pStream, "\"string tonemapkernel\" [\"%s\"] \n",tonemapkernel);
 		}
 	}
+	if(node->UserPropExists("useautolinear"))
+	{
+		node->GetUserPropBool("useautolinear",useautolinear);
+		if (useautolinear)
+		{
+			fprintf(s_pStream, "\"string tonemapkernel\" [\"%s\"] \n",tonemapkernel);
+		}
+	}
+
 }
 	//displayinterval
 			if (node->UserPropExists("displayinterval"))
@@ -708,6 +718,9 @@ if (ip->GetINodeByName(p_camera->GetName()))
 			{
 			fprintf(s_pStream, "\n# Enviromentmap goes here\n");
 			fprintf(s_pStream, "AttributeBegin \n");
+			fprintf(s_pStream, "# rotate image -90 degrees around Z axis to correct aligment.");
+			fprintf(s_pStream, "Rotate -90.0  0 0 1");
+			fprintf(s_pStream, "Scale -1 1 1");
 			fprintf(s_pStream, "LightGroup \"environment\" \n");
 			fprintf(s_pStream, "LightSource \"infinite\" \n");
 

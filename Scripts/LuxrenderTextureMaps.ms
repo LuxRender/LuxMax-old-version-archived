@@ -166,3 +166,55 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		spinner m_vdelta "V Delta:" range:[-100, 100, 0] width:100 align:#right
 	)
 )
+
+-- // =======================================================================================================================================================
+-- // lampspectrum -- Class_ID(0x59cb7df2, 0x52d63bd3)
+
+--  lampspectrum names
+--     	1:"Daylight", 2:"Candle", 3:"Incandescent1", 4:"Incandescent2",
+--     	5:"Welsbach", 6:"AntiInsect", 7:"FLD2", 8:"FL37K",
+--     	9:"CFL27K", 10:"CFL4K", 11:"CFL6K", 12:"GroLux",
+--     	13:"LCDS", 14:"FLAV8K",  16:"FLAV17K",
+--     	17:"HPM2", 18:"HPMFL1", 19:"HPMFL2", 20:"HPMSB",
+--     	21:"HPMSBFL", 22:"SS1", 23:"SS2", 24:"LPS",
+--     	25:"MPS", 26:"HPS", 27:"SHPS", 28:"MHN",
+--     	29:"MHWWD", 30:"MHSc", 31:"MHD", 32:"FeCo",
+--     	33:"GaPb", 34:"BLAU", 35:"PLANTA", 36:"GRUN",
+--     	37:"LEDB", 38:"RedLaser", 39:"GreenLaser", 40:"XeI",
+--     	41:"Rb", 42:"Cd", 43:"Zn", 44:"Ne",
+--     	45:"NeKrFL", 46:"NeXeFL1", 48:"NeXeFL2",
+--     	49:"Ar", 50:"HPMFL2Glow", 51:"Butane", 52:"Alcohol",
+--     	53:"BLP", 54:"BLNG", 55:"TV", 56:"Xe",
+--     	57:"CarbonArc", 58:"HPX", 59:"LPM2", 60:"FLBLB",
+--     	61:"HPMBL", 
+--     	62:"FLBL", 63:"UVA", 64:"HPMFLCobaltGlass",
+--     	65:"CobaltGlass", 66:"HPMFLCL42053", 67:"CL42053", 68:"HPMFLRedGlass",
+--     	69:"RedGlass", 70:"OliveOil"
+
+plugin TextureMap LuxrenderLampSpectrum name:"LR LampSpectrum" classID:#(0x59cb7df2, 0x52d63bd3) extends:Bitmaptexture replaceUI:true version:1
+( 
+	parameters main rollout:params
+	(
+		--spectruname type:#integer default:1 ui:m_uv
+		spectrumname type:#integer ui:lbx1
+		spectrumselectionint type:#integer default:1
+		spectrumnamestring type:#string default:""
+		spectrumgroupstring type:#string default:"Default" UI:edt1
+	)
+	
+	rollout params "LampSpectrum Parameters" width:295 height:264
+	(
+		listbox lbx1 "ListBox" pos:[8,8] width:280 height:9 items:#("Daylight", "Candle", "Incandescent1", "Incandescent2", "Welsbach", "AntiInsect", "FLD2", "FL37K", "CFL27K", "CFL4K", "CFL6K", "GroLux", "LCDS", "FLAV8K", "FLAV17K", "HPM2", "HPMFL1", "HPMFL2", "HPMSB", "HPMSBFL", "SS1", "SS2", "LPS", "MPS", "HPS", "SHPS", "MHN", "MHWWD", "MHSc", "MHD", "FeCo", "GaPb", "BLAU", "PLANTA", "GRUN", "LEDB", "RedLaser", "GreenLaser", "XeI", "Rb", "Cd", "Zn", "Ne", "NeKrFL", "NeXeFL1", "NeXeFL2", "Ar", "HPMFL2Glow", "Butane", "Alcohol", "BLP", "BLNG", "TV", "Xe", "CarbonArc", "HPX", "LPM2", "FLBLB", "HPMBL", "FLBL", "UVA", "HPMFLCobaltGlass", "CobaltGlass", "HPMFLCL42053", "CL42053", "HPMFLRedGlass", "RedGlass", "OliveOil")
+	--	GroupBox grp1 "Info:" pos:[8,152] width:280 height:96
+		--label lbl1 "Label" pos:[16,168] width:264 height:72
+		editText edt1 "Default" pos:[8,176] width:184 height:24
+		label lbl1 "Lightgroup:" pos:[8,152] width:184 height:16
+		
+		on lbx1 selected i do
+		(
+			format "You selected %\n" lbx1.items[i]
+			spectrumnamestring = lbx1.items[i] as string
+		)
+	)
+	
+)

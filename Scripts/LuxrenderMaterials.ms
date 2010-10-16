@@ -589,7 +589,7 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 				)
 				else
 				(
-						usenkdata = 1
+					usenkdata = 1
 					nkdatapath = "No Nk file selected"
 					lbl7.text =nkdatapath as string
 				)
@@ -1245,7 +1245,6 @@ parameters main rollout:paramsEm
 		parameters main rollout:paramsEm
 		(
 			ior type:#float default:1.5 ui:spn1
-		--kdcolor type:#color default:[90,90,90] ui:mDiffuse
 			abscolor type:#color default:[90,90,90] ui:cp1
 			abscolorr type:#float
 			abscolorg type:#float
@@ -1254,28 +1253,26 @@ parameters main rollout:paramsEm
 			preset type:#string default:"constant"
 			type type:#string default:"glass2"
 			volumeproperty type:#string default:"clear"
-			
-			on abscolor set val do (
+			dispersion type:#boolean default:false UI:chk1
+			on abscolor set val do 
+			(
 				delegate.diffuse_color = val
 				abscolorinverted = val
 				print abscolor as string
 			)
 		)
 		
-		rollout paramsEm "settings" width:160 height:152
+		rollout paramsEm "settings" width:160 height:190
 		(
-			spinner spn1 "IOR" pos:[8,72] width:136 height:16
-			colorPicker cp1 "abs Color" pos:[8,96] width:144 height:32
+			spinner spn1 "IOR" pos:[16,56] width:136 height:16
+			colorPicker cp1 "abs Color" pos:[8,120] width:144 height:32
 			dropdownList ddl1 "DropDownList" pos:[8,8] width:144 height:40 items:#("constant", "cauchy", "sellmeier", "luxpop", "sopra", "preset")
-		
-
+			checkbox chk1 "Dispersion" pos:[16,80] width:72 height:16
 			on cp1 changed col do
 			(
-			-- cp changed
 				print "changed"
 				temp = abscolor as point3
 				print temp[1] as string
-				--abscolor = (255 - temp[1]) (255 - temp[2]) (255 - temp[3])
 				abscolorr =  255 - temp[1]
 				abscolorg = 255 - temp[2]
 				abscolorb = 255 - temp[3]
@@ -1285,14 +1282,40 @@ parameters main rollout:paramsEm
 			on ddl1 selected i do
 			(
 				format "You selected '%'!\n" ddl1.items[i]
-				preset = ddl1.items[i]
-				--if (mname.items[i] == "NK Data")then
-				--(
-				
-			--	)
-				--print usenkdata as string
-				
+				preset = ddl1.items[i]	
 			)
+		)
+	)
+	
+	
+-- 	MakeNamedMaterial "3_SkinForearm_123.mat2"
+--    "string type" ["velvet"]
+--    "color Kd" [0.235145 0.031609 0.031609]
+--    "float p1" [-2.000000]
+--    "float p2" [10.000000]
+--    "float p3" [2.000000]
+--    "float thickness" [0.1000000]
+	-- Class_ID(0x64952715, 0x24c86046)
+	Plugin material velvet name:"LR Velvet" classID:#(0x64952715,0x24c86046)extends:standard replaceUI:true version:1
+	(
+		parameters main rollout:paramsEm
+		(
+			kdcolor type:#color default:[90,90,90] ui:cp1
+			--kdColor type:#color default:[90,90,90] ui:mkdColor
+			thickness type:#float default:0.1 ui:spn1 --float thickness
+			p1 type:#float default:-2.0 ui:spn2
+			p2 type:#float default:10.0 ui:spn3
+			p3 type:#float default:2.0 ui:spn4
+			on kdColor set val do delegate.diffuse_color = val
+		)
+		rollout paramsEm "settings" width:160 height:190
+		(
+			colorPicker cp1 "Color" pos:[8,8] width:144 height:32
+			spinner spn1 "thickness" pos:[16,48] width:136 height:16 range:[-1000,1000,0.1] --range:[-1000,1000,0.1]
+			
+			spinner spn2 "P1" pos:[48,72] width:104 height:16 range:[-1000,1000,0.1]
+			spinner spn3 "P2" pos:[48,96] width:104 height:16 range:[-1000,1000,0.1]
+			spinner spn4 "P3" pos:[49,120] width:103 height:16  range:[-1000,1000,0.1]
 		)
 		
 		
