@@ -73,8 +73,6 @@ void LuxMax::WriteLightMaterial(INode* p_node)
 	Mtl* m = p_node->GetMtl();
 
 	tex0 = Mtl_GetTexmap((MtlBase*)m, pr0, 0);
-	
-
 	if (!tex0)
 		return;
 
@@ -97,6 +95,24 @@ void LuxMax::WriteLightMaterial(INode* p_node)
 		fprintf(s_pStream, "\"float power\" [%s]\n", Format(val1));
 		fprintf(s_pStream, "\"float efficacy\" [%s]\n", Format(val2));
 		fprintf(s_pStream, "\"float gain\" [%s]\n", Format(val3));
+	}
+	
+	else if (tex0->ClassID() == LUXRENDER_LAMPSPECTRUM_ID)
+	{
+	// Texture "MyLamp" "color" "lampspectrum" "string name" ["GreenLaser"] 
+		TSTR pr8 = "spectrumnamestring";
+		TSTR pr9 = "spectrumgroupstring";
+		
+		TSTR val8;
+		TSTR val9;
+
+		val8 = Mtl_GetStr((MtlBase*)tex0, pr8, 0);
+		val9 = Mtl_GetStr((MtlBase*)tex0, pr9, 0);
+		
+		fprintf(s_pStream, "LightGroup \"%s\"\n", val9);
+		fprintf(s_pStream, "Texture \"%s\" \"color\" \"lampspectrum\" \"string name\" [\"%s\"]\n", tex0->GetName(), val8);
+		//AreaLightSource "area" "texture L" ["area:light"]
+		fprintf(s_pStream, "AreaLightSource \"area\" \"texture L\" [\"%s\"]\n",tex0->GetName());
 	}
 }
 
@@ -859,6 +875,8 @@ TSTR pr5 = "abscolorr";
 TSTR pr6 = "abscolorg";
 TSTR pr7 = "abscolorb";
 
+TSTR pr8 = "dispersion";
+
 float var0 = Mtl_GetFloat((MtlBase*)m,pr0,0);
 Point3 var1 = Mtl_GetColor((MtlBase*)m,pr1,0);
 MSTR var2 = Mtl_GetStr((MtlBase*)m,pr2,0);
@@ -868,6 +886,7 @@ MSTR var4 = Mtl_GetStr((MtlBase*)m,pr4,0);
 float var5 = Mtl_GetFloat((MtlBase*)m,pr5,0);
 float var6 = Mtl_GetFloat((MtlBase*)m,pr6,0);
 float var7 = Mtl_GetFloat((MtlBase*)m,pr7,0);
+int var8;
 
 fprintf(s_pStream, "#setting up material Glass2\n");
 
@@ -878,26 +897,63 @@ var1.y = (255.000000 - var1.y);
 var1.z = (255.000000 - var1.z);
 fprintf(s_pStream, "Texture \"my_ior\" \"fresnel\" \"%s\" \"float value\" [%s]\n", var2, Format(var0));
 
-//    MakeNamedVolume "my_volume" "clean" "texture fresnel" ["my_ior"] "color absorption" [0.1 15 0.0]
-
-//newR=255-oldR
-//newG=255-oldG
-//newB=255-oldB
-
-
-
-//fprintf(s_pStream, "MakeNamedVolume \"my_volume\" \"%s\" \"texture fresnel\" [\"my_ior\"] \"color absorption\" [%s %s %s]\n", var4, Format(var1.x), Format(var1.y), Format(var1.z));
 fprintf(s_pStream, "MakeNamedVolume \"my_volume\" \"%s\" \"texture fresnel\" [\"my_ior\"] \"color absorption\" [%s %s %s]\n", var4, Format(var5), Format(var6), Format(var7));
 
-//    MakeNamedMaterial "mymaterial" "string type" ["glass2"]
-fprintf(s_pStream, "MakeNamedMaterial \"mymaterial\" \"string type\" [\"glass2\"] \n");
+var8 = Mtl_GetInt((MtlBase*)m,pr8,0);
 
-//Interior "my_volume"
+if (var8 == 0)//== 1)	
+{
+	fprintf(s_pStream, "MakeNamedMaterial \"mymaterial\" \"string type\" [\"glass2\"] \"bool dispersion\" [\"false\"] \n");
+}
+
+else if(var8 == 1)
+{
+	fprintf(s_pStream, "MakeNamedMaterial \"mymaterial\" \"string type\" [\"glass2\"] \"bool dispersion\" [\"true\"]\n");
+}
+
 fprintf(s_pStream, "Interior \"my_volume\" \n");
-
 fprintf(s_pStream, "NamedMaterial \"mymaterial\" \n");
 
 
+}
+
+//LUXRENDER_VELVET_ID
+void LuxMax::writeVelvet(INode* p_node)
+{
+	Mtl* m = p_node->GetMtl();
+	//MakeNamedMaterial "Material"
+   //"string type" ["velvet"]
+   //"color Kd" [0.235145 0.031609 0.031609]
+   //"float p1" [-2.000000]
+   //"float p2" [10.000000]
+   //"float p3" [2.000000]
+   //"float thickness" [0.1000000]
+	TSTR pr1 = "kdcolor";
+	TSTR pr2 = "thickness";
+	
+	TSTR pr3 = "p1";
+	TSTR pr4 = "p2";
+	TSTR pr5 = "p3";
+
+	//Point3	var0;
+	Point3 var1;// = Mtl_GetColor((MtlBase*)m,pr1,0);
+	var1 = Mtl_GetColor((MtlBase*)m,pr1,0);
+	
+	float var2 = Mtl_GetFloat((MtlBase*)m,pr2,0);
+
+	float var3 = Mtl_GetFloat((MtlBase*)m,pr3,0);
+	float var4 = Mtl_GetFloat((MtlBase*)m,pr4,0);
+	float var5 = Mtl_GetFloat((MtlBase*)m,pr5,0);
+
+	fprintf(s_pStream, "#setting up material velvet\n");
+	fprintf(s_pStream, "MakeNamedMaterial \"%s\"\n",m->GetName());
+	fprintf(s_pStream, "\"string type\" [\"velvet\"]\n");
+	fprintf(s_pStream,"\"color Kd\" [%s %s %s]\n", Format(var1.x), Format(var1.y), Format(var1.z));
+	fprintf(s_pStream, "\"float p1\" [%s]\n", Format(var3));
+	fprintf(s_pStream, "\"float p2\" [%s]\n", Format(var4));
+	fprintf(s_pStream, "\"float p3\" [%s]\n", Format(var5));
+	fprintf(s_pStream, "NamedMaterial \"%s\"\n", m->GetName()); //NamedMaterial "mymaterial"
+	//fprintf(s_pStream, "Material \"velvet\"\n", m->GetName());
 }
 
 
@@ -930,6 +986,8 @@ void LuxMax::WriteMaterials(INode* p_node)
 			writeMatteTranslucent(p_node);
 		else if (p_material->ClassID() == LUXRENDER_GLASS2_ID)
 			writeGlass2(p_node);
+		else if (p_material->ClassID() == LUXRENDER_VELVET_ID)
+			writeVelvet(p_node);
 		else if (p_material->ClassID() == LUXRENDER_PORTALMATERIAL_ID)
 			return;
 		else

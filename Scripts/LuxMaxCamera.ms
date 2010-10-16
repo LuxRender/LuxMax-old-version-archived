@@ -98,7 +98,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		spinner spn7 "" pos:[8,256] width:104 height:16 range:[0,999999,180] type:#integer
 		checkbox chk11 "Do resume prev film" pos:[8,160] width:112 height:16 checked:false
 		checkbox chk7 "premultiply alpha" pos:[8,96] width:120 height:16
-		dropdownList ddl5 "Tonemap kernel" pos:[8,448] width:144 height:40 items:#("reinhard", "linear", "contrast", "maxwhite") selection:1
+		dropdownList ddl5 "Tonemap kernel" pos:[8,448] width:144 height:40 items:#("reinhard", "linear", "contrast", "maxwhite","autolinear") selection:1
 		GroupBox grp1 "reinhard settings:" pos:[8,488] width:145 height:72 enabled:false
 		spinner spn_reinhard_prescale "Prescale" pos:[24,504] width:120 height:16 enabled:false
 		spinner spn_reinhard_postscale "Postscale" pos:[24,520] width:120 height:16 enabled:false
@@ -350,7 +350,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		on ddl5 selected i do
 		(
 			tonemapnumber = ddl5.selection
-			--("reinhard", "linear","contrast", "maxwhite")
+			--("reinhard", "linear","contrast", "maxwhite", "autolinear")
 			
 			if (tonemapnumber ==1) do
 			(
@@ -359,7 +359,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				uselinear = false
 				usecontrast = false
 				usemaxwhite = false
-				
+				useautolinear =false
 				--enable reinhard ui
 				--lbl13.text = tonemapkernel
 				print tonemapnumber as string
@@ -376,11 +376,12 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				spn_linear_gamma.enabled = false
 				
 				
-				--set all userproperties for reinhard
+				--set all userproperties for camera
 				setUserProp $ "usereinhard" usereinhard
 				setUserProp $ "uselinear" uselinear
 				setUserProp $ "usecontrast" usecontrast
 				setUserProp $ "usemaxwhite" usemaxwhite
+				setUserProp $ "autolinear" useautolinear
 				
 				setUserProp $ "reinhard_prescale" reinhard_prescale
 				setUserProp $ "reinhard_postscale" reinhard_postscale
@@ -418,6 +419,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				setUserProp $ "usereinhard" false
 				setUserProp $ "usecontrast" false
 				setUserProp $ "usemaxwhite" false
+				setUserProp $ "autolinear" false
 				
 				setUserProp $ "linear_sensitivity" linear_sensitivity
 				setUserProp $ "linear_exposure"  linear_exposure
@@ -436,6 +438,8 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				setUserProp $ "usereinhard" false
 				setUserProp $ "usecontrast" true
 				setUserProp $ "usemaxwhite" false
+				setUserProp $ "autolinear" false
+				setUserprop $ "useautolinear" false
 				--print tonemapnumber as string
 				
 				--disable reinhard UI
@@ -463,6 +467,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				uselinear = false
 				usecontrast = false
 				usemaxwhite = true
+				useautolinear = false
 				--lbl13.text = tonemapkernel
 				
 				--disable reinhard UI
@@ -483,6 +488,44 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				usemaxwhite = true
 				print tonemapnumber as string
 			)
+			if(tonemapnumber == 5)do
+			(
+				usereinhard = false
+				uselinear = false
+				usecontrast = false
+				usemaxwhite = false
+				useautolinear = true
+				tonemapkernel = "autolinear"
+				--setUserProp $ useautolinear = true
+				--lbl13.text = tonemapkernel
+				
+				--disable reinhard UI
+				spn_reinhard_prescale.enabled = false
+				spn_reinhard_postscale.enabled = false
+				spn_reinhard_burn.enabled = false
+				grp1.enabled = false
+				
+				--enabled linear UI
+				grp_linear.enabled = false
+				spn_linear_sensitivity.enabled = false
+				spn_linear_exposure.enabled = false
+				spn_linear_fstop.enabled = false
+				spn_linear_gamma.enabled = false
+				--enable contrast ui
+				grpContrast.enabled = false
+				spn_contrast_ywa.enabled = false
+				usemaxwhite = false
+				
+				
+				setUserProp $ "uselinear" true
+				setUserProp $ "usereinhard" false
+				setUserProp $ "usecontrast" false
+				setUserProp $ "usemaxwhite" false
+				setUserProp $ "autolinear" true
+				setUserProp $ "useautolinear" true
+				
+			)
+			
 			--sets the userprop to whatever is selected in dropdown
 			setUserProp $ "tonemapkernel" tonemapkernel
 		)
@@ -698,6 +741,10 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 					print "setting default values.."
 					try
 					(
+						if(getUserProp $ "useautolinear" == undefined) do
+						(
+							setUserProp $ "useautolinear" useautolinear
+						)
 						if (getUserProp $  "hltstpint" == undefined) do
 						(
 							print "it's not there.. creating it now!!"

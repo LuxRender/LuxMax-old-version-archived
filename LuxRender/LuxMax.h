@@ -23,6 +23,7 @@
 #define LUXRENDER_MIRRORMATERIAL_ID Class_ID(0x35fa878, 0x324a4aca)
 #define LUXRENDER_TESTMATERIAL_ID Class_ID(0x3686056d, 0x66e575a8)
 #define LUXRENDER_MATTETRANSLUCENT_ID Class_ID(0x40755a6a, 0x4f0109c6)
+#define LUXRENDER_VELVET_ID Class_ID(0x64952715,0x24c86046)
 
 // Texture map types
 #define LUXRENDER_CONSTANTTEXTURE_ID Class_ID(0x251e0d83, 0x7d6a5c67)
@@ -30,6 +31,7 @@
 #define LUXRENDER_IMAGEMAPTEXTURE_ID Class_ID(0x1bbf1b50, 0x39e50806)
 #define LUXRENDER_BLACKBODY_ID Class_ID(0x48d3ea0a, 0x760c9178)
 #define LUXRENDER_GLASS2_ID Class_ID(0x1a82153d, 0x7175d56)
+#define LUXRENDER_LAMPSPECTRUM_ID Class_ID(0x59cb7df2, 0x52d63bd3)
 
 // Camera types
 #define LUXRENDER_FREECAMERA_ID Class_ID(0x3465725b, 0x7a7b54a6)
@@ -151,6 +153,7 @@ public:
 	void writeTestMaterial(INode* p_node);
 	void writeMatteTranslucent(INode* p_node);
 	void writeGlass2(INode* p_node);
+	void writeVelvet(INode* p_node);
 
 	void WritePortals(INode* p_node);
 
@@ -160,7 +163,7 @@ public:
 	void WriteCheckerBoardTexture(Texmap* tex, TSTR type);
 	void WriteImageMapTexture(Texmap* tex, TSTR type);
 	void WriteScaleTexture(Texmap* tex, TSTR type);
-
+void WriteLampSpectrumTexture(Texmap* tex, TSTR type);
 	// IO
 	IOResult Save(ISave *isave);
 	IOResult Load(ILoad *iload);

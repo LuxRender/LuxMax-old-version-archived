@@ -119,6 +119,18 @@ void LuxMax::WriteImageMapTexture(Texmap* tex, TSTR type)
 	fprintf(s_pStream, "\"float uscale\"  [%s] \"float vscale\" [%s]\n", Format(val3), Format(val4));
 }
 
+
+
+void LuxMax::WriteLampSpectrumTexture(Texmap* tex, TSTR type)
+{
+TSTR pr0 = "spectrumnamestring";
+TSTR val0;
+val0 = Mtl_GetStr((MtlBase*)tex, pr0, 0);
+//    Texture "MyLamp" "color" "lampspectrum" "string name" ["Zn"] 
+fprintf(s_pStream, "Texture \"%s\" \"color\" \"lampspectrum\" \"string name\" [\"%s\"]\n",tex->GetName(), val0);
+
+}
+
 /*
 =============================================================================
 WriteTexture
@@ -143,6 +155,11 @@ void LuxMax::WriteTexture(Texmap* tex, TSTR type)
 	{
 		WriteImageMapTexture(tex, type);
 	}
+	else if(tex->ClassID()== LUXRENDER_LAMPSPECTRUM_ID)
+	{
+		WriteLampSpectrumTexture(tex,type);
+	}
+
 	else
 	{
 		WriteConstantTexture(tex, type);
