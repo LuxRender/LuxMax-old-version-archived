@@ -15,14 +15,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		nearclip type:#float default:0.1 ui:m_nearclip
 		farclip type:#float default:100 ui:m_farclip
 	)
-	
-	on close do
-	(
 		
-		
-	)
-
-	
 	parameters main rollout:dofparams
 	(
 		usedof type:#boolean default:true ui:m_use
@@ -80,9 +73,8 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 	)
 	
 	
-	rollout filmparams "Film parameters" width:160 height:720
+	rollout filmparams "Film parameters" width:160 height:720 rolledup:true
 	(
-		
 		label lbl1 "Halt on sampels per pixel:" pos:[8,8] width:144 height:16
 		spinner hltstp "" pos:[8,24] width:144 height:16 range:[0,1e+008,0] type:#integer
 		checkbox chkwriteexr "Write EXR" pos:[8,112] width:72 height:16
@@ -91,12 +83,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		label lbl3 "Display Interval (sec):" pos:[8,232] width:112 height:16
 		checkbox chk3 "Write TGA" pos:[8,128] width:72 height:16
 		checkbox chk4 "Write resume film" pos:[8,144] width:112 height:16
-		edittext edt1 "" pos:[8,216] width:144 height:16 --default:"render"
- --default:"render"
- --default:"render"
- --default:"render"
- --default:"render"
- --default:"render"
+		edittext edt1 "" pos:[8,216] width:144 height:16 
 		label lbl4 "Filename:" pos:[8,200] width:144 height:16
 		checkbox chk5 "Debug" pos:[8,296] width:104 height:16
 		label lbl5 "Reject varmup:" pos:[8,312] width:112 height:16
@@ -117,50 +104,24 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		spinner spn_reinhard_burn "Burn" pos:[24,560] width:120 height:16 enabled:false
 		GroupBox grp_linear "Linear" pos:[8,584] width:144 height:88 enabled:false
 		spinner spn_linear_sensitivity "sensitivity" pos:[24,600] width:120 height:16 enabled:false 
- 
- 
- 
- 
 		spinner spn_linear_exposure "exposure" pos:[24,616] width:120 height:16 enabled:false 
- 
- 
- 
- 
 		spinner spn_linear_fstop "fstop" pos:[24,632] width:120 height:16 enabled:false 
- 
- 
- 
- 
 		spinner spn_linear_gamma "Gamma" pos:[24,648] width:120 height:16 enabled:false
 		GroupBox grpContrast "Contrast" pos:[8,672] width:144 height:40 enabled:false
 		spinner spn_contrast_ywa "YWA" pos:[24,688] width:120 height:16 enabled:false
 		label lbl7 "Halt after minutes:" pos:[7,48] width:145 height:16
 		spinner spnhalttime "" pos:[8,64] width:144 height:16 type:#integer
-		--checkbox chk8 "GPU" pos:[80,128] width:56 height:16
+		
 		
 		spinner spn16 "Fireflies Rej:" pos:[40,176] width:72 height:16 range:[0,5,1] type:#integer
--- 		on chk8 changed state do
--- 		(
--- 				--GPU checkbox
--- 			--setUserProp $ "gpu"
--- 			if chk8.checked == true do
--- 			(
--- 				gpu = true
--- 				setUserProp $ "gpu" gpu
--- 			)
--- 			
--- 			if chk8.checked == false do
--- 			(
--- 				gpu = false
--- 				setUserProp $ "gpu" gpu
--- 			)
--- 			
--- 		)
-
+		
 		on filmparams open do
 		(
 			print "opened camera params.."
 			print "Enabling UI for last selected tonemap kernel.."
+			
+			
+			
 			
 			if(usereinhard)do
 			(
@@ -650,7 +611,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				surfaceintegratorint type:#integer default:1 UI:ddl_surface_integrator
 			)
 			
-			rollout integrator "select integrator" width:160 height:100
+			rollout integrator "select integrator" width:160 height:100 rolledup:true
 			(
 				dropdownList ddl_surface_integrator "Integrator" pos:[8,8] width:144 height:40 items:#("bidirectional", "directlighting", "exphotonmap", "path", "distributedpath","Render with GPU")
 			)
@@ -665,7 +626,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 			bidir_lighttrhold type:#float default:0.0 UI:spn_lighttrhold
 		)
 		
-		rollout bidirectional "bidirectional" width:160 height:208
+		rollout bidirectional "bidirectional" width:160 height:208 rolledup:true
 		(
 			dropdownList ddl_lightstrategy "Lightstrategy" pos:[16,152] width:128 height:40 items:#("one", "all", "auto", "importance", "powerimp", "allpowerimp", "logpowerimp") selection:3
 			GroupBox grp_directlighting "DirectLighting" pos:[8,96] width:144 height:56
@@ -686,7 +647,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				spn_maxdepth type:#float default:5.0 UI:spn_maxdepth
 			)
 		
-		rollout Directlighting "Directlighting" width:160 height:104
+		rollout Directlighting "Directlighting" width:160 height:104 rolledup:true
 		(
 			GroupBox grp_directlighting "DirectLighting" pos:[8,8] width:144 height:40
 			dropdownList ddl_dl_lightstrategy "Lightstrategy" pos:[16,48] width:128 height:40 items:#("one", "all", "auto", "importance", "powerimp", "allpowerimp", "logpowerimp") selection:3
@@ -694,7 +655,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 			
 		)
 		
-		parameters exonphotonmap rollout:exonphotonmap
+		parameters exonphotonmap rollout:exonphotonmap 
 			(
 				exp_renderingmode type:#integer default:1 UI:ddl_exp_renderingmode
 				ex_lightstrategy type:#integer default:3 UI:ddl_ex_lightstrategy
@@ -704,7 +665,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				
 			)
 
-		rollout exonphotonmap "exonphotonmap" width:160 height:704
+		rollout exonphotonmap "exonphotonmap" width:160 height:704 rolledup:true
 		(
 			dropdownList ddl_ex_lightstrategy "Lightstrategy" pos:[16,8] width:128 height:40 items:#("one", "all", "auto", "importance", "powerimp", "allpowerimp", "logpowerimp") selection:3
 			GroupBox grp7 "Exphotonmap" pos:[8,48] width:144 height:504
@@ -749,7 +710,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		(
 			dp_maxdepth type:#integer default:16 UI:spn_maxdepth
 		)
-		rollout distributedpath "DistributedPath" width:160 height:95
+		rollout distributedpath "DistributedPath" width:160 height:95 rolledup:true
 		(
 			dropdownList ddl_dl_lightstrategy "Lightstrategy" pos:[8,8] width:128 height:40 items:#("one", "all", "auto", "importance", "powerimp", "allpowerimp", "logpowerimp") selection:3
 			spinner spn_maxdepth "" pos:[9,48] width:127 height:16 type:#integer
@@ -773,8 +734,8 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				mediumgain type:#float UI:spn3
 				
 			)
-			
-			rollout environment "environment" width:160 height:380
+			 
+			rollout environment "environment" width:160 height:380 rolledup:true
 			(
 				button btn4 "Browse" pos:[8,32] width:144 height:24
 				edittext edt2 "" pos:[8,64] width:144 height:24
@@ -854,6 +815,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				on chk1 changed state do
 				(
 				--use envmap
+					
 					if chk1.checked == true do
 					(
 						if edt2.text == "" do
@@ -891,7 +853,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 			
 			
 	
-			rollout sampler "sampler" width:160 height:472
+			rollout sampler "sampler" width:160 height:472 rolledup:true
 			(
 				dropdownList ddl_sampler "Sampler" pos:[0,0] width:144 height:40 items:#("random", "lowdiscrepancy", "metropolis", "erpt") 
 				
@@ -1395,7 +1357,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		
 		
 		
-	rollout params "Lux Parameters"
+	rollout params "Lux Parameters" rolledup:true
 	(
 		spinner m_lens "Lens:" range:[0,10000,0]
 		spinner m_fov "FOV:" range:[0,175,45]
@@ -1481,7 +1443,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		)
 	)
 	
-	rollout dofparams "Depth of Field" width:160 height:336
+	rollout dofparams "Depth of Field" width:160 height:336 rolledup:true
 	(
 		checkbox m_use "Enable" pos:[13,7] width:57 height:15 visible:false
 		checkbutton m_usefstop "Use f/stop" pos:[7,27] width:148 height:21 enabled:true visible:false

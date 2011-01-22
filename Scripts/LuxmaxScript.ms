@@ -1512,6 +1512,10 @@
 			checkbox chk_ply "ply export" pos:[8,24] width:80 height:16
 			checkbox chk_skip_exsisting_geom "skip exsisting geometry files" pos:[8,40] width:160 height:16
 			
+			on luxmaxgeom open  do
+			(
+				
+			)
 			on btn_Export pressed do
 			(
 				if templxssavefilepath == undefined then
@@ -1651,20 +1655,26 @@
 										--LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".lxg" ) true--$ "c:\\luxrender\\test.ply" false
 										if (skip_exsisting_geom == false)do
 										(
+											print "Debug: not skipping - exporting object."
 											LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" )
 										)
 										
 										if (skip_exsisting_geom == true)do
 										(
-											filepathforchecking = (temppathfixed + TheObjects[o].name + ".lxm")
-											temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
+											print "Debug: skipping = true for object:"
+											print TheObjects[o].name
 											
+											filepathforchecking = (temppath + TheObjects[o].name + ".lxm")
+											
+											
+											print "checking if object geometry file already exists"
 											if(doesFileExist filepathforchecking == false)do
 											(
 												print "exporting object since geometry is new since initial export."
 												LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" ) false--$ "c:\\luxrender\\test.ply" false
 											)
 										)
+										temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
 										writeToFile ( "Include" + "\"" + (temppathfixed + TheObjects[o].name + ".lxm\"\n" )) out_Geom_file
 									)
 									
@@ -1676,8 +1686,6 @@
 							)
 							
 						)
-						
-						
 						writeToFile "WorldEnd" out_Geom_file
 						progressBarexport.value = 0
 						progressended_text =  "Exporting geometry done!"
@@ -1690,7 +1698,7 @@
 						print (" \"" + templxssavefilepath + " \"")
 						ShellLaunch (exefile as string)  ("\"" + templxssavefilepath + "\"")
 					)
-					
+					close out_Geom_file	
 				)
 			)
 			on chk_use_old_script changed state do
@@ -1700,12 +1708,8 @@
 			)
 			on chk_skip_exsisting_geom changed state do
 			(
-			--skip existing geometry
-				--skip_exsisting_geom is global variable name
 				skip_exsisting_geom = state
-				
 			)
-			close out_Geom_file
 		)
 		
 		rollout sequence "Export sequence" width:208 height:162 rolledup:true
