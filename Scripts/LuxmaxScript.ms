@@ -19,6 +19,7 @@
 	persistent global exportanim
 	persistent global tempframe
 	persistent global exportwithplugin
+	persistent global skip_exsisting_geom
 		
 	fn writeToFile string &out_Geom_file =
 	(
@@ -1502,13 +1503,14 @@
 			format "%:\t%\n" "objecttransform " obj.objecttransform
 		)
 		
-		rollout luxmaxgeom "Scene" width:232 height:120
+		rollout luxmaxgeom "Scene" width:232 height:112
 		(
-			button btn_Export "Export" pos:[8,48] width:216 height:16
-			progressBar progressBarexport "ProgressBar" pos:[8,72] width:216 height:16 color:(color 30 10 190)
+			button btn_Export "Export" pos:[8,56] width:216 height:16
+			progressBar progressBarexport "ProgressBar" pos:[8,80] width:216 height:16 color:(color 30 10 190)
 		--	button btn7 "Button" pos:[8,120] width:112 height:28
-			checkbox chk_use_old_script "Use old script export." pos:[8,8] width:200 height:16
-			checkbox chk_ply "ply export" pos:[8,24] width:200 height:16
+			checkbox chk_use_old_script "Use old script export." pos:[8,8] width:128 height:16
+			checkbox chk_ply "ply export" pos:[8,24] width:80 height:16
+			checkbox chk_skip_exsisting_geom "skip exsisting geometry files" pos:[8,40] width:160 height:16
 			
 			on btn_Export pressed do
 			(
@@ -1595,15 +1597,16 @@
 						
 						if (chk_use_old_script.state == true)then
 						(
-							exportwithplugin = false
-							print "old script export"
-							for o = 1 to TheObjects.count do
-							(
-								Pbrt_Geometry TheObjects[o] out_Geom_file
-								progressBarexport.value = 100.*o/TheObjects.count
-								progress_text =  "Exporting geometry: " + ((100.0 / TheObjects.count * o) as integer)as string  + " % done."
-								pushprompt progress_text	
-							)
+			-- 								exportwithplugin = false
+			-- 								print "old script export"
+			-- 								for o = 1 to TheObjects.count do
+			-- 								(
+			-- 									Pbrt_Geometry TheObjects[o] out_Geom_file
+			-- 									progressBarexport.value = 100.*o/TheObjects.count
+			-- 									progress_text =  "Exporting geometry: " + ((100.0 / TheObjects.count * o) as integer)as string  + " % done."
+			-- 									pushprompt progress_text	
+			-- 								)
+							messageBox ("old script export is removed due to being insanely slow and incomplete")
 						)
 						
 						if (chk_use_old_script.state == false)then
@@ -1621,22 +1624,50 @@
 								--LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" )
 									if (chk_ply.state == true)do
 									(
-										LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".ply" ) false--$ "c:\\luxrender\\test.ply" false
 										temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
+										
+										
+										if (skip_exsisting_geom == false)do
+										(
+											LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".ply" ) false--$ "c:\\luxrender\\test.ply" false
+										)
+										
+										if (skip_exsisting_geom == true)do
+										(
+											filepathforchecking = (temppathfixed + TheObjects[o].name + ".ply")
+											
+											if(doesFileExist filepathforchecking == false)do
+											(
+												print "exporting object since geometry is new since initial export."
+												LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".ply" ) false--$ "c:\\luxrender\\test.ply" false
+											)
+											
+										)
 										writeToFile ("Shape \"plymesh\" \"string filename\" " + "[\"" + (temppathfixed + TheObjects[o].name + ".ply\"] \n" )) out_Geom_file
 									)
- 									if (chk_ply.state == false)do
- 									(
- 										--LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".lxg" ) true--$ "c:\\luxrender\\test.ply" false
-										LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" )
- 										temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
- 										writeToFile ( "Include" + "\"" + (temppathfixed + TheObjects[o].name + ".lxm\"\n" )) out_Geom_file
- 									)
-								
 									
-									-- Shape "plymesh" "string filename" ["c:\\luxrender\\test.ply"]
-								
-							
+									if (chk_ply.state == false)do
+									(
+										--LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".lxg" ) true--$ "c:\\luxrender\\test.ply" false
+										if (skip_exsisting_geom == false)do
+										(
+											LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" )
+										)
+										
+										if (skip_exsisting_geom == true)do
+										(
+											filepathforchecking = (temppathfixed + TheObjects[o].name + ".lxm")
+											temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
+											
+											if(doesFileExist filepathforchecking == false)do
+											(
+												print "exporting object since geometry is new since initial export."
+												LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" ) false--$ "c:\\luxrender\\test.ply" false
+											)
+										)
+										writeToFile ( "Include" + "\"" + (temppathfixed + TheObjects[o].name + ".lxm\"\n" )) out_Geom_file
+									)
+									
 								format "AttributeEnd\n" to:out_Geom_file
 								progressBarexport.value = 100.*o/TheObjects.count
 								progress_text =  "Exporting geometry: " + ((100.0 / TheObjects.count * o) as integer)as string  + " % done."
@@ -1652,7 +1683,7 @@
 						progressended_text =  "Exporting geometry done!"
 						pushprompt progressended_text	
 					)
-					close out_Geom_file
+					
 					if(launchafterexport == true)then
 					(
 						print out_Geom_file as string
@@ -1667,10 +1698,14 @@
 				print "checkbox state"
 				print chk_use_old_script.state
 			)
-			on chk_ascii changed state do
-		(
-	
+			on chk_skip_exsisting_geom changed state do
+			(
+			--skip existing geometry
+				--skip_exsisting_geom is global variable name
+				skip_exsisting_geom = state
+				
 			)
+			close out_Geom_file
 		)
 		
 		rollout sequence "Export sequence" width:208 height:162 rolledup:true
