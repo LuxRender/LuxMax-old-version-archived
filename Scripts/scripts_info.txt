@@ -1,7 +1,0 @@
-Please only use these scripts:
-
-LuxMaxCamera.ms
-LuxrenderMaterials.ms
-LuxrenderTextureMaps.ms
-
-put them in scripts\startup folder.
