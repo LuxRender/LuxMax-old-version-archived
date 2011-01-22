@@ -96,6 +96,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
  --default:"render"
  --default:"render"
  --default:"render"
+ --default:"render"
 		label lbl4 "Filename:" pos:[8,200] width:144 height:16
 		checkbox chk5 "Debug" pos:[8,296] width:104 height:16
 		label lbl5 "Reject varmup:" pos:[8,312] width:112 height:16
@@ -119,11 +120,14 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
  
  
  
+ 
 		spinner spn_linear_exposure "exposure" pos:[24,616] width:120 height:16 enabled:false 
  
  
  
+ 
 		spinner spn_linear_fstop "fstop" pos:[24,632] width:120 height:16 enabled:false 
+ 
  
  
  
@@ -587,10 +591,15 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 			linear_sensitivity = spn_linear_sensitivity.value
 			setUserProp $ "linear_sensitivity" linear_sensitivity
 		)
+		on spn_linear_exposure changed val do
+		(
+			linear_exposure = spn_linear_exposure.value
+			setUserProp $ "linear_exposure" linear_exposure
+		)
 		on spn_linear_fstop changed val do
 		(
-			linear_fstop = spn_linear_fstop.value
-			setUserProp $ "linear_fstop" linear_fstop
+			linear_fstop = val
+			setUserProp $ "linear_fstop" val
 		)
 		on spn_linear_gamma changed val do
 		(
@@ -836,11 +845,11 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				)
 				on spn1 changed val do
 				(
-					setuserprop $ "envgain" envgain
+					setuserprop $ "envgamma" envgamma
 				)
 				on spn2 changed val do
 				(
-					setuserprop $ "envgamma" envgamma
+					setuserprop $ "envgain" envgain
 				)
 				on chk1 changed state do
 				(
