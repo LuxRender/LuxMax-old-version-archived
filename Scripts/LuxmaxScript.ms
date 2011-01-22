@@ -1820,13 +1820,19 @@
 			
 		)
 
-		rollout SceneFile "Scene file" width:232 height:296
+		rollout SceneFile "Scene file" width:232 height:104
 		(
 			GroupBox grp1 "Scene file path:" pos:[8,8] width:216 height:80
 			button btn_file_browse "Browse" pos:[16,48] width:200 height:16
 			edittext edt_scenefile_path "" pos:[16,24] width:200 height:16
 			
-			on btn_file_browse pressed  do
+			button btn2 "Open file location" pos:[16,64] width:200 height:16
+			
+			on SceneFile open do
+			(
+				edt_scenefile_path.text = templxssavefilepath as string
+			)
+			on btn_file_browse pressed do
 			(
 				templxssavefilepath = getSaveFileName caption:"Open A Test File:"  types:"Lxs(*.lxs)|*.lxs"
 				if (templxssavefilepath  != undefined) then
@@ -1835,10 +1841,18 @@
 					lxssavefilepath = templxssavefilepath
 				)
 			)
-			
-			on SceneFile open do 
+			on btn2 pressed  do
 			(
-				edt_scenefile_path.text = templxssavefilepath as string
+				--open file location
+				try 
+				(
+					folderpath = getFilenamePath lxssavefilepath
+					HiddenDOSCommand("explorer.exe " + folderpath)
+				)
+				catch
+				(
+					messageBox ("Some error occured. please make sure file path is valid.")
+				)
 			)
 		)
 		
