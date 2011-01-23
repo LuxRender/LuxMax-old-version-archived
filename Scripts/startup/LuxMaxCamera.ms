@@ -39,36 +39,25 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		filtertypeint type:#integer default:1 UI:ddl1
 		filtertype type:#string default:"mitchell"
 		filterboxx type:#float default:2.0 UI:spn_pixelfilter
-		--filterboxy type:#float default:2.0 UI:spn_pixelfilter_y
-		
 		filternumber type:#integer default:1
-		--ddl1.selection
 		resumeprevfilm type:#boolean default:true UI:chk11
 		rejectwarmup type:#integer default:12 UI:spn5
-		--("reinhard", "linear","contrast", "maxwhite")
-		
-		tonemapkernel type:#string default:"reinhard" --UI:lbl13
-		
+		tonemapkernel type:#string default:"reinhard"
 		usereinhard type:#boolean default:true
-		reinhard_prescale type:#float default:1.0 UI:spn_reinhard_prescale -- reinhard_prescale  0.0 - 8.0 def: 1
-		reinhard_postscale type:#float default:1.0 UI:spn_reinhard_postscale --reinhard_postscale  the same def: 1
-		reinhard_burn type:#float default:6.0 UI:spn_reinhard_burn		--reinhard_burn   0.0 - 12 def: 6.0
-		usereinhardint type:#integer default:1 -- int for bool check!!
-		
-		--linear settings and things
+		reinhard_prescale type:#float default:1.0 UI:spn_reinhard_prescale
+		reinhard_postscale type:#float default:1.0 UI:spn_reinhard_postscale
+		reinhard_burn type:#float default:6.0 UI:spn_reinhard_burn
+		usereinhardint type:#integer default:1 
 		uselinear type:#boolean default:false 
 		linear_sensitivity type:#float default:50 UI:spn_linear_sensitivity -- 50.0 
 		linear_exposure type:#float default:1.0 UI:spn_linear_exposure --1.0 
 		linear_fstop type:#float default:2.8 UI:spn_linear_fstop --2.8 
 		linear_gamma type:#float default:1.0 UI:spn_linear_gamma --1.0
-		
 		usecontrast type:#boolean default:false
 		usemaxwhite type:#boolean default:false
-		
 		tonemapnumber type:#integer default:1 UI:ddl5
 		contrast_ywa type:#float default:1.0 UI:spn_contrast_ywa
 		halttime type:#integer default:0 UI:spnhalttime
-		--gpu type:#boolean default:false UI:chk8
 		Fireflies_Rej type:#integer default:0 UI:spn16
 	)
 	
@@ -768,7 +757,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 				)
 				on btn4 pressed do
 				(
-					f = getOpenFileName types:"Exr(*.exr)|*.exr| Jpg(*.jpg)|*.jpg|All|*.*|" --\ 
+					f = getOpenFileName types:"Exr(*.exr)|*.exr| Jpg(*.jpg)|*.jpg|All|*.*|hdr(*.hdr)|*.hdr|" --\ 
 					
 					if (f != undefined)then
 					(

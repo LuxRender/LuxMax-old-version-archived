@@ -1443,30 +1443,27 @@
 			
 			format "WorldBegin\n" to:out_file 
 			
-					---volume for camera
-				if ($.use_medium)do
-				(
-					
-					--Texture "Scene:named_volumes:1.tex:value" "fresnel" "constant" "float value" [1.459000]
-					format "Texture \"my_volume\" \"fresnel\" \"constant\"  \"float value\" [1.459000] \"float gain\" [%] \n" $.mediumgain to:out_Geom_file
-					
-					--MakeNamedVolume "Scatter" "homogeneous" "texture fresnel" ["Scene:named_volumes:1.tex:value"]
-					format "MakeNamedVolume \"Scatter\" \"homogeneous\" \"texture fresnel\" [\"my_volume\"]\n" to:out_Geom_file
-					
-					--"color sigma_a" [0.0150931982401 0.0150931982401 0.0150931982401]
-					format "\"color sigma_a\" [% % %]\n" ($.sigmaa.r / 255) ($.sigmaa.g / 255) ($.sigmaa.b / 255) to:out_Geom_file
-					
-					--"color sigma_s" [0.039781 0.039781 0.039781]
-					format "\"color sigma_s\" [% % %]\n" ($.sigmas.r / 255) ($.sigmas.g / 255) ($.sigmas.b / 255) to:out_Geom_file
-					--"color g" [0.700000 0.700000 0.700000]
-					format "\"color g\" [0.700000 0.700000 0.700000]\n" to:out_Geom_file
-					
-					format "Exterior \"Scatter\" \n" to:out_Geom_file
-				)
-			
-			
+			---volume for camera
+			if ($.use_medium)do
+			(
+				
+				--Texture "Scene:named_volumes:1.tex:value" "fresnel" "constant" "float value" [1.459000]
+				format "Texture \"my_volume\" \"fresnel\" \"constant\"  \"float value\" [1.459000] \"float gain\" [%] \n" $.mediumgain to:out_Geom_file
+				
+				--MakeNamedVolume "Scatter" "homogeneous" "texture fresnel" ["Scene:named_volumes:1.tex:value"]
+				format "MakeNamedVolume \"Scatter\" \"homogeneous\" \"texture fresnel\" [\"my_volume\"]\n" to:out_Geom_file
+				
+				--"color sigma_a" [0.0150931982401 0.0150931982401 0.0150931982401]
+				format "\"color sigma_a\" [% % %]\n" ($.sigmaa.r / 255) ($.sigmaa.g / 255) ($.sigmaa.b / 255) to:out_Geom_file
+				
+				--"color sigma_s" [0.039781 0.039781 0.039781]
+				format "\"color sigma_s\" [% % %]\n" ($.sigmas.r / 255) ($.sigmas.g / 255) ($.sigmas.b / 255) to:out_Geom_file
+				--"color g" [0.700000 0.700000 0.700000]
+				format "\"color g\" [0.700000 0.700000 0.700000]\n" to:out_Geom_file
+				
+				format "Exterior \"Scatter\" \n" to:out_Geom_file
+			)
 			--volume for camera
-			
 			
 			if (getUserProp $ "useenvmap" as string == "true")do
 			(
@@ -1483,7 +1480,6 @@
 				format "\"float gamma\" [%] \n" (getUserProp $ "envgamma") to:out_file
 				format "\"float envgain\" [%] \n" (getUserProp $ "envgain") to:out_file
 				format "AttributeEnd \n" to:out_file 
-				
 			)
 			format "\n" to:out_file 
 		)
@@ -1615,7 +1611,7 @@
 						
 						if (chk_use_old_script.state == false)then
 						(
-							print "new plugin export"
+						--	print "new plugin export"
 							exportwithplugin = true
 							for o = 1 to TheObjects.count do
 							(
@@ -1642,7 +1638,7 @@
 											
 											if(doesFileExist filepathforchecking == false)do
 											(
-												print "exporting object since geometry is new since initial export."
+											--	print "exporting object since geometry is new since initial export."
 												LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".ply" ) false--$ "c:\\luxrender\\test.ply" false
 											)
 											
@@ -1655,22 +1651,15 @@
 										--LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".lxg" ) true--$ "c:\\luxrender\\test.ply" false
 										if (skip_exsisting_geom == false)do
 										(
-											print "Debug: not skipping - exporting object."
 											LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" )
 										)
 										
 										if (skip_exsisting_geom == true)do
 										(
-											print "Debug: skipping = true for object:"
-											print TheObjects[o].name
-											
 											filepathforchecking = (temppath + TheObjects[o].name + ".lxm")
-											
-											
-											print "checking if object geometry file already exists"
 											if(doesFileExist filepathforchecking == false)do
 											(
-												print "exporting object since geometry is new since initial export."
+												--print "exporting object since geometry is new since initial export."
 												LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" ) false--$ "c:\\luxrender\\test.ply" false
 											)
 										)
