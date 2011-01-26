@@ -2,7 +2,18 @@
 dxshadermanager.SetVisible false
 mental_ray_Preferences.mrExtensionsActive =  false
 --// Matte
-
+	fn replaceChar str oChar rChar = 
+		(
+			tStr = ""
+			for i=1 to str.count do
+			(
+				if str[i] == oChar then tStr += rChar
+				else tStr += str[i] 
+			)
+			tStr
+		)
+		
+		
 plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72) extends:Standard replaceUI:true version:1
 ( 
 	parameters main rollout:params
@@ -581,6 +592,13 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 					usenkdata = 1
 					print usenkdata as string					
 					
+					temppath = (f)
+					print temppath
+					temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
+					print temppathfixed
+					print "end found nk data"
+					nkdatapath = temppathfixed
+					print nkdatapathm
 				)
 				else
 				(

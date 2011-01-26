@@ -31,6 +31,16 @@
 		return ( ((c.r / 255)) as string + " " + ((c.g / 255)) as string + " " + ((c.b / 255)) as string )
 	)
 	
+			fn replaceChar str oChar rChar = 
+		(
+			tStr = ""
+			for i=1 to str.count do
+			(
+				if str[i] == oChar then tStr += rChar
+				else tStr += str[i] 
+			)
+			tStr
+		)
 	
 	fn write_bumpmaptexture Obj &out_Geom_file =
 	(
@@ -158,10 +168,10 @@
 				(
 					format	"\t\"string name\" [\"copper\"]\n" to:out_Geom_file
 				)
+				print "cecking.."
 				if (obj.material.metalname == 5)do
 				(
-					temppath = (obj.material.nkdatapath)
-				temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
+					print "begin found nk data"
 					
 					format "\t\"string filename\" [\"%\"]\n" temppathfixed to:out_Geom_file
 				)
@@ -175,7 +185,7 @@
 					
 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 			)
-			
+			print "teeeeeeest"
 			if classOf obj.material == LuxrenderGlass then
 			(
 				if (obj.material.KtTexture != undefined) do
@@ -303,7 +313,7 @@
 					(
 						if Obj.material.iorTexture != undefined then
 						(
-							format " \"texture index\" [\"%s\"]\n" Obj.material.iorTexture.name to:out_Geom_file
+							format " \"texture index\" [\"%\"]\n" Obj.material.iorTexture.name to:out_Geom_file
 						)
 						if Obj.material.iorTexture == undefined then
 						(
@@ -355,7 +365,7 @@
 				
 				if (classOf tempmap == LuxrenderBlackbody) then
 				(
-					format "LightGroup \"%s\"\n" obj.material.AreaLightSourceMap.group to:out_Geom_file
+					format "LightGroup \"%\"\n" obj.material.AreaLightSourceMap.group to:out_Geom_file
 					format "Texture \"area:light\" \"color\" \"blackbody\" \"float temperature\" [%]\n" obj.material.AreaLightSourceMap.temperature to:out_Geom_file
 					format "AreaLightSource \"area\" \"texture L\" [\"area:light\"]\n" to:out_Geom_file
 					format "\"float power\" [%]\n" obj.material.AreaLightSourceMap.power to:out_Geom_file
@@ -720,7 +730,7 @@
 				)
 				if (obj.material.metalname == 5)do
 				(
-					format "\t\"string filename\" [\"%s\"]\n" obj.material.nkdatapath to:out_Geom_file
+					format "\t\"string filename\" [\"%\"]\n" obj.material.nkdatapath to:out_Geom_file
 				)
 				format "\"float vroughness\"[%]\n" obj.material.vexponent to:out_Geom_file
 				format "\"float uroughness\"[%]\n" obj.material.uexponent to:out_Geom_file
@@ -860,7 +870,7 @@
 					(
 						if Obj.material.iorTexture != undefined then
 						(
-							format " \"texture index\" [\"%s\"]\n" Obj.material.iorTexture.name to:out_Geom_file
+							format " \"texture index\" [\"%\"]\n" Obj.material.iorTexture.name to:out_Geom_file
 						)
 						if Obj.material.iorTexture == undefined then
 						(
@@ -912,7 +922,7 @@
 				
 				if (classOf tempmap == LuxrenderBlackbody) then
 				(
-					format "LightGroup \"%s\"\n" obj.material.AreaLightSourceMap.group to:out_Geom_file
+					format "LightGroup \"%\"\n" obj.material.AreaLightSourceMap.group to:out_Geom_file
 					format "Texture \"area:light\" \"color\" \"blackbody\" \"float temperature\" [%]\n" obj.material.AreaLightSourceMap.temperature to:out_Geom_file
 					format "AreaLightSource \"area\" \"texture L\" [\"area:light\"]\n" to:out_Geom_file
 					format "\"float power\" [%]\n" obj.material.AreaLightSourceMap.power to:out_Geom_file
@@ -1176,16 +1186,7 @@
 			
 		)
 
-		fn replaceChar str oChar rChar = 
-		(
-			tStr = ""
-			for i=1 to str.count do
-			(
-				if str[i] == oChar then tStr += rChar
-				else tStr += str[i] 
-			)
-			tStr
-		)
+
 
 		fn outputCameraSettings &out_file =
 		(
@@ -1933,7 +1934,7 @@
 			label lbl1 "Written by Stig Atle steffensen - www.stigatle.net" pos:[40,16] width:160 height:32
 			label lbl2 " for the Luxrender renderer. www.luxrender.net" pos:[40,48] width:160 height:32
 			label lbl5 "Some code is from PBRT 2 Exporter by Guillermo M. Leal LLaguno." pos:[40,144] width:176 height:32
-			label lbl4 "And big thanks for perpixel for starting the exporter (materials \ textures) so that it can be used as a base for this exporter." pos:[40,88] width:176 height:56
+			label lbl4 "And big tha for perpixel for starting the exporter (materials \ textures) so that it can be used as a base for this exporter." pos:[40,88] width:176 height:56
 		)
 
 		try(closeRolloutFloater theNewFloater)catch()
