@@ -706,6 +706,15 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 			
 			
 		)
+		parameters path_integrator rollout:pathrollout
+		(
+			pathdepth type:#integer default:16 UI:spn_maxdepth
+		)	
+		rollout pathrollout "Path" width:160 height:95
+		(
+			spinner spn_maxdepth "" pos:[9,48] width:127 height:16 type:#integer
+			label lbl1 "Path depth" pos:[8,8] width:128 height:24
+		)
 			
 			--	http://www.luxrender.net/forum/viewtopic.php?f=27&t=3698#p35250
 			parameters environment rollout:environment

@@ -1378,10 +1378,10 @@
 			if ($.surfaceintegratorint == 1)do
 			(
 				format "SurfaceIntegrator \"bidirectional\" \n" to:out_file
-				format "\"integer eyedepth\" [%] \n" (getUserProp $ "bidir_eyedepth") to:out_file
-				format "\"integer lightdepth\" [%] \n" (getUserProp $ "bidir_lightdepth") to:out_file
-				format "\"integer eyetrrhold\" [%] \n" (getUserProp $ "bidir_eyetrrhold") to:out_file
-				format "\"integer lighttrhold\" [%] \n" (getUserProp $ "bidir_lighttrhold") to:out_file
+				format "\"integer eyedepth\" [%] \n" ($.bidir_eyedepth) to:out_file
+				format "\"integer lightdepth\" [%] \n" ($.bidir_lightdepth) to:out_file
+				format "\"integer eyetrrhold\" [%] \n" ($.bidir_eyetrrhold) to:out_file
+				format "\"integer lighttrhold\" [%] \n" ($.bidir_lighttrhold) to:out_file
 			)
 			
 			if ($.surfaceintegratorint == 2)do
@@ -1430,7 +1430,7 @@
 			(
 				--maxdepth	
 				format "SurfaceIntegrator \"path\" \n" to:out_file
-				format "\"integer maxdepth\" [%] \n" $.dp_maxdepth to:out_file
+				format "\"integer maxdepth\" [%] \n" $.pathdepth to:out_file
 				
 			)
 			
