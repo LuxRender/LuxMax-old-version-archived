@@ -1,4 +1,4 @@
-place the scripts in your scripts folder I.E: 
+ place the scripts in your scripts folder I.E: 
 C:\Program Files\Autodesk\3ds Max 2011\Scripts\LuxmaxScript.ms
 C:\Program Files\Autodesk\3ds Max 2011\Scripts\Luxmax_macro.ms
 
