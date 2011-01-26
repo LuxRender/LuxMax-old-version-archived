@@ -573,6 +573,8 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 				--filename:"c:/test/test.nk"
 				if (f != undefined)then
 				(
+					
+					
 					nkdatapath = f
 					lbl7.text =f as string
 					print f

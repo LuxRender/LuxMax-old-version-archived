@@ -160,7 +160,10 @@
 				)
 				if (obj.material.metalname == 5)do
 				(
-					format "\t\"string filename\" [\"%s\"]\n" obj.material.nkdatapath to:out_Geom_file
+					temppath = (obj.material.nkdatapath)
+				temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
+					
+					format "\t\"string filename\" [\"%\"]\n" temppathfixed to:out_Geom_file
 				)
 				format "\"float vroughness\"[%]\n" obj.material.vexponent to:out_Geom_file
 				format "\"float uroughness\"[%]\n" obj.material.uexponent to:out_Geom_file
