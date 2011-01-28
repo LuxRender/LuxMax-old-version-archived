@@ -527,10 +527,10 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		
 		GroupBox grp1 "Advanced Parameters" pos:[4,69] width:252 height:112
 		label lb_exponentu "U-Exponent . . . . . . " pos:[8,88] width:95 height:13 enabled:true across:3
-		spinner spn_exponentu "" pos:[80,88] width:68 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001
+		spinner spn_exponentu "" pos:[80,88] width:68 height:16 enabled:true range:[0.001,1,0.001] type:#float scale:0.001
 		mapButton spn_exponentuTexture "None" pos:[152,88] width:96 height:18 enabled:false
 		label lb_exponentv "V-Exponent . . . . . . " pos:[8,112] width:94 height:13 enabled:true across:3
-		spinner spn_exponentv "" pos:[80,111] width:68 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001
+		spinner spn_exponentv "" pos:[80,111] width:68 height:16 enabled:true range:[0.001,1,0.001] type:#float scale:0.001
 		mapButton spn_exponentvTexture "None" pos:[152,112] width:96 height:18 enabled:false
 
 			-- Bumpmap parameters

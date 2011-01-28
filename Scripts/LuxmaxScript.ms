@@ -1630,13 +1630,16 @@
 									(
 										temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
 										
+										print "exporting ply format"
+										print "skip existing:"
+										print skip_exsisting_geom
 										
-										if (skip_exsisting_geom == false)do
+										if (chk_ply.state == false)do
 										(
 											LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".ply" ) false--$ "c:\\luxrender\\test.ply" false
 										)
 										
-										if (skip_exsisting_geom == true)do
+										if (chk_ply.state == true)do
 										(
 											filepathforchecking = (temppathfixed + TheObjects[o].name + ".ply")
 											
