@@ -1634,12 +1634,12 @@
 										print "skip existing:"
 										print skip_exsisting_geom
 										
-										if (chk_ply.state == false)do
+										if (chk_skip_exsisting_geom.state == false)do
 										(
 											LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".ply" ) false--$ "c:\\luxrender\\test.ply" false
 										)
 										
-										if (chk_ply.state == true)do
+										if (chk_skip_exsisting_geom.state == true)do
 										(
 											filepathforchecking = (temppathfixed + TheObjects[o].name + ".ply")
 											
@@ -1648,7 +1648,6 @@
 											--	print "exporting object since geometry is new since initial export."
 												LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".ply" ) false--$ "c:\\luxrender\\test.ply" false
 											)
-											
 										)
 										writeToFile ("Shape \"plymesh\" \"string filename\" " + "[\"" + (temppathfixed + TheObjects[o].name + ".ply\"] \n" )) out_Geom_file
 									)
@@ -1656,19 +1655,21 @@
 									if (chk_ply.state == false)do
 									(
 										--LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".lxg" ) true--$ "c:\\luxrender\\test.ply" false
-										if (skip_exsisting_geom == false)do
+										if (chk_skip_exsisting_geom.state == false)do
 										(
 											LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" )
 										)
 										
-										if (skip_exsisting_geom == true)do
+										if (chk_skip_exsisting_geom.state == true)do
 										(
 											filepathforchecking = (temppath + TheObjects[o].name + ".lxm")
 											if(doesFileExist filepathforchecking == false)do
 											(
 												--print "exporting object since geometry is new since initial export."
+												print "object file not found, exporting"
 												LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" ) false--$ "c:\\luxrender\\test.ply" false
 											)
+											
 										)
 										temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
 										writeToFile ( "Include" + "\"" + (temppathfixed + TheObjects[o].name + ".lxm\"\n" )) out_Geom_file
