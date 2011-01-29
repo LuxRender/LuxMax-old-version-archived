@@ -190,7 +190,6 @@
 				if (obj.material.KtTexture != undefined) do
 				(
 					getandwriteMaterialTexture Obj.material.KtTexture out_Geom_file
-					
 				)
 				if (obj.material.KrTexture != undefined) do
 				(
@@ -198,7 +197,8 @@
 				)
 				
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				format "\"string type\" \"glass\"\n" to:out_Geom_file				
+				format "\"string type\" \"glass\"\n" to:out_Geom_file
+				
 				if (obj.material.KtTexture != undefined) do
 				(
 					format "\"texture Kt\" [\"%\"]\n" obj.material.KtTexture.name to:out_Geom_file
@@ -213,16 +213,16 @@
 					format "\"color Kt\" [% % %]\n" (Obj.material.kt.r / 255) (Obj.material.kt.g / 255) (Obj.material.kt.b / 255) to:out_Geom_file	
 				)
 				
-				if (obj.material.iorActive as string == "on")do
+				if (obj.material.iorActive as string == "true")do
 				(
 					format " \"bool architectural\" [\"true\"]\n" to:out_Geom_file
 				)
 				
-				if (obj.material.iorActive as string == "off")do
+				if (obj.material.iorActive as string == "false")do
 				(
 					format " \"bool architectural\" [\"false\"]\n" to:out_Geom_file
-					format " \"float index\" [%]\n" Obj.material.ior to:out_Geom_file
 				)
+				format " \"float index\" [%]\n" Obj.material.ior to:out_Geom_file
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
@@ -1133,11 +1133,6 @@
 					)
 					close out_Geom_file	
 				)
-			)
-			on chk_use_old_script changed state do
-			(
-				--print "checkbox state"
-				--print chk_use_old_script.state
 			)
 			on chk_skip_exsisting_geom changed state do
 			(
