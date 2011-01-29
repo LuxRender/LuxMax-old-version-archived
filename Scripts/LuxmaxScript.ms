@@ -1862,7 +1862,7 @@
 			button btn_file_browse "Browse" pos:[16,48] width:200 height:16
 			edittext edt_scenefile_path "" pos:[16,24] width:200 height:16
 			
-			button btn2 "Open file location" pos:[16,64] width:200 height:16
+			button btn2 "Open file location and select file" pos:[16,64] width:200 height:16
 			
 			on SceneFile open do
 			(
@@ -1882,8 +1882,12 @@
 				--open file location
 				try 
 				(
+					--folderpath = getFilenamePath lxssavefilepath
+					--HiddenDOSCommand("explorer.exe " + folderpath)
+					
 					folderpath = getFilenamePath lxssavefilepath
-					HiddenDOSCommand("explorer.exe " + folderpath)
+					HiddenDOSCommand("explorer.exe /select ," +lxssavefilepath)
+					
 				)
 				catch
 				(
