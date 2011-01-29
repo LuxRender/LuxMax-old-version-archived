@@ -97,7 +97,7 @@ plugin TextureMap LuxrenderCheckboard name:"LR Checkboard" classID:#(0x6be51c96,
 -- // ImageMap
 
 plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x39e50806) extends:Bitmaptexture replaceUI:true version:1 
-( 
+(
 	parameters main rollout:params
 	(
 		filename type:#string default:"" ui:m_filename
@@ -121,8 +121,6 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		label lb_filename "Bitmap:" pos:[8,48] width:35 height:13
 		button m_filename "" pos:[8,64] width:282 height:21
 		dropdownList m_wrap "Wrap:" pos:[8,88] width:176 height:40 items:#("Repeat", "Black", "Clamp")
-		
-		
 		label lbl2 "Chosen filename:" pos:[8,8] width:96 height:16
 		label lbl3 "" pos:[104,8] width:184 height:16
 		button btn3 "Open folder and select file in explorer" pos:[8,24] width:208 height:16
@@ -148,18 +146,16 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 				r = ""
 				texturefilename = filenameFromPath filenametemp
 				lbl3.text  = texturefilename
-				
 				for i = 1 to (f.count - 1) do
 				(
 					append r (f[i] + "\\\\")
 				)
-				
 				append r f[f.count]
-				
 				m_filename.text = r
 				filename = r
 			)
 		)
+		
 		on btn3 pressed do
 		(
 			try 
@@ -173,6 +169,7 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 			)
 		)
 	)
+
 	
 	rollout paramsCoordinates "Coordinates"
 	(
@@ -185,6 +182,7 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		spinner m_vdelta "V Delta:" range:[-100, 100, 0] width:100 align:#right
 	)
 )
+
 
 -- // =======================================================================================================================================================
 -- // lampspectrum -- Class_ID(0x59cb7df2, 0x52d63bd3)

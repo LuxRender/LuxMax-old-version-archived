@@ -80,567 +80,580 @@
 	
 
  
-	fn Pbrt_Geometry Obj  &out_Geom_file = 
-	(
-		addModifier obj (Edit_Mesh ())
-		format "\n#**** Object: % **** \n"  Obj.name to:out_Geom_file
-		format "AttributeBegin \n"  to:out_Geom_file
-		Local MeshArrays = #(#(), #(), #(), #())
-		num_faces = Obj.numfaces
-			print (classof Obj.material)
-			
-			if (Obj.numfaces != 0) then
-		(
-			if (classof Obj.material != undefined) then
-			(
-			
-			--MATTE MATERIAL BEGIN	
-			
-			if classof Obj.material == LuxrenderMatte  then 
-			(
-				if Obj.material.useBumpmap as string == "true" then
-				(
-					if (Obj.material.bumpmapTexture != undefined) do
-					(
-						write_bumpmaptexture Obj.material.bumpmapTexture out_Geom_file
-						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-					)
-				)
-				
-				if (Obj.material.kdTexture != undefined) do
-				(
-					getandwriteMaterialTexture Obj.material.kdTexture out_Geom_file
-				)
-				
-				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				format "\"string type\" \"matte\"\n" to:out_Geom_file
-				if (obj.material.kdTexture != undefined) do
-				(
-					format "\"texture Kd\" [\"%\"]\n" obj.material.kdTexture.name to:out_Geom_file
-				)
-				
-				if (Obj.material.kdTexture == undefined) do
-				(
-					format "\"color Kd\" [% % %]\n" (Obj.material.kdColor.r / 255) (Obj.material.kdColor.g / 255) (Obj.material.kdColor.b / 255) to:out_Geom_file	
-				)
-				
-				if (Obj.material.bumpmapTexture == undefined) then
-				(
-					if (Obj.material.useBumpmap as string == "true") then
-					(
-						format "\"float bumpmap\" [%]\n" Obj.material.bumpMap to:out_Geom_file
-					)
-				)
-				if (Obj.material.bumpmapTexture != undefined) do
-					(
-						format "\"texture bumpmap\" [\"%\"]\n" Obj.material.bumpmapTexture.name to:out_Geom_file
-						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-					)
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-			)
-			
-			
-	----METAL BEGIN
-			if classOf obj.material == LuxrenderMetal then
-			(
-				if (Obj.material.KtTexture != undefined) do
-				(
-					write_bumpmaptexture Obj.material.KtTexture out_Geom_file
-					format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-				)
-				
-				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				format "\"string type\" \"metal\"\n" to:out_Geom_file
-				
-				if (obj.material.metalname == 1)do
-				(
-					format	"\t\"string name\" [\"aluminium\"]\n" to:out_Geom_file
-				)
-				if (obj.material.metalname == 2)do
-				(
-					format	"\t\"string name\" [\"amorphous carbon\"]\n" to:out_Geom_file
-				)				
-				if (obj.material.metalname == 3)do
-				(
-					format	"\t\"string name\" [\"gold\"]\n" to:out_Geom_file
-				)
-				if (obj.material.metalname == 4)do
-				(
-					format	"\t\"string name\" [\"copper\"]\n" to:out_Geom_file
-				)
-				print "cecking.."
-				if (obj.material.metalname == 5)do
-				(
-					print "begin found nk data"
-					
-					format "\t\"string filename\" [\"%\"]\n" temppathfixed to:out_Geom_file
-				)
-				format "\"float vroughness\"[%]\n" obj.material.vexponent to:out_Geom_file
-				format "\"float uroughness\"[%]\n" obj.material.uexponent to:out_Geom_file
-					if (Obj.material.bumpmapTexture != undefined) do
-					(
-						format "\"texture bumpmap\" [\"%\"]\n" Obj.material.KtTexture.name to:out_Geom_file
-						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-					)
-					
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-			)
-			print "teeeeeeest"
-			if classOf obj.material == LuxrenderGlass then
-			(
-				if (obj.material.KtTexture != undefined) do
-				(
-					getandwriteMaterialTexture Obj.material.KtTexture out_Geom_file
-					
-				)
-				if (obj.material.KrTexture != undefined) do
-				(
-					getandwriteMaterialTexture Obj.material.KrTexture out_Geom_file
-				)
-				
-				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				format "\"string type\" \"glass\"\n" to:out_Geom_file				
-				if (obj.material.KtTexture != undefined) do
-				(
-					format "\"texture Kt\" [\"%\"]\n" obj.material.KtTexture.name to:out_Geom_file
-				)
-				if (obj.material.KrTexture != undefined) do
-				(
-					format "\"texture Kr\" [\"%\"]\n" obj.material.KrTexture.name to:out_Geom_file
-				)
-				
-				if (obj.material.KtTexture == undefined) do
-				(
-					format "\"color Kt\" [% % %]\n" (Obj.material.kt.r / 255) (Obj.material.kt.g / 255) (Obj.material.kt.b / 255) to:out_Geom_file	
-				)
-				
-				if (obj.material.iorActive as string == "on")do
-				(
-					format " \"bool architectural\" [\"true\"]\n" to:out_Geom_file
-				)
-				
-				if (obj.material.iorActive as string == "off")do
-				(
-					format " \"bool architectural\" [\"false\"]\n" to:out_Geom_file
-					format " \"float index\" [%]\n" Obj.material.ior to:out_Geom_file
-				)
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-			)
-			
-			if classOf obj.material == LuxGlass2 then
-			(
-				format "Texture \"my_ior\" \"fresnel\" \"%\" \"float value\" [%]\n" Obj.material.preset Obj.material.ior to:out_Geom_file
-				
-				format "MakeNamedVolume \"my_volume\" \"%\" \"texture fresnel\" [\"my_ior\"] \"color absorption\" [% % %]\n" Obj.material.volumeproperty (Obj.material.abscolorr) (Obj.material.abscolorg) (Obj.material.abscolorb) to:out_Geom_file
-				format "MakeNamedMaterial \"mymaterial\" \"string type\" [\"glass2\"]" to:out_Geom_file
-				if (obj.material.dispersion as string == "on")do
-				(
-					format "\"bool dispersion\" [\"true\"] \n" to:out_Geom_file
-				)
-				if (obj.material.dispersion as string == "off")do
-				(
-					format "\"bool dispersion\" [\"false\"] \n" to:out_Geom_file
-				)
-				format "Interior \"my_volume\" \n" to:out_Geom_file
-				format "NamedMaterial \"mymaterial\" \n" to:out_Geom_file
-			)
-			
-			if classOf obj.material == LuxrenderGlossy then
-			(
-				print "creating glossy material:"
-				print Obj.material.useBumpmap as string
-				if Obj.material.useBumpmap as string == "true" then
-				(
-					print "usebumpmap"
-					print "checking if there's bump texture"
-					print Obj.material.bumpmapTexture as string
-					
-					if (Obj.material.bumpmapTexture != undefined) do
-					(
-						print "found bumpmap texture.."
-						print "Kd Texture name:"
-						print Obj.material.bumpmapTexture.name as string
-						write_bumpmaptexture Obj.material.bumpmapTexture out_Geom_file
-						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-					)
-				)
-					
-				if Obj.material.kdTexture != undefined then
-				(
-					print "Kd Texture name:"
-					print Obj.material.kdTexture.name as string
-					write_texturemap Obj.material.kdTexture out_Geom_file
-				)
-					
-					if Obj.material.ksTexture != undefined then
-					(
-						print "Ks Texture name:"
-						print Obj.material.ksTexture.name as string
-						write_texturemap Obj.material.ksTexture out_Geom_file
-					)
-					
-					if Obj.material.iorTexture != undefined then
-					(
-						print "ior Texture name:"
-						print Obj.material.iorTexture.name as string
-						write_texturemap Obj.material.iorTexture out_Geom_file
-					)
-					
-					if Obj.material.katexture != undefined then
-					(
-						print "Ka Texture name:"
-						print Obj.material.katexture.name as string
-						print Obj.material.katexture as string
-						write_texturemap Obj.material.katexture out_Geom_file
-					)
-					format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-					format "\"string type\" \"glossy\"\n" to:out_Geom_file
-					format " \"float uroughness\" [%]\n" Obj.material.uroughness to:out_Geom_file
-					format " \"float vroughness\" [%]\n" Obj.material.vroughness to:out_Geom_file
-					if Obj.material.ksTexture != undefined then
-					(
-						format " \"texture Ks\" [\"%\"]\n" Obj.material.ksTexture.name to:out_Geom_file
-					)
+-- 	fn Pbrt_Geometry Obj  &out_Geom_file = 
+-- 	(
+-- 		addModifier obj (Edit_Mesh ())
+-- 		format "\n#**** Object: % **** \n"  Obj.name to:out_Geom_file
+-- 		format "AttributeBegin \n"  to:out_Geom_file
+-- 		Local MeshArrays = #(#(), #(), #(), #())
+-- 		num_faces = Obj.numfaces
+-- 			print (classof Obj.material)
+-- 			
+-- 			if (Obj.numfaces != 0) then
+-- 		(
+-- 			if (classof Obj.material != undefined) then
+-- 			(
+-- 			
+-- 			--MATTE MATERIAL BEGIN	
+-- 			
+-- 			if classof Obj.material == LuxrenderMatte  then 
+-- 			(
+-- 				if Obj.material.useBumpmap as string == "true" then
+-- 				(
+-- 					if (Obj.material.bumpmapTexture != undefined) do
+-- 					(
+-- 						write_bumpmaptexture Obj.material.bumpmapTexture out_Geom_file
+-- 						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
+-- 					)
+-- 				)
+-- 				
+-- 				if (Obj.material.kdTexture != undefined) do
+-- 				(
+-- 					getandwriteMaterialTexture Obj.material.kdTexture out_Geom_file
+-- 				)
+-- 				
+-- 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 				format "\"string type\" \"matte\"\n" to:out_Geom_file
+-- 				if (obj.material.kdTexture != undefined) do
+-- 				(
+-- 					format "\"texture Kd\" [\"%\"]\n" obj.material.kdTexture.name to:out_Geom_file
+-- 				)
+-- 				
+-- 				if (Obj.material.kdTexture == undefined) do
+-- 				(
+-- 					format "\"color Kd\" [% % %]\n" (Obj.material.kdColor.r / 255) (Obj.material.kdColor.g / 255) (Obj.material.kdColor.b / 255) to:out_Geom_file	
+-- 				)
+-- 				
+-- 				if (Obj.material.bumpmapTexture == undefined) then
+-- 				(
+-- 					if (Obj.material.useBumpmap as string == "true") then
+-- 					(
+-- 						format "\"float bumpmap\" [%]\n" Obj.material.bumpMap to:out_Geom_file
+-- 					)
+-- 				)
+-- 				if (Obj.material.bumpmapTexture != undefined) do
+-- 					(
+-- 						format "\"texture bumpmap\" [\"%\"]\n" Obj.material.bumpmapTexture.name to:out_Geom_file
+-- 						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
+-- 					)
+-- 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 			)
+-- 			
+-- 			
+-- 	----METAL BEGIN
+-- 			if classOf obj.material == LuxrenderMetal then
+-- 			(
+-- 				if (Obj.material.KtTexture != undefined) do
+-- 				(
+-- 					write_bumpmaptexture Obj.material.KtTexture out_Geom_file
+-- 					format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
+-- 				)
+-- 				
+-- 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 				format "\"string type\" \"metal\"\n" to:out_Geom_file
+-- 				
+-- 				if (obj.material.metalname == 1)do
+-- 				(
+-- 					format	"\t\"string name\" [\"aluminium\"]\n" to:out_Geom_file
+-- 				)
+-- 				if (obj.material.metalname == 2)do
+-- 				(
+-- 					format	"\t\"string name\" [\"amorphous carbon\"]\n" to:out_Geom_file
+-- 				)				
+-- 				if (obj.material.metalname == 3)do
+-- 				(
+-- 					format	"\t\"string name\" [\"gold\"]\n" to:out_Geom_file
+-- 				)
+-- 				if (obj.material.metalname == 4)do
+-- 				(
+-- 					format	"\t\"string name\" [\"copper\"]\n" to:out_Geom_file
+-- 				)
+-- 				print "cecking.."
+-- 				if (obj.material.metalname == 5)do
+-- 				(
+-- 					print "begin found nk data"
+-- 					
+-- 					format "\t\"string filename\" [\"%\"]\n" temppathfixed to:out_Geom_file
+-- 				)
+-- 				format "\"float vroughness\"[%]\n" obj.material.vexponent to:out_Geom_file
+-- 				format "\"float uroughness\"[%]\n" obj.material.uexponent to:out_Geom_file
+-- 					if (Obj.material.bumpmapTexture != undefined) do
+-- 					(
+-- 						format "\"texture bumpmap\" [\"%\"]\n" Obj.material.KtTexture.name to:out_Geom_file
+-- 						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
+-- 					)
+-- 					
+-- 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 			)
+-- 			print "teeeeeeest"
+-- 			if classOf obj.material == LuxrenderGlass then
+-- 			(
+-- 				if (obj.material.KtTexture != undefined) do
+-- 				(
+-- 					getandwriteMaterialTexture Obj.material.KtTexture out_Geom_file
+-- 					
+-- 				)
+-- 				if (obj.material.KrTexture != undefined) do
+-- 				(
+-- 					getandwriteMaterialTexture Obj.material.KrTexture out_Geom_file
+-- 				)
+-- 				
+-- 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 				format "\"string type\" \"glass\"\n" to:out_Geom_file				
+-- 				if (obj.material.KtTexture != undefined) do
+-- 				(
+-- 					format "\"texture Kt\" [\"%\"]\n" obj.material.KtTexture.name to:out_Geom_file
+-- 				)
+-- 				if (obj.material.KrTexture != undefined) do
+-- 				(
+-- 					format "\"texture Kr\" [\"%\"]\n" obj.material.KrTexture.name to:out_Geom_file
+-- 				)
+-- 				
+-- 				if (obj.material.KtTexture == undefined) do
+-- 				(
+-- 					format "\"color Kt\" [% % %]\n" (Obj.material.kt.r / 255) (Obj.material.kt.g / 255) (Obj.material.kt.b / 255) to:out_Geom_file	
+-- 				)
+-- 				
+-- 				if (obj.material.iorActive as string == "on")do
+-- 				(
+-- 					format " \"bool architectural\" [\"true\"]\n" to:out_Geom_file
+-- 				)
+-- 				
+-- 				if (obj.material.iorActive as string == "off")do
+-- 				(
+-- 					format " \"bool architectural\" [\"false\"]\n" to:out_Geom_file
+-- 					format " \"float index\" [%]\n" Obj.material.ior to:out_Geom_file
+-- 				)
+-- 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 			)
+-- 			
+-- 			if classOf obj.material == LuxGlass2 then
+-- 			(
+-- 				format "Texture \"my_ior\" \"fresnel\" \"%\" \"float value\" [%]\n" Obj.material.preset Obj.material.ior to:out_Geom_file
+-- 				
+-- 				format "MakeNamedVolume \"my_volume\" \"%\" \"texture fresnel\" [\"my_ior\"] \"color absorption\" [% % %]\n" Obj.material.volumeproperty (Obj.material.abscolorr) (Obj.material.abscolorg) (Obj.material.abscolorb) to:out_Geom_file
+-- 				format "MakeNamedMaterial \"mymaterial\" \"string type\" [\"glass2\"]" to:out_Geom_file
+-- 				if (obj.material.dispersion as string == "on")do
+-- 				(
+-- 					format "\"bool dispersion\" [\"true\"] \n" to:out_Geom_file
+-- 				)
+-- 				if (obj.material.dispersion as string == "off")do
+-- 				(
+-- 					format "\"bool dispersion\" [\"false\"] \n" to:out_Geom_file
+-- 				)
+-- 				format "Interior \"my_volume\" \n" to:out_Geom_file
+-- 				format "NamedMaterial \"mymaterial\" \n" to:out_Geom_file
+-- 			)
+-- 			
+-- 			if classOf obj.material == LuxrenderGlossy then
+-- 			(
+-- 				print "creating glossy material:"
+-- 				print Obj.material.useBumpmap as string
+-- 				if Obj.material.useBumpmap as string == "true" then
+-- 				(
+-- 					print "usebumpmap"
+-- 					print "checking if there's bump texture"
+-- 					print Obj.material.bumpmapTexture as string
+-- 					
+-- 					if (Obj.material.bumpmapTexture != undefined) do
+-- 					(
+-- 						print "found bumpmap texture.."
+-- 						print "Kd Texture name:"
+-- 						print Obj.material.bumpmapTexture.name as string
+-- 						write_bumpmaptexture Obj.material.bumpmapTexture out_Geom_file
+-- 						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
+-- 					)
+-- 				)
+-- 					
+-- 				if Obj.material.kdTexture != undefined then
+-- 				(
+-- 					print "Kd Texture name:"
+-- 					print Obj.material.kdTexture.name as string
+-- 					write_texturemap Obj.material.kdTexture out_Geom_file
+-- 				)
+-- 					
+-- 					if Obj.material.ksTexture != undefined then
+-- 					(
+-- 						print "Ks Texture name:"
+-- 						print Obj.material.ksTexture.name as string
+-- 						write_texturemap Obj.material.ksTexture out_Geom_file
+-- 					)
+-- 					
+-- 					if Obj.material.iorTexture != undefined then
+-- 					(
+-- 						print "ior Texture name:"
+-- 						print Obj.material.iorTexture.name as string
+-- 						write_texturemap Obj.material.iorTexture out_Geom_file
+-- 					)
+-- 					
+-- 					if Obj.material.katexture != undefined then
+-- 					(
+-- 						print "Ka Texture name:"
+-- 						print Obj.material.katexture.name as string
+-- 						print Obj.material.katexture as string
+-- 						write_texturemap Obj.material.katexture out_Geom_file
+-- 					)
+-- 					format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 					format "\"string type\" \"glossy\"\n" to:out_Geom_file
+-- 					format " #adfdfkajdfhadsf\n" to:out_Geom_file
+-- 					format " \"float uroughness\" [%]\n" Obj.material.uroughness to:out_Geom_file
+-- 					format " \"float vroughness\" [%]\n" Obj.material.vroughness to:out_Geom_file
+-- 					
+-- 					print "UseKA: "
+-- 					print Obj.material.useka as string
+-- 					format  "#usingKA = true" to:out_Geom_file
+-- 					print "Obj.material.useka"
+-- 					print Obj.material.useka
+-- 				
+-- 					if Obj.material.useka == "true" then
+-- 					(
+-- 						format  "#usingKA = true" to:out_Geom_file
+-- 						if (Obj.material.katexture != undefined) then
+-- 						(
+-- 							format " \"texture Ka\" [\"%\"]\n" Obj.material.katexture.name to:out_Geom_file
+-- 						)
+-- 						if (Obj.material.katexture == undefined) then
+-- 						(
+-- 							format " \"color Ka\" [% % %]\n" (Obj.material.kacolor.r / 255) (Obj.material.kacolor.g / 255) (Obj.material.kacolor.b / 255)  to:out_Geom_file
+-- 						)
+-- 					)
+-- 					
+-- 					
+-- 					
+-- 					if Obj.material.ksTexture != undefined then
+-- 					(
+-- 						format " \"texture Ks\" [\"%\"]\n" Obj.material.ksTexture.name to:out_Geom_file
+-- 					)
 
-					if Obj.material.kdTexture != undefined then
-					(
-						format " \"texture Kd\" [\"%\"]\n" Obj.material.kdTexture.name to:out_Geom_file
-					)
-					if Obj.material.kdTexture == undefined then
-					(	
-						format " \"color Kd\" [% % %]\n" ((Obj.material.Kdcolor.r / 255) -255) ((Obj.material.Kdcolor.g / 255) -255) ((Obj.material.Kdcolor.b / 255)-255)  to:out_Geom_file
-					)
-					if Obj.material.useior as string == "off" then
-					(
-						if Obj.material.iorTexture != undefined then
-						(
-							format " \"texture index\" [\"%\"]\n" Obj.material.iorTexture.name to:out_Geom_file
-						)
-						if Obj.material.iorTexture == undefined then
-						(
-							format " \"float index\" [%]\n" Obj.material.ior to:out_Geom_file
-						)
-					)
-					
-					if Obj.material.ksTexture == undefined then
-					(
-						format " \"color Ks\" [% % %]\n" (Obj.material.kscolor.r / 255) (Obj.material.kscolor.g / 255) (Obj.material.kscolor.b / 255) to:out_Geom_file
-					)
-					
-					if Obj.material.useka as string == "on" then
-					(
-						if Obj.material.katexture != undefined then
-						(
-							format " \"texture Ka\" [\"%\"]\n" Obj.material.katexture.name to:out_Geom_file
-						)
-						if Obj.material.katexture == undefined then
-						(
-							format " \"color Ka\" [% % %]\n" (Obj.material.kacolor.r / 255) (Obj.material.kacolor.g / 255) (Obj.material.kacolor.b / 255)  to:out_Geom_file
-						)
-					)
+-- 					if Obj.material.kdTexture != undefined then
+-- 					(
+-- 						format " \"texture Kd\" [\"%\"]\n" Obj.material.kdTexture.name to:out_Geom_file
+-- 					)
+-- 					if Obj.material.kdTexture == undefined then
+-- 					(	
+-- 						format " \"color Kd\" [% % %]\n" ((Obj.material.Kdcolor.r / 255) -255) ((Obj.material.Kdcolor.g / 255) -255) ((Obj.material.Kdcolor.b / 255)-255)  to:out_Geom_file
+-- 					)
+-- 					if Obj.material.useior as string == "off" then
+-- 					(
+-- 						if Obj.material.iorTexture != undefined then
+-- 						(
+-- 							format " \"texture index\" [\"%\"]\n" Obj.material.iorTexture.name to:out_Geom_file
+-- 						)
+-- 						if Obj.material.iorTexture == undefined then
+-- 						(
+-- 							format " \"float index\" [%]\n" Obj.material.ior to:out_Geom_file
+-- 						)
+-- 					)
+-- 					
+-- 					if Obj.material.ksTexture == undefined then
+-- 					(
+-- 						format " \"color Ks\" [% % %]\n" (Obj.material.kscolor.r / 255) (Obj.material.kscolor.g / 255) (Obj.material.kscolor.b / 255) to:out_Geom_file
+-- 					)
+-- 				
+-- 					
 
-					format " \"float d\" [%]\n" Obj.material.kadepth to:out_Geom_file
-					
-					if (Obj.material.bumpmapTexture == undefined) then
-					(
-						if (Obj.material.useBumpmap as string == "true") then
-						(
-							format "\"float bumpmap\" [%]\n" Obj.material.bumpMap to:out_Geom_file
-						)
-					)
-					if (obj.material.useBumpmap as string == "true") then
-					(
-						if (Obj.material.bumpmapTexture != undefined) then
-						(
-							format "\"texture bumpmap\" [\"%\"]\n" Obj.material.bumpmapTexture.name to:out_Geom_file
-							format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-						)
-					)
-					format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-			)
-				
-			if classOf obj.material == LuxrenderLight then
-			(
-				tempmap = getSubTexmap obj.material 1
-				print (classOf tempmap)
-				
-				if (classOf tempmap == LuxrenderBlackbody) then
-				(
-					format "LightGroup \"%\"\n" obj.material.AreaLightSourceMap.group to:out_Geom_file
-					format "Texture \"area:light\" \"color\" \"blackbody\" \"float temperature\" [%]\n" obj.material.AreaLightSourceMap.temperature to:out_Geom_file
-					format "AreaLightSource \"area\" \"texture L\" [\"area:light\"]\n" to:out_Geom_file
-					format "\"float power\" [%]\n" obj.material.AreaLightSourceMap.power to:out_Geom_file
-					format "\"float efficacy\" [%]\n" obj.material.AreaLightSourceMap.efficacy to:out_Geom_file
-					format "\"float gain\" [%]\n" obj.material.AreaLightSourceMap.gain to:out_Geom_file
-					format "Material \"matte\" \"color Kd\" [0.8 0.8 0.8]" to:out_Geom_file
-				)
-				
-				if (classof tempmap == LuxrenderLampSpectrum) then
-				(
-					format "LightGroup \"%\"\n" obj.material.AreaLightSourceMap.spectrumgroupstring to:out_Geom_file
-					format "Texture \"%\" \"color\" \"lampspectrum\" \"string name\" [\"%\"]\n" obj.material.AreaLightSourceMap.name obj.material.AreaLightSourceMap.spectrumnamestring to:out_Geom_file
-					format "AreaLightSource \"area\" \"texture L\" [\"%\"]\n" obj.material.AreaLightSourceMap.name to:out_Geom_file
-				)
-			)
-				
-			if classOf obj.material == LuxMatteTrans then
-			(
-				if (obj.material.kdTexture != undefined) then
-				(
-					write_texturemap Obj.material.kdTexture out_Geom_file
-				)
-				if (obj.material.KtTexture != undefined) then
-				(
-					write_texturemap Obj.material.ktTexture out_Geom_file
-				)
-				
-				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				format "\"string type\" \"mattetranslucent\"\n" to:out_Geom_file
-				if (obj.material.kdTexture != undefined) then
-				(
-					format " \"texture Kr\" [\"%\"]\n" obj.material.kdTexture.name to:out_Geom_file
-				)
+-- 					format " \"float d\" [%]\n" Obj.material.kadepth to:out_Geom_file
+-- 					
+-- 					if (Obj.material.bumpmapTexture == undefined) then
+-- 					(
+-- 						if (Obj.material.useBumpmap as string == "true") then
+-- 						(
+-- 							format "\"float bumpmap\" [%]\n" Obj.material.bumpMap to:out_Geom_file
+-- 						)
+-- 					)
+-- 					if (obj.material.useBumpmap as string == "true") then
+-- 					(
+-- 						if (Obj.material.bumpmapTexture != undefined) then
+-- 						(
+-- 							format "\"texture bumpmap\" [\"%\"]\n" Obj.material.bumpmapTexture.name to:out_Geom_file
+-- 							format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
+-- 						)
+-- 					)
+-- 					format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 			)
+-- 				
+-- 			if classOf obj.material == LuxrenderLight then
+-- 			(
+-- 				tempmap = getSubTexmap obj.material 1
+-- 				print (classOf tempmap)
+-- 				
+-- 				if (classOf tempmap == LuxrenderBlackbody) then
+-- 				(
+-- 					format "LightGroup \"%\"\n" obj.material.AreaLightSourceMap.group to:out_Geom_file
+-- 					format "Texture \"area:light\" \"color\" \"blackbody\" \"float temperature\" [%]\n" obj.material.AreaLightSourceMap.temperature to:out_Geom_file
+-- 					format "AreaLightSource \"area\" \"texture L\" [\"area:light\"]\n" to:out_Geom_file
+-- 					format "\"float power\" [%]\n" obj.material.AreaLightSourceMap.power to:out_Geom_file
+-- 					format "\"float efficacy\" [%]\n" obj.material.AreaLightSourceMap.efficacy to:out_Geom_file
+-- 					format "\"float gain\" [%]\n" obj.material.AreaLightSourceMap.gain to:out_Geom_file
+-- 					format "Material \"matte\" \"color Kd\" [0.8 0.8 0.8]" to:out_Geom_file
+-- 				)
+-- 				
+-- 				if (classof tempmap == LuxrenderLampSpectrum) then
+-- 				(
+-- 					format "LightGroup \"%\"\n" obj.material.AreaLightSourceMap.spectrumgroupstring to:out_Geom_file
+-- 					format "Texture \"%\" \"color\" \"lampspectrum\" \"string name\" [\"%\"]\n" obj.material.AreaLightSourceMap.name obj.material.AreaLightSourceMap.spectrumnamestring to:out_Geom_file
+-- 					format "AreaLightSource \"area\" \"texture L\" [\"%\"]\n" obj.material.AreaLightSourceMap.name to:out_Geom_file
+-- 				)
+-- 			)
+-- 				
+-- 			if classOf obj.material == LuxMatteTrans then
+-- 			(
+-- 				if (obj.material.kdTexture != undefined) then
+-- 				(
+-- 					write_texturemap Obj.material.kdTexture out_Geom_file
+-- 				)
+-- 				if (obj.material.KtTexture != undefined) then
+-- 				(
+-- 					write_texturemap Obj.material.ktTexture out_Geom_file
+-- 				)
+-- 				
+-- 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 				format "\"string type\" \"mattetranslucent\"\n" to:out_Geom_file
+-- 				if (obj.material.kdTexture != undefined) then
+-- 				(
+-- 					format " \"texture Kr\" [\"%\"]\n" obj.material.kdTexture.name to:out_Geom_file
+-- 				)
 
-				if (obj.material.kdTexture == undefined) then
-				(
-					format "\"color Kr\" [% % %]\n" (Obj.material.diffuseColor.r / 255) (Obj.material.diffuseColor.g / 255) (Obj.material.diffuseColor.b / 255)  to:out_Geom_file
-				)
-				if (obj.material.KtTexture != undefined) then
-				(
-					format " \"texture Kt\" [\"%\"]\n" obj.material.KtTexture.name to:out_Geom_file
-				)
-				
-				if (obj.material.KtTexture == undefined) then
-				(
-					format "\"color Kt\" [% % %]\n" (Obj.material.transmitivitycolor.r / 255) (Obj.material.transmitivitycolor.g / 255) (Obj.material.transmitivitycolor.b / 255)  to:out_Geom_file
-				)
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-			)
-			
-			if classof obj.material == LuxrenderMirror then
-			(
-				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				format "\"string type\" \"mirror\"\n" to:out_Geom_file
-				format "\"color Kr\" [% % %]" (obj.material.mirrorkdColor.r / 255) (obj.material.mirrorkdColor.g / 255) (obj.material.mirrorkdColor.b / 255) to:out_Geom_file
-				format "\"float film\" [%]\n" obj.material.mirror_film to:out_Geom_file
-				format "\"float filmindex\" [%]\n" obj.material.mirror_index to:out_Geom_file
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-			)
-			
-			if classof obj.material == LuxNullMaterial then
-			(
-				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				format "\"string type\" \"null\"\n" to:out_Geom_file
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-			)
-			
-			if classof obj.material == LuxTest then
-			(
-				if (obj.material.KtTexture != undefined) then
-				(
-					write_texturemap Obj.material.ktTexture out_Geom_file
-				)
-				if (obj.material.KrTexture != undefined) then
-				(
-					write_texturemap Obj.material.KrTexture out_Geom_file
-				)
-				
-				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				format "\"string type\" \"roughglass\"\n" to:out_Geom_file
-				if (obj.material.KtTexture != undefined) then
-				(
-					format " \"texture Kt\" [\"%\"]\n" obj.material.KtTexture.name to:out_Geom_file
-				)
-				if (obj.material.KrTexture != undefined) then
-				(
-					format " \"texture Kr\" [\"%\"]\n" obj.material.KrTexture.name to:out_Geom_file
-				)
-				
-				if (obj.material.KtTexture == undefined) then
-				(
-					format "\"color Kt\" [% % %]\n" (Obj.material.transmissioncolor.r / 255) (Obj.material.transmissioncolor.g / 255) (Obj.material.transmissioncolor.b / 255)  to:out_Geom_file
-				)
-				
-				if (obj.material.KrTexture == undefined) then
-				(
-					format "\"color Kr\" [% % %]\n" (Obj.material.roughreflectioncolor.r / 255) (Obj.material.roughreflectioncolor.g / 255) (Obj.material.roughreflectioncolor.b / 255)  to:out_Geom_file
-				)
-				
-				format "\"float vroughness\" [%]\n" obj.material.vroughness to:out_Geom_file
-				format "\"float uroughness\" [%]\n" obj.material.uroughness to:out_Geom_file
-				format "\"float index\" [%]\n" obj.material.ior to:out_Geom_file
-				format "\"float cauchyb\" [%]\n" obj.material.cauchyb to:out_Geom_file
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-			)
-			
-			if classof obj.material == velvet then
-			(
-				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				format "\"string type\" [\"velvet\"]\n" to:out_Geom_file
-				format "\"color Kd\" [% % %]\n"  (Obj.material.kdColor.r / 255) (Obj.material.kdColor.g / 255) (Obj.material.kdColor.b / 255)  to:out_Geom_file
-				format "\"float thickness\" [%]\n" Obj.material.thickness to:out_Geom_file
-				format "\"float p1\" [%]\n"  Obj.material.p1 to:out_Geom_file
-				format "\"float p2\" [%]\n" Obj.material.p2 to:out_Geom_file
-				format "\"float p3\" [%]\n" Obj.material.p3 to:out_Geom_file
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-			)
-			
-			if classof obj.material == LuxrenderPortal2 then
-			(
-				format "PortalShape \"trianglemesh\"\n" to:out_Geom_file
-			)
-			
-			if classof obj.material == LuxrenderCarPaint then
-			(
-				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				format "\"string type\" \"carpaint\" \n" to:out_Geom_file
-				paintnameString = ""
-				--"Blue Matte", "Blue", "White", "2k Acrylack", "BMW 339", "Opel Titan", "Polaris Silber", "Ford F8"
-				if obj.material.paintname == 1 do
-				(
-					paintnameString = toLower "Blue Matte"
-					
-				)
-				if obj.material.paintname == toLower 2 do
-				(
-					paintnameString = toLower "Blue"
-				)
-				if obj.material.paintname == 3 do
-				(
-					paintnameString = toLower "White"
-				)
-				if obj.material.paintname == 4 do
-				(
-					paintnameString =toLower  "2k Acrylack"
-				)
-				if obj.material.paintname == 5 do
-				(
-					paintnameString = toLower "BMW339"
-				)
-				if obj.material.paintname == 6 do
-				(
-					paintnameString = toLower "Opel Titan"
-				)
-				if obj.material.paintname == 7 do
-				(
-					paintnameString = toLower "Polaris Silber"
-				)
-				if obj.material.paintname == 8 do
-				(
-					paintnameString = toLower "Ford F8"
-				)
-				
-				if (obj.material.useka)do
-				(
-				--	if (obj.material.katexture == undefined )do
-				--	(
-						--apply kacolor
-						format "\"color Ka\" [% % %]\n"  (Obj.material.kacolor.r / 255) (Obj.material.kacolor.g / 255) (Obj.material.kacolor.b / 255)  to:out_Geom_file
-					--)
-					--if (obj.material.katexture != undefined )do
-					--(
-						--send to write texture function
-						--getandwriteMaterialTexture Obj.material.katexture out_Geom_file
-					--)
-					
-				)
-				format " \"float d\" [%]\n" obj.material.kadepth to:out_Geom_file
-				format "\t\"string name\" [\"%\"]\n" paintnameString to:out_Geom_file--name from dropdown
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				
-				
-				--format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
-			)
-				
-				
-				------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-				------------------------------EXPORT GEOMETRY BEGIN---------------------------------------------------------------------------------------------------------------------------------------------------
-				------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-				
-				format "\n#**** Numfaces: % **** \n"  num_faces to:out_Geom_file
-				for i = 1 to num_faces do
-					(
-						face = getFace Obj i
-						
-						v1 = (MeshArrays[2].count + 1)
-						v2 = (MeshArrays[2].count + 2)
-						v3 = (MeshArrays[2].count + 3)
-						
-						append MeshArrays[1] [v1,v2,v3]
-						
-						v1 =  getvert Obj face.x
-						v2 =  getvert Obj face.y
-						v3 =  getvert Obj face.z
-						
-						append MeshArrays[2] v1
-						append MeshArrays[2] v2
-						append MeshArrays[2] v3
-						
-						myTransform = Obj.transform
-						
-						v1 = (coordsys local getnormal Obj face.x)* myTransform  - (myTransform.translationpart)	-- * theInvTM 
-						v2 = (coordsys local getnormal Obj face.y)* myTransform  - (myTransform.translationpart)	--* theInvTM 
-						v3 = (coordsys local getnormal Obj face.z) * myTransform - (myTransform.translationpart)	--* theInvTM 
-						
-						v11 = normalize v1
-						v22 = normalize v2
-						v33 = normalize v3
-						
-						append MeshArrays[4] v11
-						append MeshArrays[4] v22
-						append MeshArrays[4] v33
-						
-						if Obj.numtverts != 0 then 
-						( 
-							tvface = getTVFace Obj i
-							v1 = getTVert Obj tvface.x
-							v2 = getTVert Obj tvface.y
-							v3 = getTVert Obj tvface.z
-							append MeshArrays[3] v1
-							append MeshArrays[3] v2	
-							append MeshArrays[3] v3	
-						)
-					)
-				-- **** Triangle Indiex *****
-				format "\nShape \"trianglemesh\" \"integer indices\"\n"  to:out_Geom_file	
-				format "[\n"  to:out_Geom_file					
-				for f in MeshArrays[1] do
-					(
-						format "\t% % %\n" (f.x as integer - 1) (f.y as integer - 1) (f.z as integer - 1) to:out_Geom_file
-					)					
-				format "]\n"  to:out_Geom_file
-					
-				-- **** Points ****
-				format "\"point P\" \n[ \n"  to:out_Geom_file					
-				for v in MeshArrays[2] do
-					(
-						format "\t% % %\n" v.x v.y v.z to:out_Geom_file
-					)					
-				format "]\n"  to:out_Geom_file
-					
-				if MeshArrays[3].count != 0 then (
-					format "\"float uv\"  \n[\n"  to:out_Geom_file		
-					for v in MeshArrays[3] do
-					(
-						vert = v -- Obj.transform.row4
-						format "\t% %\n" vert.x -vert.y to:out_Geom_file
-					)
-					format "]\n"  to:out_Geom_file
-				)
-				-- **** Normals ****
-				format "\"normal N\" \n[\n"  to:out_Geom_file	
-				for v in MeshArrays[4] do
-				(
-					format "\t% % %\n" v.x v.y v.z to:out_Geom_file
-				)
-				format "]\n"  to:out_Geom_file						
-				format "\nAttributeEnd \n" to:out_Geom_file
-				format "\n#**** End Object: % **** \n"  Obj.name to:out_Geom_file		
-				deleteModifier obj (1)
-			)
-			
-		)
-	)
+-- 				if (obj.material.kdTexture == undefined) then
+-- 				(
+-- 					format "\"color Kr\" [% % %]\n" (Obj.material.diffuseColor.r / 255) (Obj.material.diffuseColor.g / 255) (Obj.material.diffuseColor.b / 255)  to:out_Geom_file
+-- 				)
+-- 				if (obj.material.KtTexture != undefined) then
+-- 				(
+-- 					format " \"texture Kt\" [\"%\"]\n" obj.material.KtTexture.name to:out_Geom_file
+-- 				)
+-- 				
+-- 				if (obj.material.KtTexture == undefined) then
+-- 				(
+-- 					format "\"color Kt\" [% % %]\n" (Obj.material.transmitivitycolor.r / 255) (Obj.material.transmitivitycolor.g / 255) (Obj.material.transmitivitycolor.b / 255)  to:out_Geom_file
+-- 				)
+-- 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 			)
+-- 			
+-- 			if classof obj.material == LuxrenderMirror then
+-- 			(
+-- 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 				format "\"string type\" \"mirror\"\n" to:out_Geom_file
+-- 				format "\"color Kr\" [% % %]" (obj.material.mirrorkdColor.r / 255) (obj.material.mirrorkdColor.g / 255) (obj.material.mirrorkdColor.b / 255) to:out_Geom_file
+-- 				format "\"float film\" [%]\n" obj.material.mirror_film to:out_Geom_file
+-- 				format "\"float filmindex\" [%]\n" obj.material.mirror_index to:out_Geom_file
+-- 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 			)
+-- 			
+-- 			if classof obj.material == LuxNullMaterial then
+-- 			(
+-- 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 				format "\"string type\" \"null\"\n" to:out_Geom_file
+-- 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 			)
+-- 			
+-- 			if classof obj.material == LuxTest then
+-- 			(
+-- 				if (obj.material.KtTexture != undefined) then
+-- 				(
+-- 					write_texturemap Obj.material.ktTexture out_Geom_file
+-- 				)
+-- 				if (obj.material.KrTexture != undefined) then
+-- 				(
+-- 					write_texturemap Obj.material.KrTexture out_Geom_file
+-- 				)
+-- 				
+-- 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 				format "\"string type\" \"roughglass\"\n" to:out_Geom_file
+-- 				if (obj.material.KtTexture != undefined) then
+-- 				(
+-- 					format " \"texture Kt\" [\"%\"]\n" obj.material.KtTexture.name to:out_Geom_file
+-- 				)
+-- 				if (obj.material.KrTexture != undefined) then
+-- 				(
+-- 					format " \"texture Kr\" [\"%\"]\n" obj.material.KrTexture.name to:out_Geom_file
+-- 				)
+-- 				
+-- 				if (obj.material.KtTexture == undefined) then
+-- 				(
+-- 					format "\"color Kt\" [% % %]\n" (Obj.material.transmissioncolor.r / 255) (Obj.material.transmissioncolor.g / 255) (Obj.material.transmissioncolor.b / 255)  to:out_Geom_file
+-- 				)
+-- 				
+-- 				if (obj.material.KrTexture == undefined) then
+-- 				(
+-- 					format "\"color Kr\" [% % %]\n" (Obj.material.roughreflectioncolor.r / 255) (Obj.material.roughreflectioncolor.g / 255) (Obj.material.roughreflectioncolor.b / 255)  to:out_Geom_file
+-- 				)
+-- 				
+-- 				format "\"float vroughness\" [%]\n" obj.material.vroughness to:out_Geom_file
+-- 				format "\"float uroughness\" [%]\n" obj.material.uroughness to:out_Geom_file
+-- 				format "\"float index\" [%]\n" obj.material.ior to:out_Geom_file
+-- 				format "\"float cauchyb\" [%]\n" obj.material.cauchyb to:out_Geom_file
+-- 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 			)
+-- 			
+-- 			if classof obj.material == velvet then
+-- 			(
+-- 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 				format "\"string type\" [\"velvet\"]\n" to:out_Geom_file
+-- 				format "\"color Kd\" [% % %]\n"  (Obj.material.kdColor.r / 255) (Obj.material.kdColor.g / 255) (Obj.material.kdColor.b / 255)  to:out_Geom_file
+-- 				format "\"float thickness\" [%]\n" Obj.material.thickness to:out_Geom_file
+-- 				format "\"float p1\" [%]\n"  Obj.material.p1 to:out_Geom_file
+-- 				format "\"float p2\" [%]\n" Obj.material.p2 to:out_Geom_file
+-- 				format "\"float p3\" [%]\n" Obj.material.p3 to:out_Geom_file
+-- 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 			)
+-- 			
+-- 			if classof obj.material == LuxrenderPortal2 then
+-- 			(
+-- 				format "PortalShape \"trianglemesh\"\n" to:out_Geom_file
+-- 			)
+-- 			
+-- 			if classof obj.material == LuxrenderCarPaint then
+-- 			(
+-- 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 				format "\"string type\" \"carpaint\" \n" to:out_Geom_file
+-- 				paintnameString = ""
+-- 				--"Blue Matte", "Blue", "White", "2k Acrylack", "BMW 339", "Opel Titan", "Polaris Silber", "Ford F8"
+-- 				if obj.material.paintname == 1 do
+-- 				(
+-- 					paintnameString = toLower "Blue Matte"
+-- 					
+-- 				)
+-- 				if obj.material.paintname == toLower 2 do
+-- 				(
+-- 					paintnameString = toLower "Blue"
+-- 				)
+-- 				if obj.material.paintname == 3 do
+-- 				(
+-- 					paintnameString = toLower "White"
+-- 				)
+-- 				if obj.material.paintname == 4 do
+-- 				(
+-- 					paintnameString =toLower  "2k Acrylack"
+-- 				)
+-- 				if obj.material.paintname == 5 do
+-- 				(
+-- 					paintnameString = toLower "BMW339"
+-- 				)
+-- 				if obj.material.paintname == 6 do
+-- 				(
+-- 					paintnameString = toLower "Opel Titan"
+-- 				)
+-- 				if obj.material.paintname == 7 do
+-- 				(
+-- 					paintnameString = toLower "Polaris Silber"
+-- 				)
+-- 				if obj.material.paintname == 8 do
+-- 				(
+-- 					paintnameString = toLower "Ford F8"
+-- 				)
+-- 				
+-- 				if (obj.material.useka)do
+-- 				(
+-- 				--	if (obj.material.katexture == undefined )do
+-- 				--	(
+-- 						--apply kacolor
+-- 						format "\"color Ka\" [% % %]\n"  (Obj.material.kacolor.r / 255) (Obj.material.kacolor.g / 255) (Obj.material.kacolor.b / 255)  to:out_Geom_file
+-- 					--)
+-- 					--if (obj.material.katexture != undefined )do
+-- 					--(
+-- 						--send to write texture function
+-- 						--getandwriteMaterialTexture Obj.material.katexture out_Geom_file
+-- 					--)
+-- 					
+-- 				)
+-- 				format " \"float d\" [%]\n" obj.material.kadepth to:out_Geom_file
+-- 				format "\t\"string name\" [\"%\"]\n" paintnameString to:out_Geom_file--name from dropdown
+-- 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+-- 				
+-- 				
+-- 				--format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
+-- 			)
+-- 				
+-- 				
+-- 				------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 				------------------------------EXPORT GEOMETRY BEGIN---------------------------------------------------------------------------------------------------------------------------------------------------
+-- 				------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 				
+-- 				format "\n#**** Numfaces: % **** \n"  num_faces to:out_Geom_file
+-- 				for i = 1 to num_faces do
+-- 					(
+-- 						face = getFace Obj i
+-- 						
+-- 						v1 = (MeshArrays[2].count + 1)
+-- 						v2 = (MeshArrays[2].count + 2)
+-- 						v3 = (MeshArrays[2].count + 3)
+-- 						
+-- 						append MeshArrays[1] [v1,v2,v3]
+-- 						
+-- 						v1 =  getvert Obj face.x
+-- 						v2 =  getvert Obj face.y
+-- 						v3 =  getvert Obj face.z
+-- 						
+-- 						append MeshArrays[2] v1
+-- 						append MeshArrays[2] v2
+-- 						append MeshArrays[2] v3
+-- 						
+-- 						myTransform = Obj.transform
+-- 						
+-- 						v1 = (coordsys local getnormal Obj face.x)* myTransform  - (myTransform.translationpart)	-- * theInvTM 
+-- 						v2 = (coordsys local getnormal Obj face.y)* myTransform  - (myTransform.translationpart)	--* theInvTM 
+-- 						v3 = (coordsys local getnormal Obj face.z) * myTransform - (myTransform.translationpart)	--* theInvTM 
+-- 						
+-- 						v11 = normalize v1
+-- 						v22 = normalize v2
+-- 						v33 = normalize v3
+-- 						
+-- 						append MeshArrays[4] v11
+-- 						append MeshArrays[4] v22
+-- 						append MeshArrays[4] v33
+-- 						
+-- 						if Obj.numtverts != 0 then 
+-- 						( 
+-- 							tvface = getTVFace Obj i
+-- 							v1 = getTVert Obj tvface.x
+-- 							v2 = getTVert Obj tvface.y
+-- 							v3 = getTVert Obj tvface.z
+-- 							append MeshArrays[3] v1
+-- 							append MeshArrays[3] v2	
+-- 							append MeshArrays[3] v3	
+-- 						)
+-- 					)
+-- 				-- **** Triangle Indiex *****
+-- 				format "\nShape \"trianglemesh\" \"integer indices\"\n"  to:out_Geom_file	
+-- 				format "[\n"  to:out_Geom_file					
+-- 				for f in MeshArrays[1] do
+-- 					(
+-- 						format "\t% % %\n" (f.x as integer - 1) (f.y as integer - 1) (f.z as integer - 1) to:out_Geom_file
+-- 					)					
+-- 				format "]\n"  to:out_Geom_file
+-- 					
+-- 				-- **** Points ****
+-- 				format "\"point P\" \n[ \n"  to:out_Geom_file					
+-- 				for v in MeshArrays[2] do
+-- 					(
+-- 						format "\t% % %\n" v.x v.y v.z to:out_Geom_file
+-- 					)					
+-- 				format "]\n"  to:out_Geom_file
+-- 					
+-- 				if MeshArrays[3].count != 0 then (
+-- 					format "\"float uv\"  \n[\n"  to:out_Geom_file		
+-- 					for v in MeshArrays[3] do
+-- 					(
+-- 						vert = v -- Obj.transform.row4
+-- 						format "\t% %\n" vert.x -vert.y to:out_Geom_file
+-- 					)
+-- 					format "]\n"  to:out_Geom_file
+-- 				)
+-- 				-- **** Normals ****
+-- 				format "\"normal N\" \n[\n"  to:out_Geom_file	
+-- 				for v in MeshArrays[4] do
+-- 				(
+-- 					format "\t% % %\n" v.x v.y v.z to:out_Geom_file
+-- 				)
+-- 				format "]\n"  to:out_Geom_file						
+-- 				format "\nAttributeEnd \n" to:out_Geom_file
+-- 				format "\n#**** End Object: % **** \n"  Obj.name to:out_Geom_file		
+-- 				deleteModifier obj (1)
+-- 			)
+-- 			
+-- 		)
+-- 	)
 	
 	fn WriteShaders Obj  &out_Geom_file = 
 	(
@@ -884,7 +897,7 @@
 						format " \"color Ks\" [% % %]\n" (Obj.material.kscolor.r / 255) (Obj.material.kscolor.g / 255) (Obj.material.kscolor.b / 255) to:out_Geom_file
 					)
 					
-					if Obj.material.useka as string == "on" then
+					if (Obj.material.useka) then
 					(
 						if Obj.material.katexture != undefined then
 						(

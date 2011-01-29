@@ -154,6 +154,9 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 		(
 			mAbsorption.enabled = s
 			mAbsorptionTexture.enabled = s
+			useka = s
+			print "useKa"
+			print useKa
 		)
 		group "Advanced Parameters"
 		(
