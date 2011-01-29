@@ -65,6 +65,12 @@
 		format "\"color\" \"imagemap\" \"string wrap\" [\"repeat\"]\n" to:out_Geom_file
 		format "\"string filename\" [\"%\"]\n" Obj.filename to:out_Geom_file
 	)
+	fn write_texturemap_float Obj &out_Geom_file=
+	(
+		format "Texture \"%\"\n" Obj.name to:out_Geom_file
+		format "\"float\" \"imagemap\" \"string wrap\" [\"repeat\"]\n" to:out_Geom_file
+		format "\"string filename\" [\"%\"]\n" Obj.filename to:out_Geom_file
+	)
 	
 	fn getandwriteMaterialTexture Obj &out_Geom_file=
 	(
@@ -680,7 +686,7 @@
 						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
 					)
 				)
-				
+
 				if (Obj.material.kdTexture != undefined) do
 				(
 					getandwriteMaterialTexture Obj.material.kdTexture out_Geom_file
@@ -710,6 +716,10 @@
 						format "\"texture bumpmap\" [\"%\"]\n" Obj.material.bumpmapTexture.name to:out_Geom_file
 						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
 					)
+					
+					
+					
+					
 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 			)
 			
@@ -820,6 +830,7 @@
 			(
 				print "creating glossy material:"
 				print Obj.material.useBumpmap as string
+				
 				if Obj.material.useBumpmap as string == "true" then
 				(
 					print "usebumpmap"
@@ -835,6 +846,18 @@
 						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
 					)
 				)
+						print "use ior"
+						print Obj.material.useior
+					
+				if (Obj.material.useior) then
+					(
+						if (Obj.material.iorTexture != undefined)do
+						(
+							--	getandwriteMaterialTexture Obj.material.iorTexture out_Geom_file
+							write_texturemap_float Obj.material.iorTexture out_Geom_file
+						)
+						
+					)
 					
 				if Obj.material.kdTexture != undefined then
 				(
@@ -880,7 +903,8 @@
 					(	
 						format " \"color Kd\" [% % %]\n" (Obj.material.Kdcolor.r / 255) (Obj.material.Kdcolor.g / 255) (Obj.material.Kdcolor.b / 255)  to:out_Geom_file
 					)
-					if Obj.material.useior as string == "off" then
+					
+					if (Obj.material.useior) then
 					(
 						if Obj.material.iorTexture != undefined then
 						(
