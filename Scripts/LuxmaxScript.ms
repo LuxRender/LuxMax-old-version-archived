@@ -290,7 +290,8 @@
 					(
 						print "Ka Texture name:"
 						print Obj.material.katexture.name as string
-						write_texturemap Obj.material.ksTexture out_Geom_file
+						print Obj.material.katexture as string
+						write_texturemap Obj.material.katexture out_Geom_file
 					)
 					format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 					format "\"string type\" \"glossy\"\n" to:out_Geom_file
@@ -847,7 +848,7 @@
 					(
 						print "Ka Texture name:"
 						print Obj.material.katexture.name as string
-						write_texturemap Obj.material.ksTexture out_Geom_file
+						write_texturemap Obj.material.kaTexture out_Geom_file
 					)
 					format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 					format "\"string type\" \"glossy\"\n" to:out_Geom_file
