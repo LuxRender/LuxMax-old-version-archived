@@ -956,9 +956,10 @@
 			--checkbox chk_use_old_script "Use old script export." pos:[8,8] width:128 height:16
 			checkbox chk_ply "ply export" pos:[8,24] width:80 height:16
 			checkbox chk_skip_exsisting_geom "skip exsisting geometry files" pos:[8,40] width:160 height:16
+			checkbox chk_kill_lux "Kill luxrender.exe before launching" pos:[8,8] width:192 height:16
 			
-			on luxmaxgeom open  do
-			(
+			on luxmaxgeom open do
+				(
 				
 			)
 			on btn_Export pressed do
@@ -970,6 +971,15 @@
 				
 				if templxssavefilepath != undefined then
 				(
+					if (chk_kill_lux.checked == true)then
+					(
+						try
+						(
+							HiddenDOSCommand  "taskkill /IM luxrender.exe"
+							HiddenDOSCommand  "taskkill /IM luxconsole.exe"
+						)catch()
+					)
+					
 					exportanim = false
 					deleteFile lxssavefilepath
 					out_Geom_file = createfile lxssavefilepath
