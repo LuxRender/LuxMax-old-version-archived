@@ -61,6 +61,21 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		Fireflies_Rej type:#integer default:0 UI:spn16
 	)
 	
+	rollout target "Create Target camera" width:160 height:100 rolledup:true
+	(
+		button btn1 "Create target" pos:[8,8] width:144 height:24
+		
+		on btn1 pressed  do
+		(
+			myTransform = $.transform
+			myTransform.row4 = [$.pos.x, $.pos.y,$.pos.z] 
+			tempcamname = $.name
+			cam = $
+			Dummy transform:(myTransform) isSelected:on
+			$.name = (tempcamname + "_Target")
+			$.lookat=cam
+		)
+	)
 	
 	rollout filmparams "Film parameters" width:160 height:720 rolledup:true
 	(

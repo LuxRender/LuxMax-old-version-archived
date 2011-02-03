@@ -129,15 +129,12 @@
 						format "\"float bumpmap\" [%]\n" Obj.material.bumpMap to:out_Geom_file
 					)
 				)
+				
 				if (Obj.material.bumpmapTexture != undefined) do
-					(
-						format "\"texture bumpmap\" [\"%\"]\n" Obj.material.bumpmapTexture.name to:out_Geom_file
-						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-					)
-					
-					
-					
-					
+				(
+					format "\"texture bumpmap\" [\"%\"]\n" Obj.material.bumpmapTexture.name to:out_Geom_file
+					format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
+				)
 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 			)
 			
@@ -948,6 +945,21 @@
 			format "%:\t%\n" "objecttransform " obj.objecttransform
 		)
 		
+		fn writeSkyPortal obj &out_file =
+		(
+			--ObjectBegin  "Plane.001"
+			format "ObjectBegin \"%\"\n" obj.name to:out_file
+			--Transform [1.200000047683716 0.000000000000000 0.000000000000000 0.000000000000000 0.000000000000000 1.200000047683716 0.000000000000000 0.000000000000000 0.000000000000000 0.000000000000000 1.200000047683716 0.000000000000000 0.000000000000000 0.000000000000000 20.711303710937500 1.000000000000000]
+			--Shape "trianglemesh"
+			format "Shape \"trianglemesh\"\n" to:out_file
+			--"integer indices" [0 1 2 0 2 3]
+			--"point P" [1.000000000000000 0.999999940395355 -0.050191871821880 1.000000000000000 -1.000000000000000 -0.050191871821880 -1.000000119209290 -0.999999821186066 -0.050191871821880 -0.999999642372131 1.000000357627869 -0.050191871821880]
+			--"normal N" [0.000000000000000 0.000000000000000 -1.000000000000000 0.000000000000000 0.000000000000000 -1.000000000000000 0.000000000000000 0.000000000000000 -1.000000000000000 0.000000000000000 0.000000000000000 -1.000000000000000]
+			--ObjectEnd
+			
+			
+		)
+		
 		rollout luxmaxgeom "Scene" width:232 height:112
 		(
 			button btn_Export "Export" pos:[8,56] width:216 height:16
@@ -1014,13 +1026,16 @@
 					
 					if (doexport) do
 					(
-						TheObjects = for o in objects where superclassof o == GeometryClass and classof o != Targetobject and (not o.isHidden) collect o
-						TheLights 	=  for o in lights where  classof o != Targetobject and (not o.isHidden) collect o
+						TheObjects = for o in objects where superclassof o == GeometryClass and classof o != Targetobject and (not o.isHidden) and classof o != mr_Sky_Portal collect o
+						TheLights 	=  for o in lights where  classof o != Targetobject and (not o.isHidden) and classof o != mr_Sky_Portal collect o
+						
 					--	print "Found numlights in scene:"
 					--	print TheLights.count as string
 						
-						TheSun = for o in lights where  classof o == LuxSun collect o
-						TheSky = for o in lights where  classof o == LuxSky collect o
+						TheSun = for o in lights where  classof o == LuxSun and classof o != mr_Sky_Portal collect o
+						TheSky = for o in lights where  classof o == LuxSky  and classof o != mr_Sky_Portal collect o 
+						TheSkyPortals = for o in objects where classof o == mr_Sky_Portal collect o
+							
 						
 						for o = 1 to TheLights.count do
 						(
@@ -1042,26 +1057,15 @@
 							Pbrt_Lights TheSky[o] out_Geom_file
 						)
 						
-			-- 						if (exportanim) do
-			--  						(
-			--  							-- TODO: Create filename based on frame number.
-			--  							for i = animationrange.start to animationrange.end do
-			--  							(
-			--  								print "exporting frame:"
-			--  								print i
-			--  							)
-			--  						)
+						for o = 1 to TheSkyPortals.count do
+						(
+							print (TheSkyPortals[o].name as string)
+							
+						)
 						
 						progressBarexport.value = 0
 						
-						--if (chk_use_old_script.state == true)then
-						--(
-						--	messageBox ("old script export is removed due to being insanely slow and incomplete")
-						--)
 						
-					--	if (chk_use_old_script.state == false)then
-						--(
-						--	print "new plugin export"
 							exportwithplugin = true
 							for o = 1 to TheObjects.count do
 							(
@@ -1103,6 +1107,8 @@
 										--LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".lxg" ) true--$ "c:\\luxrender\\test.ply" false
 										if (chk_skip_exsisting_geom.state == false)do
 										(
+											print "exporting"
+											print  TheObjects[o].name
 											LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" )
 										)
 										
