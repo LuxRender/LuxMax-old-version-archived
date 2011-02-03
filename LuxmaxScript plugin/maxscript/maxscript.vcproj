@@ -227,7 +227,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib"
-				OutputFile="C:\Development\LuxmaxScript plugin\bin\Luxmax_Binary_X32.dlx"
+				OutputFile="C:\Development\Luxmax\bin\Luxmax_Binary_X32.dlx"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="C:\3ds Max 2008\maxsdk\lib"
 				ModuleDefinitionFile="Maxscript.def"
@@ -307,7 +307,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib"
-				OutputFile="C:\Development\LuxmaxScript plugin\bin\Luxmax_Binary_X64.dlx"
+				OutputFile="C:\Development\Luxmax\bin\Luxmax_Binary_X64.dlx"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="C:\3ds Max 2008\maxsdk\lib"
 				ModuleDefinitionFile="Maxscript.def"

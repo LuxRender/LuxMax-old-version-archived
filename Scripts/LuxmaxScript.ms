@@ -20,6 +20,8 @@
 	persistent global tempframe
 	persistent global exportwithplugin
 	persistent global skip_exsisting_geom
+	persistent global TheSkyPortals
+	global exportply	
 	
 	fn writeToFile string &out_Geom_file =
 	(
@@ -497,7 +499,7 @@
 			
 			if classof obj.material == LuxrenderPortal2 then
 			(
-				format "PortalShape \"trianglemesh\"\n" to:out_Geom_file
+				--format "PortalShape \"trianglemesh\"\n" to:out_Geom_file
 			)
 			
 			if classof obj.material == LuxrenderCarPaint then
@@ -616,11 +618,34 @@
 				format "AttributeBegin # %\n"	 Lt.name to:out_file	
 				format "LightGroup \"Sun\"\n" to:out_file	
 				format "LightSource \"sun\"\n" to:out_file	
+				--scan for portals and add them
+
+				
+				--scan for portals and add them
 				format "\"vector sundir\" [% % %]" Lt.pos.x Lt.pos.y Lt.pos.z to:out_file
 				format "\"float gain\" [%]\n" (getUserProp Lt "gain") to:out_file
 				format "\"float relsize\" [%]\n" (getUserProp Lt "relsize") to:out_file
 				format "\"float turbidity\" [%]\n" (getUserProp Lt "turbidity") to:out_file
 				format "\"integer nsamples\" [%]\n" (getUserProp Lt "nsamples") to:out_file
+				
+				for i = 1 to TheSkyPortals.count do
+				(
+					print "adding portal shapes.."
+					print (TheSkyPortals[i].name)
+					temppath = getFilenamePath templxssavefilepath
+					print exportply
+					if (exportply as string == "true")do
+					(
+						temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
+						format "Include \"%\"" (temppathfixed + TheSkyPortals[i].name + ".ply\n" ) to:out_file
+					)
+					if (exportply as string == "false")do
+					(
+						temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
+						format "Include \"%\"" (temppathfixed + TheSkyPortals[i].name + ".lxm\n" ) to:out_file
+					)
+				)
+				
 				format "AttributeEnd # %\n\n"	 Lt.name to:out_file	
 			)
 			
@@ -634,6 +659,24 @@
 				format "\"float relsize\" [%]\n" (getUserProp Lt "relsize") to:out_file
 				format "\"float turbidity\" [%]\n" (getUserProp Lt "turbidity") to:out_file
 				format "\"integer nsamples\" [%]\n" (getUserProp Lt "nsamples") to:out_file
+				
+				for i = 1 to TheSkyPortals.count do
+				(
+					print "adding portal shapes.."
+					print (TheSkyPortals[i].name)
+					temppath = getFilenamePath templxssavefilepath
+					print exportply
+					if (exportply as string == "true")do
+					(
+						temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
+						format "Include \"%\"" (temppathfixed + TheSkyPortals[i].name + ".ply\n" ) to:out_file
+					)
+					if (exportply as string == "false")do
+					(
+						temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
+						format "Include \"%\"" (temppathfixed + TheSkyPortals[i].name + ".lxm\n" ) to:out_file
+					)
+				)
 				
 				format "AttributeEnd # %\n\n"	 Lt.name to:out_file	
 			)
@@ -1026,7 +1069,8 @@
 					
 					if (doexport) do
 					(
-						TheObjects = for o in objects where superclassof o == GeometryClass and classof o != Targetobject and (not o.isHidden) and classof o != mr_Sky_Portal collect o
+						TheObjects = for o in objects where superclassof o == GeometryClass and classof o != Targetobject and (not o.isHidden) and (not classof o.material == LuxrenderPortal2) and classof o != mr_Sky_Portal collect o
+						--TheObjects = for o in objects where superclassof o == GeometryClass and classof o != Targetobject and (not o.isHidden) and classof o != mr_Sky_Portal collect o
 						TheLights 	=  for o in lights where  classof o != Targetobject and (not o.isHidden) and classof o != mr_Sky_Portal collect o
 						
 					--	print "Found numlights in scene:"
@@ -1034,7 +1078,7 @@
 						
 						TheSun = for o in lights where  classof o == LuxSun and classof o != mr_Sky_Portal collect o
 						TheSky = for o in lights where  classof o == LuxSky  and classof o != mr_Sky_Portal collect o 
-						TheSkyPortals = for o in objects where classof o == mr_Sky_Portal collect o
+						TheSkyPortals = for o in objects where classof o.material == LuxrenderPortal2 collect o
 							
 						
 						for o = 1 to TheLights.count do
@@ -1057,16 +1101,62 @@
 							Pbrt_Lights TheSky[o] out_Geom_file
 						)
 						
-						for o = 1 to TheSkyPortals.count do
-						(
-							print (TheSkyPortals[o].name as string)
-							
-						)
+
 						
 						progressBarexport.value = 0
 						
 						
 							exportwithplugin = true
+						
+							for o =1 to TheSkyPortals.count do
+							(
+								
+								--(
+								addModifier TheSkyPortals[o] (Edit_Mesh ())
+								temppath = getFilenamePath templxssavefilepath
+									if (chk_ply.state == true)do
+									(
+										exportply = true
+										temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
+										
+										if (chk_skip_exsisting_geom.state == false)do
+										(
+											LMX_ExportPLY TheSkyPortals[o] (temppath + TheObjects[o].name + ".ply" ) false--$ "c:\\luxrender\\test.ply" false
+										)
+										
+										if (chk_skip_exsisting_geom.state == true)do
+										(
+											filepathforchecking = (temppathfixed + TheSkyPortals[o].name + ".ply")
+											
+											if(doesFileExist filepathforchecking == false)do
+											(
+												LMX_ExportPLY TheSkyPortals[o] (temppath + TheSkyPortals[o].name + ".ply" ) false--$ "c:\\luxrender\\test.ply" false
+											)
+										)
+									)
+									
+									if (chk_ply.state == false)do
+									(
+										exportply = false
+										--LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".lxg" ) true--$ "c:\\luxrender\\test.ply" false
+										if (chk_skip_exsisting_geom.state == false)do
+										(
+											print "exporting"
+											print  TheSkyPortals[o].name
+											LMX_ExportMesh TheSkyPortals[o] (temppath + TheSkyPortals[o].name + ".lxm" )
+										)
+										
+										if (chk_skip_exsisting_geom.state == true)do
+										(
+											filepathforchecking = (temppath + TheSkyPortals[o].name + ".lxm")
+											if(doesFileExist filepathforchecking == false)do
+											(
+												LMX_ExportMesh TheSkyPortals[o] (temppath + TheSkyPortals[o].name + ".lxm" ) false--$ "c:\\luxrender\\test.ply" false
+											)
+										)
+									)
+							)
+						
 							for o = 1 to TheObjects.count do
 							(
 								addModifier TheObjects[o] (Edit_Mesh ())
@@ -1076,8 +1166,12 @@
 								temppath = getFilenamePath templxssavefilepath
 							
 								--LMX_ExportMesh TheObjects[o] (temppath + TheObjects[o].name + ".lxm" )
+									print "chk_ply.state"
+									print chk_ply.state
+									
 									if (chk_ply.state == true)do
 									(
+										exportply = true
 										temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
 										
 										--print "exporting ply format"
@@ -1086,6 +1180,7 @@
 										
 										if (chk_skip_exsisting_geom.state == false)do
 										(
+											 
 											LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".ply" ) false--$ "c:\\luxrender\\test.ply" false
 										)
 										
@@ -1104,6 +1199,7 @@
 									
 									if (chk_ply.state == false)do
 									(
+										exportply = false
 										--LMX_ExportPLY TheObjects[o] (temppath + TheObjects[o].name + ".lxg" ) true--$ "c:\\luxrender\\test.ply" false
 										if (chk_skip_exsisting_geom.state == false)do
 										(
@@ -1128,12 +1224,13 @@
 									)
 									
 								format "AttributeEnd\n" to:out_Geom_file
+								
 								progressBarexport.value = 100.*o/TheObjects.count
 								progress_text =  "Exporting geometry: " + ((100.0 / TheObjects.count * o) as integer)as string  + " % done."
 								pushprompt progress_text	
 								deleteModifier TheObjects[o] (1)
 							)
-							
+						)
 						--)
 						writeToFile "WorldEnd" out_Geom_file
 						progressBarexport.value = 0
@@ -1149,13 +1246,13 @@
 					)
 					close out_Geom_file	
 				)
-			)
+			--)
 			on chk_skip_exsisting_geom changed state do
 			(
 				skip_exsisting_geom = state
 			)
-		)
-		
+		--)
+	)
 
 
 		rollout luxmaxcam "Camera Settings" width:162 height:78
