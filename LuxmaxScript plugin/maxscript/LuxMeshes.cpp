@@ -83,6 +83,7 @@ LuxMaxMesh::LuxMaxMesh(INode* p_node)
 		{
 			if (material->ClassID() == LUXRENDER_PORTALMATERIAL_ID)
 				isPortal = true;
+			
 		}
 
 		c = 0;
@@ -199,8 +200,7 @@ void WritePortals(INode* p_node, FILE* s_pStream)
 
 		if (lxmesh.numfaces > 0 && lxmesh.isPortal)
 		{
-			fprintf(s_pStream, "# %s\nPortalShape \"trianglemesh\" ", p_node->GetName()); // Portal Name
-
+			fprintf(s_pStream, "PortalShape \"trianglemesh\" ", p_node->GetName()); // Portal Name
 			lxmesh.WriteIndices(s_pStream);
 			lxmesh.WritePoints(s_pStream);
 		}
@@ -220,19 +220,42 @@ void WriteMeshes(INode* p_node, FILE* s_pStream)
 	{
 		LuxMaxMesh lxmesh(p_node);
 
-		if (lxmesh.numfaces > 0 && !lxmesh.isPortal && lxmesh.isTriMesh)
+		if (lxmesh.numfaces > 0 && lxmesh.isTriMesh)
 		{
-			//fprintf(s_pStream, "NamedMaterial \"%s\"\n", material->GetName());
-			fprintf(s_pStream, "# %s\nAttributeBegin\n\n", p_node->GetName());
-
-			fprintf(s_pStream, "Shape \"trianglemesh\" ");
+			
+			if(lxmesh.isPortal)
+			{
+				fprintf(s_pStream, "#is PortalShape\n");
+				fprintf(s_pStream, "#is is now included with sun\sky.\n");
+		//		fprintf(s_pStream, "# %s\nObjectBegin\n\n", p_node->GetName());
+				fprintf(s_pStream, "PortalShape \"trianglemesh\" ");
+			}
+			
+			
+			if( !lxmesh.isPortal)
+			{
+				fprintf(s_pStream, "# %s\nAttributeBegin\n\n", p_node->GetName());
+				fprintf(s_pStream, "Shape \"trianglemesh\" ");
+			}
+	//		if(lxmesh.isPortal)
+	//		{
+		//		fprintf(s_pStream, "PortalShape \"trianglemesh\" ");
+			//}
 
 			lxmesh.WriteIndices(s_pStream);
 			lxmesh.WritePoints(s_pStream);
 			lxmesh.WriteNormals(s_pStream);
 			lxmesh.WriteUvs(s_pStream);
 
-			fprintf(s_pStream, "AttributeEnd\n\n");
+	//		if( lxmesh.isPortal)
+	//		{
+	//			fprintf(s_pStream, "# %s\nObjectEnd\n\n", p_node->GetName());
+	//		}
+			if( !lxmesh.isPortal)
+			{
+				fprintf(s_pStream, "AttributeEnd\n\n");
+			}
+			
 		}
 	}
 }

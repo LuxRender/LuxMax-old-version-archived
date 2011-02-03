@@ -93,7 +93,7 @@
 			Name="Release|x64"
 			>
 			<DebugSettings
-				Command=""
+				Command="C:\Program Files\Autodesk\3ds Max 2011\3dsmax.exe"
 				WorkingDirectory=""
 				CommandArguments=""
 				Attach="false"
