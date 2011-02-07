@@ -22,6 +22,11 @@
 	persistent global skip_exsisting_geom
 	persistent global TheSkyPortals
 	global exportply	
+	persistent global temp_mat_file
+	persistent global temp_geom_file
+	global forpreview
+	global tempShaderBox
+	persistent global luxconsolepath
 	
 	fn writeToFile string &out_Geom_file =
 	(
@@ -43,6 +48,59 @@
 		)
 		tStr
 	)
+	
+	fn preview_selected_material &temp_mat_file =
+	(
+		if (activeMeditSlot == undefined) then
+		(
+			messagebox "error.."
+		)
+		else 
+		(
+			format "#matname is = %\n" (meditMaterials[activeMeditSlot].name) to:temp_mat_file
+			---------------------------------------------------------------------------------------------------------------------------
+			format "LookAt 0.0 -3.0 0.5 0.0 -2.0 0.5 0.0 0.0 1.0\n" to:temp_mat_file
+			format "Camera \"perspective\" \"float fov\" [22.5]\n" to:temp_mat_file
+			format "Film \"fleximage\" \"integer xresolution\" [140] \"integer yresolution\" [140] \"integer ldr_writeinterval\" [3600] \"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [1] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"string filename\" [\"matpreview\"]\n" to:temp_mat_file
+			format "PixelFilter \"mitchell\" \"float xwidth\" [1.500000] \"float ywidth\" [1.500000] \"float B\" [0.333330] \"float C\" [0.333330] \"bool supersample\" [\"true\"]\n" to:temp_mat_file
+			format "Sampler \"lowdiscrepancy\" \"string pixelsampler\" [\"hilbert\"] \"integer pixelsamples\" [8]\n" to:temp_mat_file
+			format "SurfaceIntegrator \"distributedpath\" \"integer directsamples\" [1] \"integer diffusereflectdepth\" [1] \"integer diffusereflectsamples\" [4] \"integer diffuserefractdepth\" [4] \"integer diffuserefractsamples\" [1] \"integer glossyreflectdepth\" [1] \"integer glossyreflectsamples\" [2] \"integer glossyrefractdepth\" [4] \"integer glossyrefractsamples\" [1] \"integer specularreflectdepth\" [2] \"integer specularrefractdepth\" [4]\n" to:temp_mat_file
+			format "WorldBegin\n" to:temp_mat_file
+			---------------------------------------------------------------------------------------------------------------------------
+			--MATERIAL FOR PREVIEW OBJECT
+			temparray =#()
+			---------------------------------------------------------------------------------------------------------------------------
+			format "AttributeBegin\n" to:temp_mat_file
+			format "Include\"temp_matpreview.lxm\"\n" to:temp_mat_file
+			format "Transform [0.5 0.0 0.0 0.0  0.0 0.5 0.0 0.0  0.0 0.0 0.5 0.0  0.0 0.0 0.5 1.0]\n" to:temp_mat_file
+			format "TransformBegin\n" to:temp_mat_file
+			format "Scale 1.000000 1.000000 1.000000\n" to:temp_mat_file
+			format "TransformEnd\n" to:temp_mat_file
+			format "Shape \"sphere\" \"float radius\" [1.0]\n" to:temp_mat_file
+			format "AttributeEnd\n" to:temp_mat_file
+			--MATERIAL FOR PREVIEW OBJECT
+			---------------------------------------------------------------------------------------------------------------------------
+			format "AttributeBegin\n" to:temp_mat_file
+			format "Transform [5.0 0.0 0.0 0.0  0.0 5.0 0.0 0.0  0.0 0.0 5.0 0.0  0.0 0.0 0.0 1.0]\n" to:temp_mat_file
+			format "Texture \"checks::pattern\" \"float\" \"checkerboard\"\"integer dimension\" [2] \"string aamode\" [\"supersample\"]\"string mapping\" [\"uv\"] \"float uscale\" [36.8] \"float vscale\" [36.0]\n" to:temp_mat_file
+			format "Texture \"checks\" \"color\" \"mix\" \"texture amount\" [\"checks::pattern\"] \"color tex1\" [0.9 0.9 0.9] \"color tex2\" [0.0 0.0 0.0]\n" to:temp_mat_file
+			format "Material \"matte\" \"texture Kd\" [\"checks\"]\n" to:temp_mat_file
+			format "Shape \"loopsubdiv\" \"integer nlevels\" [3] \"bool dmnormalsmooth\" [\"true\"] \"bool dmsharpboundary\" [\"false\"] \"integer indices\" [ 0 1 2 0 2 3 1 0 4 1 4 5 5 4 6 5 6 7 ]\"point P\" [ 1.000000 1.000000 0.000000 -1.000000 1.000000 0.000000 -1.000000 -1.000000 0.000000 1.000000 -1.000000 0.000000 1.000000 3.000000 0.000000 -1.000000 3.000000 0.000000 1.000000 3.000000 2.000000 -1.000000 3.000000 2.000000] \"normal N\" [ 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 -0.707083 0.707083 0.000000 -0.707083 0.707083 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000] \"float uv\" [ 0.333334 0.000000 0.333334 0.333334 0.000000 0.333334 0.000000 0.000000 0.666667 0.000000 0.666667 0.333333 1.000000 0.000000 1.000000 0.333333 ]\n" to:temp_mat_file
+			format "AttributeEnd\n" to:temp_mat_file
+			format "AttributeBegin\n" to:temp_mat_file
+			format "Transform [1.0 0.0 0.0 0.0  0.0 1.0 0.0 0.0  0.0 0.0 1.0 0.0  1.0 -1.0 4.0 1.0]\n" to:temp_mat_file
+			format "Texture \"pL\" \"color\" \"blackbody\" \"float temperature\" [6500.0]\n" to:temp_mat_file
+			format "LightSource \"point\" \"texture L\" [\"pL\"] \"float gain\" [0.002]\n" to:temp_mat_file
+			format "AttributeEnd\n" to:temp_mat_file
+			format "WorldEnd\n" to:temp_mat_file
+			forpreview = 0
+			
+			
+			
+		)
+	)
+	
+	
 	
 	fn write_bumpmaptexture Obj &out_Geom_file =
 	(
@@ -84,7 +142,9 @@
 	fn WriteShaders Obj  &out_Geom_file = 
 	(
 		--addModifier obj (Edit_Mesh ())
-
+		print "BEGIN DDDDDDDEEEEEEEEEBBBBBBUUUUUG"
+		print (classof Obj)
+		print "END DDDDDDDEEEEEEEEEBBBBBBUUUUUG"
 		Local MeshArrays = #(#(), #(), #(), #())
 		num_faces = Obj.numfaces
 		--	print (classof Obj.material)
@@ -1349,6 +1409,66 @@
 			label lbl5 "Some code is from PBRT 2 Exporter by Guillermo M. Leal LLaguno." pos:[40,144] width:176 height:32
 			label lbl4 "And big tha for perpixel for starting the exporter (materials \ textures) so that it can be used as a base for this exporter." pos:[40,88] width:176 height:56
 		)
+		
+		rollout preview_material "Preview Material" width:232 height:246
+		(
+			button btn1 "Create preview for sel material" pos:[8,176] width:216 height:24
+			bitmap bmp1 "Bitmap" pos:[8,8] width:216 height:128 --fileName:"C:\Program Files\Autodesk\3ds Max 2011\Scripts\matpreview.png"
+			button btn3 "Browse to luxconsole" pos:[8,144] width:216 height:24
+			
+			
+			on preview_material open do
+			(
+				if (luxconsolepath == undefined) do
+				(
+					btn3.text = luxconsolepath
+					
+				)
+			)
+			on btn1 pressed do
+			(
+				if (luxconsolepath == undefined) do
+					(
+						messagebox "Please browse to luxconsole.exe."
+					)
+				if (luxconsolepath != undefined)do
+				(
+					--create preview
+					temp_mat_file = createFile (scriptsPath + "temp_matpreview.lxs")
+					preview_selected_material temp_mat_file
+					close temp_mat_file
+					temp_mat_file2 = createFile (scriptsPath + "temp_matpreview.lxm")
+					tempShaderBox = box name:"tempShaderBox" position:[0,0,0] height:1
+					tempShaderBox.material = meditMaterials[activeMeditSlot]	
+					convertToMesh tempShaderBox
+					select tempShaderBox
+					WriteShaders $ temp_mat_file2
+					delete tempShaderBox
+					close temp_mat_file
+					close temp_mat_file2
+					
+					templxpreviewspath = getFilenamePath (scriptsPath + "temp_matpreview.lxs")
+					ShellLaunch (luxconsolepath as string)  ("\"" + (scriptsPath + "temp_matpreview.lxs") + "\"")
+					print templxpreviewspath
+					sleep 5
+					
+					bmp1.fileName = (scriptsPath + "matpreview.png")
+					
+				)
+				
+			)
+			on btn3 pressed do
+			(
+			--browse for luxconsole
+				--persistent global luxconsolepath
+				f = getOpenFileName caption:"browse to luxconsole exe:" \ 
+				filename:"c:/luxconsole.exe"
+				btn3.text = f
+				luxconsolepath = f
+				--print "Debug:"
+				--print (f as string)
+			)
+		)
 
 		try(closeRolloutFloater theNewFloater)catch()
 		theNewFloater = newRolloutFloater "LuxMaxscript Exporter" 250 500
@@ -1357,5 +1477,6 @@
 		addRollout luxmaxcam theNewFloater
 		addRollout SceneFile theNewFloater
 		addRollout luxmaxgeom theNewFloater
+		addRollout preview_material theNewFloater
 		addRollout about_script theNewFloater
 	
