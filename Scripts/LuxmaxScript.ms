@@ -63,12 +63,11 @@
 			format "Camera \"perspective\" \"float fov\" [22.5]\n" to:temp_mat_file
 			format "Film \"fleximage\" \"integer xresolution\" [140] \"integer yresolution\" [140] \"integer ldr_writeinterval\" [3600] \"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [1] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"string filename\" [\"matpreview\"]\n" to:temp_mat_file
 			format "PixelFilter \"mitchell\" \"float xwidth\" [1.500000] \"float ywidth\" [1.500000] \"float B\" [0.333330] \"float C\" [0.333330] \"bool supersample\" [\"true\"]\n" to:temp_mat_file
-			format "Sampler \"lowdiscrepancy\" \"string pixelsampler\" [\"hilbert\"] \"integer pixelsamples\" [8]\n" to:temp_mat_file
+			format "Sampler \"lowdiscrepancy\" \"string pixelsampler\" [\"hilbert\"] \"integer pixelsamples\" [16]\n" to:temp_mat_file
 			format "SurfaceIntegrator \"distributedpath\" \"integer directsamples\" [1] \"integer diffusereflectdepth\" [1] \"integer diffusereflectsamples\" [4] \"integer diffuserefractdepth\" [4] \"integer diffuserefractsamples\" [1] \"integer glossyreflectdepth\" [1] \"integer glossyreflectsamples\" [2] \"integer glossyrefractdepth\" [4] \"integer glossyrefractsamples\" [1] \"integer specularreflectdepth\" [2] \"integer specularrefractdepth\" [4]\n" to:temp_mat_file
 			format "WorldBegin\n" to:temp_mat_file
 			---------------------------------------------------------------------------------------------------------------------------
 			--MATERIAL FOR PREVIEW OBJECT
-			temparray =#()
 			---------------------------------------------------------------------------------------------------------------------------
 			format "AttributeBegin\n" to:temp_mat_file
 			format "Include\"temp_matpreview.lxm\"\n" to:temp_mat_file
@@ -141,10 +140,6 @@
 	
 	fn WriteShaders Obj  &out_Geom_file = 
 	(
-		--addModifier obj (Edit_Mesh ())
-		print "BEGIN DDDDDDDEEEEEEEEEBBBBBBUUUUUG"
-		print (classof Obj)
-		print "END DDDDDDDEEEEEEEEEBBBBBBUUUUUG"
 		Local MeshArrays = #(#(), #(), #(), #())
 		num_faces = Obj.numfaces
 		--	print (classof Obj.material)
@@ -166,6 +161,9 @@
 						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
 					)
 				)
+				
+				
+				
 
 				if (Obj.material.kdTexture != undefined) do
 				(
@@ -683,10 +681,10 @@
 				
 				--scan for portals and add them
 				format "\"vector sundir\" [% % %]" Lt.pos.x Lt.pos.y Lt.pos.z to:out_file
-				format "\"float gain\" [%]\n" (getUserProp Lt "gain") to:out_file
-				format "\"float relsize\" [%]\n" (getUserProp Lt "relsize") to:out_file
-				format "\"float turbidity\" [%]\n" (getUserProp Lt "turbidity") to:out_file
-				format "\"integer nsamples\" [%]\n" (getUserProp Lt "nsamples") to:out_file
+				format "\"float gain\" [%]\n" Lt.gain to:out_file
+				format "\"float relsize\" [%]\n" Lt.relsize to:out_file
+				format "\"float turbidity\" [%]\n" Lt.turbidity to:out_file
+				format "\"integer nsamples\" [%]\n" Lt.nsamples to:out_file
 				
 				for i = 1 to TheSkyPortals.count do
 				(
@@ -715,10 +713,10 @@
 				format "LightGroup \"Sky\"\n" to:out_file
 				format "LightSource \"sky\"\n" to:out_file
 				format "\"vector sundir\" [0 0 1]" to:out_file
-				format "\"float gain\" [%]\n" (getUserProp Lt "gain") to:out_file
-				format "\"float relsize\" [%]\n" (getUserProp Lt "relsize") to:out_file
-				format "\"float turbidity\" [%]\n" (getUserProp Lt "turbidity") to:out_file
-				format "\"integer nsamples\" [%]\n" (getUserProp Lt "nsamples") to:out_file
+				format "\"float gain\" [%]\n" Lt.gain to:out_file
+				format "\"float relsize\" [%]\n" Lt.relsize to:out_file
+				format "\"float turbidity\" [%]\n" Lt.turbidity to:out_file
+				format "\"integer nsamples\" [%]\n" Lt.nsamples to:out_file
 				
 				for i = 1 to TheSkyPortals.count do
 				(
@@ -1421,7 +1419,7 @@
 			(
 				if (luxconsolepath == undefined) do
 				(
-					btn3.text = luxconsolepath
+					btn3.text = "Browse to luxconsole.exe"
 					
 				)
 			)
