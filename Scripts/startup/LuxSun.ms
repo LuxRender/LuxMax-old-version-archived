@@ -27,33 +27,12 @@ plugin light LuxSun name:"LR Sun" classID:#(0x6c044fc0, 0x11b5394c) extends:SkyL
 		(
 			
 		)
-		on spn_gain changed val do
-		(
-			setUserProp $ "gain" val
-		)
-		on spn_nsamples changed val do
-		(
-			setUserProp $ "nsamples" val
-		)
-		on spn_turbidity changed val do
-		(
-			setUserProp $ "turbidity" val
-		)
-		on spn_relsize changed val do
-		(
-			setUserProp $ "relsize" val
-		)
 	)
 	
 	tool create
 	( 
 		on mousePoint click do 
 		(
-			setUserProp $ "gain" "1.0"
-			setUserProp $ "nsamples" "1.0"
-			setUserProp $ "turbidity" "2.0"
-			setUserProp $ "relsize" "1.0"
-			setUserProp $ "isLuxSun" "true" 
 			nodeTM.translation = gridPoint;#stop 
 		)
 	) 
