@@ -20,37 +20,13 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 		spinner spn_turbidity "Turbidity" pos:[16,56] width:136 height:16 range:[0,30,0]
 		spinner spn_relsize "Relative size" pos:[16,80] width:136 height:16 type:#float
 		
-		on params open do
-		(
-			
-		)
-		on spn_gain changed val do
-		(
-			setUserProp $ "gain" val
-		)
-		on spn_nsamples changed val do
-		(
-			setUserProp $ "nsamples" val
-		)
-		on spn_turbidity changed val do
-		(
-			setUserProp $ "turbidity" val
-		)
-		on spn_relsize changed val do
-		(
-			setUserProp $ "relsize" val
-		)
+		
 	)
 	
 	tool create
 	( 
 		on mousePoint click do 
 		(
-			setUserProp $ "gain" "1.0"
-			setUserProp $ "nsamples" "1.0"
-			setUserProp $ "turbidity" "2.0"
-			setUserProp $ "relsize" "1.0"
-			setUserProp $ "isLuxSky" "true"
 			nodeTM.translation = gridPoint;#stop 
 		)
 	) 	
