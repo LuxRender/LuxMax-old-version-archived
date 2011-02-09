@@ -26,8 +26,12 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 		useBumpmap type:#boolean ui:museBumpmap
 		bumpmap type:#float ui:mbumpmap
 		bumpmapTexture type:#textureMap ui:mbumpmapTexture
-		emission type:#boolean ui:memission
+		useEmission type:#boolean ui:museEmission
 		emissionTexture type:#textureMap ui:memissionTexture
+		useSubdivision type:#boolean ui:museSubdivision
+		Subdivision type:#float ui:mSubdivision
+		isSharpen type:#boolean ui:mSharpenBounds
+		isSmooth type:#boolean ui:mSmooth
 		on kdColor set val do delegate.diffuse_color = val
 	)
 	
@@ -63,21 +67,30 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 			)
 		
 			-- Emission paramters
-			checkbox memission "Emission Texture ..............." across:2
+			checkbox museEmission "Emission Texture ..............." across:2
 			mapbutton memissionTexture "T" width:128 height:16 align:#right
-			on memission changed s do
+			on museEmission changed s do
 			(
 				memissionTexture.enabled = s
 			)
+			
 		)
 		
 		group "Subdivision Parameters"
 		(
+			checkbox museSubdivision "Subdivision . . ." across:3 
+			spinner msubdivision "" scale:1 range:[0,12,0] type:#integer width:50 align:#left
+			label lb0 ""
+			checkbox mSharpenBounds "Sharpen Bounds"
+			checkbox mSmooth "Smooth"
+		)
+		on museSubdivision changed s do
+		(
+			msubdivision.enabled = s
+			mSharpenBounds.enabled = s
+			mSmooth.enabled = s
 		)
 		
-		group "Displacement Parameters"
-		(
-		)
 		on params open do
 		(
 			--msigma.enabled = museSigma.state
@@ -85,7 +98,8 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 			
 			mbumpmap.enabled = museBumpmap.state
 			mbumpmapTexture.enabled = museBumpmap.state
-			memissionTexture.enabled = memission.state
+			memissionTexture.enabled = museEmission.state
+			
 		)
 	)
 )
@@ -121,7 +135,7 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 		bumpmap type:#float ui:mbumpmap
 		bumpmapTexture type:#textureMap ui:mbumpmapTexture
 		
-		emission type:#boolean ui:memission
+		useEmission type:#boolean ui:museEmission
 		emissionTexture type:#textureMap ui:memissionTexture
 		
 		useSubdivision type:#boolean ui:museSubdivision
@@ -132,6 +146,9 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 		useDisplacement type:#boolean ui:museDisplacement
 		displacement type:#float ui:mdisplacement
 		displacementTexture type:#textureMap ui:mdisplacementTexture
+		
+		useGlossylossy type:#boolean ui:museGlossylossy
+		
 	)
 
 	
@@ -150,6 +167,9 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 			label lb_depth "Absorption Depth . . . . . . . . . . . . . . . . . . . . ." align:#left across:2
 			spinner mDepth "" width:60 align:#right range:[0,15,0.15] scale:0.01
 		)
+		
+		
+		
 		on museabsorption changed s do
 		(
 			mAbsorption.enabled = s
@@ -177,8 +197,12 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 			mapbutton mbumpmapTexture "T" width:120 height:18 align:#right
 			
 			-- Emission paramters
-			checkbox memission "Emission Texture . . . . . . . . . . " across:2 enabled:false
-			mapbutton memissionTexture "T" width:120 height:18 align:#right
+			checkbox museEmission "Emission Texture ..............." across:2
+			mapbutton memissionTexture "T" width:128 height:16 align:#right
+			on museEmission changed s do
+			(
+				memissionTexture.enabled = s
+			)
 		)
 		on chk_ior changed s do
 		(
@@ -190,10 +214,8 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 			mbumpmap.enabled = s
 			mbumpmapTexture.enabled = s
 		)
-		on memission changed s do
-		(
-			memissionTexture.enabled = s
-		)
+	
+	
 		group "Subdivision Parameters"
 		(
 			checkbox museSubdivision "Subdivision . . ." across:3 enabled:true
@@ -229,7 +251,7 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 			mbumpmap.enabled = museBumpmap.state
 			mbumpmapTexture.enabled = museBumpmap.state
 			
-			memissionTexture.enabled = memission.state
+			memissionTexture.enabled = museEmission.state
 			
 			msubdivision.enabled = museSubdivision.state
 			mSharpenBounds.enabled = museSubdivision.state
@@ -237,6 +259,14 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 			
 			mdisplacement.enabled = museDisplacement.state
 			mDisplacementTexture.enabled = museDisplacement.state
+		)
+		group "Glossy Lossy Material"
+		(
+			checkbox museGlossylossy "Use GlossyLossy" align:#left across:3
+		)
+		on museGlossylossy s do
+		(
+			museGlossyLossy.enabled = s
 		)
 	)
 )
@@ -504,9 +534,8 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		
 		useBumpmap type:#boolean ui:museBumpmap
 		bumpmap type:#float ui:mbumpmap
-		kttexture type:#textureMap ui:mbumpmapTexture
-		bumpmaptexture type:#textureMap --ui:mbumpmapTexture
-		emission type:#boolean ui:memission
+		bumpmapTexture type:#textureMap ui:mbumpmapTexture
+		useEmission type:#boolean ui:museEmission
 		emissionTexture type:#textureMap ui:memissionTexture
 		
 		useSubdivision type:#boolean ui:museSubdivision
@@ -531,19 +560,28 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		GroupBox grp1 "Advanced Parameters" pos:[4,69] width:252 height:112
 		label lb_exponentu "U-Exponent . . . . . . " pos:[8,88] width:95 height:13 enabled:true across:3
 		spinner spn_exponentu "" pos:[80,88] width:68 height:16 enabled:true range:[0.001,1,0.001] type:#float scale:0.001
-		mapButton spn_exponentuTexture "None" pos:[152,88] width:96 height:18 enabled:false
+		mapButton spn_exponentuTexture "None" pos:[152,88] width:96 height:18 enabled:false  align:#right
 		label lb_exponentv "V-Exponent . . . . . . " pos:[8,112] width:94 height:13 enabled:true across:3
 		spinner spn_exponentv "" pos:[80,111] width:68 height:16 enabled:true range:[0.001,1,0.001] type:#float scale:0.001
 		mapButton spn_exponentvTexture "None" pos:[152,112] width:96 height:18 enabled:false
 
-			-- Bumpmap parameters
-		checkbox museBumpmap "Bumpmap . . . ." pos:[8,136] width:95 height:15 enabled:true across:3
-		spinner mbumpmap "" pos:[80,136] width:68 height:16 range:[0,1,0] scale:0.01 --enabled:
-		mapButton mbumpmapTexture "T" pos:[152,136] width:96 height:18 enabled:false
+		-- Bumpmap parameters
+			checkbox museBumpmap "Bumpmap ......." across:3
+			spinner mbumpmap "" scale:0.01 range:[0,1,0] width:50 align:#left
+			mapbutton mbumpmapTexture "T" width:128 height:16 align:#right
+			on museBumpmap changed s do
+			(
+				mbumpmap.enabled = s
+				mbumpmapTexture.enabled = s
+			)
 
-			-- Emission paramters
-		checkbox memission "Emission Texture . . . . . . . . . . " pos:[8,160] width:167 height:15 enabled:false across:2
-		mapButton memissionTexture "T" pos:[152,160] width:96 height:18
+		-- Emission paramters
+			checkbox museEmission "Emission Texture ..............." across:2
+			mapbutton memissionTexture "T" width:128 height:16 align:#right
+			on museEmission changed s do
+			(
+				memissionTexture.enabled = s
+			)
 		
 
 		GroupBox grp2 "Subdivision Parameters" pos:[4,186] width:154 height:81
@@ -555,16 +593,15 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		GroupBox grp3 "Displacement Map Parameters" pos:[0,272] width:154 height:43
 		checkbox museDisplacement "Displacement . ." pos:[13,291] width:100 height:15 enabled:true across:3
 		spinner mdisplacement "" pos:[58,291] width:50 height:16 range:[-10,10,0] scale:0.1
-		mapButton mdisplacementTexture "T" pos:[28,291] width:120 height:18
+		mapButton mdisplacementTexture "T" pos:[28,291] width:120 height:18  align:#right
 		label lbl7 "NkData" pos:[8,56] width:144 height:16
 		
 		on params open do
 		(
-			bumpmaptexture = kttexture
 			mbumpmap.enabled = museBumpmap.state
 			mbumpmapTexture.enabled = museBumpmap.state
 			
-			memissionTexture.enabled = memission.state
+			memissionTexture.enabled = museEmission.state
 			
 			msubdivision.enabled = museSubdivision.state
 			mSharpenBounds.enabled = museSubdivision.state
@@ -1011,7 +1048,29 @@ plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x65
 ( 
 	parameters main rollout:params
 	(
-		paintname type:#integer ui:mname default:1
+		kdcolor type:#color default:[90,90,90] ui:mDiffuse
+		on kdColor set val do delegate.diffuse_color = val
+		kdtexture type:#textureMap ui:mDiffuseTexture
+		ks1color type:#color default:[90,90,90] ui:mSpec1
+		ks1texture type:#textureMap ui:mSpec1Texture
+		ks2color type:#color default:[90,90,90] ui:mSpec2
+		ks2texture type:#textureMap ui:mSpec2Texture
+		ks3color type:#color default:[90,90,90] ui:mSpec3
+		ks3texture type:#textureMap ui:mSpec3Texture
+		floatR1 type:#float default:1.0 ui:mfloatR1
+		floatR1texture type:#textureMap ui:mfloatR1texture
+		floatR2 type:#float default:1.0 ui:mfloatR2
+		floatR2texture type:#textureMap ui:mfloatR2texture
+		floatR3 type:#float default:1.0 ui:mfloatR3
+		floatR3texture type:#textureMap ui:mfloatR3texture
+		floatM1 type:#float default:1.0 ui:mfloatM1
+		floatM1texture type:#textureMap ui:mfloatM1texture
+		floatM2 type:#float default:1.0 ui:mfloatM2
+		floatM2texture type:#textureMap ui:mfloatM2texture
+		floatM3 type:#float default:1.0 ui:mfloatM3
+		floatM3texture type:#textureMap ui:mfloatM3texture
+		
+		
 		useka type:#boolean default:false ui:museabsorption
 		kacolor type:#color default:[90,90,90] ui:mAbsorption
 	--	katexture type:#textureMap ui:mAbsorptionTexture
@@ -1034,21 +1093,48 @@ plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x65
 	
 	rollout params "Car Paint Parameters"
 	(
-		dropdownlist mname "Name:"  items:#("Blue Matte", "Blue", "White", "2k Acrylack", "BMW339", "Opel Titan", "Polaris Silber", "Ford F8")
+		
 		group "Basic Parameters" (
+			label lbDiffuse "Diffuse . . . . . . . . . " align:#left across:3
+			colorpicker mDiffuse "" align:#left height:18
+			mapbutton mDiffuseTexture"None" width:120 height:18 align:#right
+			label lbSpecular1 "Specular1 . . . . . . . ." across:3 align:#left
+			colorpicker mSpec1 ""  align:#left height:18
+			mapbutton mSpec1Texture"None" width:120 height:18 align:#right
+			label lbSpecular2 "Specular2 . . . . . . . ." across:3 align:#left
+			colorpicker mSpec2 ""  align:#left height:18
+			mapbutton mSpec2Texture"None" width:120 height:18 align:#right
+			label lbSpecular3 "Specular3 . . . . . . . ." across:3 align:#left
+			colorpicker mSpec3 ""  align:#left height:18
+			mapbutton mSpec3Texture"None" width:120 height:18 align:#right
+			label lbfloatR1 "FloatR1" across:3 align:#left
+			spinner mfloatR1 "" scale:0.01 range:[0,1,0] width:68 align:#left
+			mapbutton mfloatR1Texture "T" width:120 height:18 align:#right
+			label lbfloatR2 "FloatR2" across:3 align:#left
+			spinner mfloatR2 "" scale:0.01 range:[0,1,0] width:68 align:#left
+			mapbutton mfloatR2Texture "T" width:120 height:18 align:#right
+			label lbfloatR3 "FloatR3" across:3 align:#left
+			spinner mfloatR3 "" scale:0.01 range:[0,1,0] width:68 align:#left
+			mapbutton mfloatR3Texture "T" width:120 height:18 align:#right
+			label lbfloatM1 "FloatM1" across:3 align:#left
+			spinner mfloatM1 "" scale:0.01 range:[0,1,0] width:68 align:#left
+			mapbutton mfloatM1Texture "T" width:120 height:18 align:#right
+			label lbfloatM2 "FloatM2" across:3 align:#left
+			spinner mfloatM2 "" scale:0.01 range:[0,1,0] width:68 align:#left
+			mapbutton mfloatM2Texture "T" width:120 height:18 align:#right
+			label lbfloatM3 "FloatM3" across:3 align:#left
+			spinner mfloatM3 "" scale:0.01 range:[0,1,0] width:68 align:#left
+			mapbutton mfloatM3Texture "T" width:120 height:18 align:#right
+		)
+
+		group "Advanced Parameters"
+		(
+			--Absorption parameters
 			checkbox museabsorption "Absorption . . . ." align:#left across:3
 			colorpicker mAbsorption "" align:#left height:18 enabled:false
 			--mapbutton mAbsorptionTexture "None" width:120 height:18 align:#right enabled:false
-			label lb_depth "Absorption Depth . . . . . . . . . . . . . . . . . . . . ." align:#left across:2
+			label lb_depth "Absorption Depth" align:#left across:3
 			spinner mDepth "" width:60 align:#right range:[0,15,0.15] scale:0.01
-		)
-		on museabsorption changed s do
-		(
-			mAbsorption.enabled = s
-			--mAbsorptionTexture.enabled = s
-		)
-		group "Advanced Parameters"
-		(
 			-- Bumpmap parameters
 			checkbox museBumpmap "Bumpmap . . . ." across:3 enabled:false
 			spinner mbumpmap "" scale:0.01 range:[0,1,0] width:68 align:#left
@@ -1057,6 +1143,11 @@ plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x65
 			-- Emission paramters
 			checkbox memission "Emission Texture . . . . . . . . . . " across:2 enabled:false
 			mapbutton memissionTexture "T" width:120 height:18 align:#right
+		)
+		on museabsorption changed s do
+		(
+			mAbsorption.enabled = s
+			--mAbsorptionTexture.enabled = s
 		)
 		on museBumpmap changed s do
 		(
