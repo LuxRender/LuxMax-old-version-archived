@@ -161,6 +161,79 @@
 		format " \"color Ks\" [% % %]\n" (Obj.material.Kscolor.r / 255) (Obj.material.Kscolor.g / 255) (Obj.material.Kscolor.b / 255)  to:out_Geom_file
 		)
 	)
+	
+	fn load_sigma Obj &out_Geom_file =
+	(
+		if Obj.material.usesigma as string == "true" then
+		(
+			if (Obj.material.sigmaTexture != undefined) do
+				(
+				format "Texture \"%\" \"float\" \"imagemap\" \"string wrap\" [\"repeat\"] \"string filename\" [\"%\"]\n" Obj.material.sigmatexture.name obj.material.sigmatexture.filename to:out_Geom_file
+				format "Texture \"%.scale\" \"float\" \"scale\" \"texture tex1\" [\"%\"] \"float tex2\" [%]\n" Obj.material.sigmatexture.name Obj.material.sigmatexture.name Obj.material.sigma to:out_Geom_file
+				)
+		)
+	)
+	
+	fn write_sigma Obj &out_Geom_file =
+	(	if Obj.material.usesigma as string == "true" then
+		(
+			if (Obj.material.sigmaTexture != undefined) then
+			(
+				format "\"texture sigma\" \"%.scale\"\n" Obj.material.sigmatexture.name to:out_Geom_file
+			)
+			else
+			(
+				format "\"float sigma\" [%]\n" Obj.material.sigma to:out_Geom_file
+			)
+		)	
+	)
+	
+	fn load_uroughness Obj &out_Geom_file =
+	(
+			if (Obj.material.uroughnessTexture != undefined) do
+				(
+				format "Texture \"%\" \"float\" \"imagemap\" \"string wrap\" [\"repeat\"] \"string filename\" [\"%\"]\n" Obj.material.uroughnesstexture.name obj.material.uroughnesstexture.filename to:out_Geom_file
+				format "Texture \"%.scale\" \"float\" \"scale\" \"texture tex1\" [\"%\"] \"float tex2\" [%]\n" Obj.material.uroughnesstexture.name Obj.material.uroughnesstexture.name Obj.material.uroughness to:out_Geom_file
+				)
+		
+	)
+	
+	fn write_uroughness Obj &out_Geom_file =
+	(	
+			if (Obj.material.uroughnessTexture != undefined) then
+			(
+				format "\"texture uroughness\" \"%.scale\"\n" Obj.material.uroughnesstexture.name to:out_Geom_file
+			)
+			else
+			(
+				format "\"float uroughness\" [%]\n" Obj.material.uroughness to:out_Geom_file
+			)
+		
+	)
+	
+	fn load_vroughness Obj &out_Geom_file =
+	(
+			if (Obj.material.vroughnessTexture != undefined) do
+				(
+				format "Texture \"%\" \"float\" \"imagemap\" \"string wrap\" [\"repeat\"] \"string filename\" [\"%\"]\n" Obj.material.vroughnesstexture.name obj.material.vroughnesstexture.filename to:out_Geom_file
+				format "Texture \"%.scale\" \"float\" \"scale\" \"texture tex1\" [\"%\"] \"float tex2\" [%]\n" Obj.material.vroughnesstexture.name Obj.material.vroughnesstexture.name Obj.material.vroughness to:out_Geom_file
+				)
+		
+	)
+	
+	fn write_vroughness Obj &out_Geom_file =
+	(	
+			if (Obj.material.vroughnessTexture != undefined) then
+			(
+				format "\"texture vroughness\" \"%.scale\"\n" Obj.material.vroughnesstexture.name to:out_Geom_file
+			)
+			else
+			(
+				format "\"float vroughness\" [%]\n" Obj.material.vroughness to:out_Geom_file
+			)
+		
+	)
+	
 	fn load_bump Obj &out_Geom_file =
 	(
 		if Obj.material.useBumpmap as string == "true" then
@@ -330,11 +403,13 @@
 			if classof Obj.material == LuxrenderMatte  then 
 			(
 				load_diffuse Obj out_Geom_file
+				load_sigma Obj out_Geom_file
 				load_bump Obj out_Geom_file
 				load_emissiontexture Obj out_Geom_file
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				format "\"string type\" \"matte\"\n" to:out_Geom_file
 				write_diffuse Obj out_Geom_file
+				write_sigma Obj out_Geom_file
 				write_bump Obj out_Geom_file
 				write_emissiontexture Obj out_Geom_file
 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
@@ -346,10 +421,14 @@
 			(
 
 				load_bump Obj out_Geom_file
+				load_uroughness Obj out_Geom_file
+				load_vroughness Obj out_Geom_file
 				load_emissiontexture Obj out_Geom_file
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				format "\"string type\" \"metal\"\n" to:out_Geom_file
 				write_bump Obj out_Geom_file
+				write_uroughness Obj out_Geom_file
+				write_vroughness Obj out_Geom_file
 				write_emissiontexture Obj out_Geom_file
 				
 				if (obj.material.metalname == 1)do
@@ -372,10 +451,6 @@
 				(
 					format "\t\"string filename\" [\"%\"]\n" obj.material.nkdatapath to:out_Geom_file
 				)
-				format "\"float vroughness\"[%]\n" obj.material.vexponent to:out_Geom_file
-				format "\"float uroughness\"[%]\n" obj.material.uexponent to:out_Geom_file
-					
-					
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
@@ -428,6 +503,8 @@
 				load_diffuse Obj out_Geom_file
 				load_emissiontexture Obj out_Geom_file
 				load_bump Obj out_Geom_file
+				load_uroughness Obj out_Geom_file
+				load_vroughness Obj out_Geom_file
 				load_specular Obj out_Geom_file
 					
 					
@@ -435,17 +512,6 @@
 					(
 						write_texturemap Obj.material.kaTexture out_Geom_file
 					)
-					
-					if Obj.material.uRoughnessTexture !=undefined then
-					(
-						write_texturemap_float Obj.material.uRoughnessTexture out_Geom_file
-					)
-					
-					if Obj.material.vRoughnessTexture !=undefined then
-					(
-						write_texturemap_float Obj.material.vRoughnessTexture out_Geom_file
-					)
-					
 					format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 		            if Obj.material.useGlossylossy as string != "true" then
 						(
@@ -457,23 +523,10 @@
 						)
 					write_diffuse Obj out_Geom_file
 					write_specular Obj out_Geom_file
-					format "\"float vroughness\"[%]\n" obj.material.vroughness to:out_Geom_file
-				    format "\"float uroughness\"[%]\n" obj.material.uroughness to:out_Geom_file
 					write_bump Obj out_Geom_file
-					
-					if Obj.material.vRoughnessTexture !=undefined then
-						(
-						format " \"texture vroughness\" [\"%\"]\n" Obj.material.vRoughnessTexture.name to:out_Geom_file
-						format " \"float vroughness\" [%]\n" Obj.material.vRoughness to:out_Geom_file
-						)
-					
-					if Obj.material.uRoughnessTexture !=undefined then
-						(
-						format " \"texture uroughness\" [\"%\"]\n" Obj.material.uRoughnessTexture.name to:out_Geom_file
-						format " \"float uroughness\" [%]\n" Obj.material.uRoughness to:out_Geom_file
-						)
-					
-					
+					write_uroughness Obj out_Geom_file
+					write_vroughness Obj out_Geom_file
+						
 					if (Obj.material.useka) then
 						(
 						if Obj.material.katexture != undefined then
@@ -516,35 +569,16 @@
 				
 			if classOf obj.material == LuxMatteTrans then
 			(
-				if (obj.material.kdTexture != undefined) then
-				(
-					write_texturemap Obj.material.kdTexture out_Geom_file
-				)
-				if (obj.material.KtTexture != undefined) then
-				(
-					write_texturemap Obj.material.ktTexture out_Geom_file
-				)
-				
+				load_transmission Obj out_Geom_file
+				load_reflection Obj out_Geom_file
+				load_sigma Obj out_Geom_file
+				load_bump Obj out_Geom_file
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				format "\"string type\" \"mattetranslucent\"\n" to:out_Geom_file
-				if (obj.material.kdTexture != undefined) then
-				(
-					format " \"texture Kr\" [\"%\"]\n" obj.material.kdTexture.name to:out_Geom_file
-				)
-
-				if (obj.material.kdTexture == undefined) then
-				(
-					format "\"color Kr\" [% % %]\n" (Obj.material.diffuseColor.r / 255) (Obj.material.diffuseColor.g / 255) (Obj.material.diffuseColor.b / 255)  to:out_Geom_file
-				)
-				if (obj.material.KtTexture != undefined) then
-				(
-					format " \"texture Kt\" [\"%\"]\n" obj.material.KtTexture.name to:out_Geom_file
-				)
-				
-				if (obj.material.KtTexture == undefined) then
-				(
-					format "\"color Kt\" [% % %]\n" (Obj.material.transmitivitycolor.r / 255) (Obj.material.transmitivitycolor.g / 255) (Obj.material.transmitivitycolor.b / 255)  to:out_Geom_file
-				)
+				write_reflection Obj out_Geom_file
+				write_transmission Obj out_Geom_file
+				write_sigma Obj out_Geom_file
+				write_bump Obj out_Geom_file
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
