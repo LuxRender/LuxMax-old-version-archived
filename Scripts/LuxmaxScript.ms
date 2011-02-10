@@ -49,61 +49,120 @@
 		tStr
 	)
 	
-	fn preview_selected_material &temp_mat_file =
+	fn load_diffuse Obj &out_Geom_file =
 	(
-		if (activeMeditSlot == undefined) then
+	if (Obj.material.kdTexture != undefined) do
+				(
+					getandwriteMaterialTexture Obj.material.kdTexture out_Geom_file
+					if (Obj.material.kdcolor.value as float != 255) then
+					(
+					format "Texture \"%.scale\" \"color\" \"scale\" \"texture tex1\" [\"%\"] \"color tex2\" [% % %]\n" Obj.material.kdtexture.name Obj.material.kdtexture.name (Obj.material.Kdcolor.r / 255) (Obj.material.Kdcolor.g / 255) (Obj.material.Kdcolor.b / 255)   to:out_Geom_file
+					)
+				)	
+	)
+	
+	fn write_diffuse Obj &out_Geom_file =
+	(
+		if (Obj.material.kdTexture != undefined) then
+			(
+			if (Obj.material.kdcolor.value as float != 255) then
+				(
+				format "\"texture Kd\" \"%.scale\"\n" Obj.material.kdtexture.name to:out_Geom_file
+				)
+			else
+				(
+				format "\"texture Kd\" \"%\"\n" Obj.material.kdtexture.name to:out_Geom_file	
+				)
+			)
+		else
 		(
-			messagebox "error.."
+		format " \"color Kd\" [% % %]\n" (Obj.material.Kdcolor.r / 255) (Obj.material.Kdcolor.g / 255) (Obj.material.Kdcolor.b / 255)  to:out_Geom_file
+		)	
+	)
+	
+	fn load_specular Obj &out_Geom_file =
+	(
+		if (Obj.material.ksTexture != undefined) do
+			(
+				getandwriteMaterialTexture Obj.material.ksTexture out_Geom_file
+				if (Obj.material.kscolor.value as float != 255) then
+				(
+				format "Texture \"%.scale\" \"color\" \"scale\" \"texture tex1\" [\"%\"] \"color tex2\" [% % %]\n" Obj.material.kstexture.name Obj.material.kstexture.name (Obj.material.Kscolor.r / 255) (Obj.material.Kscolor.g / 255) (Obj.material.Kscolor.b / 255)   to:out_Geom_file
+				)
+			)
+	)
+	
+	fn write_specular Obj &out_Geom_file =
+	(
+		if (Obj.material.ksTexture != undefined) then
+		(
+			if (Obj.material.kscolor.value as float != 255) then
+				(
+				format "\"texture Ks\" \"%.scale\"\n" Obj.material.kstexture.name to:out_Geom_file
+				)
+			else
+				(
+				format "\"texture Ks\" \"%\"\n" Obj.material.kstexture.name to:out_Geom_file	
+				)
 		)
-		else 
+		else
 		(
-			format "#matname is = %\n" (meditMaterials[activeMeditSlot].name) to:temp_mat_file
-			---------------------------------------------------------------------------------------------------------------------------
-			format "LookAt 0.0 -3.0 0.5 0.0 -2.0 0.5 0.0 0.0 1.0\n" to:temp_mat_file
-			format "Camera \"perspective\" \"float fov\" [22.5]\n" to:temp_mat_file
-			format "Film \"fleximage\" \"integer xresolution\" [140] \"integer yresolution\" [140] \"integer ldr_writeinterval\" [3600] \"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [1] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"string filename\" [\"matpreview\"]\n" to:temp_mat_file
-			format "PixelFilter \"mitchell\" \"float xwidth\" [1.500000] \"float ywidth\" [1.500000] \"float B\" [0.333330] \"float C\" [0.333330] \"bool supersample\" [\"true\"]\n" to:temp_mat_file
-			format "Sampler \"lowdiscrepancy\" \"string pixelsampler\" [\"hilbert\"] \"integer pixelsamples\" [16]\n" to:temp_mat_file
-			format "SurfaceIntegrator \"distributedpath\" \"integer directsamples\" [1] \"integer diffusereflectdepth\" [1] \"integer diffusereflectsamples\" [4] \"integer diffuserefractdepth\" [4] \"integer diffuserefractsamples\" [1] \"integer glossyreflectdepth\" [1] \"integer glossyreflectsamples\" [2] \"integer glossyrefractdepth\" [4] \"integer glossyrefractsamples\" [1] \"integer specularreflectdepth\" [2] \"integer specularrefractdepth\" [4]\n" to:temp_mat_file
-			format "WorldBegin\n" to:temp_mat_file
-			---------------------------------------------------------------------------------------------------------------------------
-			--MATERIAL FOR PREVIEW OBJECT
-			---------------------------------------------------------------------------------------------------------------------------
-			format "AttributeBegin\n" to:temp_mat_file
-			format "Include\"temp_matpreview.lxm\"\n" to:temp_mat_file
-			format "Transform [0.5 0.0 0.0 0.0  0.0 0.5 0.0 0.0  0.0 0.0 0.5 0.0  0.0 0.0 0.5 1.0]\n" to:temp_mat_file
-			format "TransformBegin\n" to:temp_mat_file
-			format "Scale 1.000000 1.000000 1.000000\n" to:temp_mat_file
-			format "TransformEnd\n" to:temp_mat_file
-			format "Shape \"sphere\" \"float radius\" [1.0]\n" to:temp_mat_file
-			format "AttributeEnd\n" to:temp_mat_file
-			--MATERIAL FOR PREVIEW OBJECT
-			---------------------------------------------------------------------------------------------------------------------------
-			format "AttributeBegin\n" to:temp_mat_file
-			format "Transform [5.0 0.0 0.0 0.0  0.0 5.0 0.0 0.0  0.0 0.0 5.0 0.0  0.0 0.0 0.0 1.0]\n" to:temp_mat_file
-			format "Texture \"checks::pattern\" \"float\" \"checkerboard\"\"integer dimension\" [2] \"string aamode\" [\"supersample\"]\"string mapping\" [\"uv\"] \"float uscale\" [36.8] \"float vscale\" [36.0]\n" to:temp_mat_file
-			format "Texture \"checks\" \"color\" \"mix\" \"texture amount\" [\"checks::pattern\"] \"color tex1\" [0.9 0.9 0.9] \"color tex2\" [0.0 0.0 0.0]\n" to:temp_mat_file
-			format "Material \"matte\" \"texture Kd\" [\"checks\"]\n" to:temp_mat_file
-			format "Shape \"loopsubdiv\" \"integer nlevels\" [3] \"bool dmnormalsmooth\" [\"true\"] \"bool dmsharpboundary\" [\"false\"] \"integer indices\" [ 0 1 2 0 2 3 1 0 4 1 4 5 5 4 6 5 6 7 ]\"point P\" [ 1.000000 1.000000 0.000000 -1.000000 1.000000 0.000000 -1.000000 -1.000000 0.000000 1.000000 -1.000000 0.000000 1.000000 3.000000 0.000000 -1.000000 3.000000 0.000000 1.000000 3.000000 2.000000 -1.000000 3.000000 2.000000] \"normal N\" [ 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 -0.707083 0.707083 0.000000 -0.707083 0.707083 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000] \"float uv\" [ 0.333334 0.000000 0.333334 0.333334 0.000000 0.333334 0.000000 0.000000 0.666667 0.000000 0.666667 0.333333 1.000000 0.000000 1.000000 0.333333 ]\n" to:temp_mat_file
-			format "AttributeEnd\n" to:temp_mat_file
-			format "AttributeBegin\n" to:temp_mat_file
-			format "Transform [1.0 0.0 0.0 0.0  0.0 1.0 0.0 0.0  0.0 0.0 1.0 0.0  1.0 -1.0 4.0 1.0]\n" to:temp_mat_file
-			format "Texture \"pL\" \"color\" \"blackbody\" \"float temperature\" [6500.0]\n" to:temp_mat_file
-			format "LightSource \"point\" \"texture L\" [\"pL\"] \"float gain\" [0.002]\n" to:temp_mat_file
-			format "AttributeEnd\n" to:temp_mat_file
-			format "WorldEnd\n" to:temp_mat_file
-			forpreview = 0
-			
-			
-			
+		format " \"color Ks\" [% % %]\n" (Obj.material.Kscolor.r / 255) (Obj.material.Kscolor.g / 255) (Obj.material.Kscolor.b / 255)  to:out_Geom_file
+		)
+	)
+	fn load_bump Obj &out_Geom_file =
+	(
+		if Obj.material.useBumpmap as string == "true" then
+		(
+			if (Obj.material.bumpmapTexture != undefined) do
+				(
+				format "Texture \"%\" \"float\" \"imagemap\" \"string wrap\" [\"repeat\"] \"string filename\" [\"%\"]\n" Obj.material.bumpmaptexture.name obj.material.bumpmaptexture.filename to:out_Geom_file
+				format "Texture \"%.scale\" \"float\" \"scale\" \"texture tex1\" [\"%\"] \"float tex2\" [%]\n" Obj.material.bumpmaptexture.name Obj.material.bumpmaptexture.name Obj.material.bumpMap to:out_Geom_file
+				)
 		)
 	)
 	
-	
-	
-	fn write_bumpmaptexture Obj &out_Geom_file =
+	fn write_bump Obj &out_Geom_file =
 	(
-		format "Texture \"%\" \"float\" \"imagemap\" \"string wrap\" [\"repeat\"] \"string filename\" [\"%\"]\n" Obj.name obj.filename to:out_Geom_file
+		if (Obj.material.bumpmapTexture != undefined) do
+			(
+				format "\"texture bumpmap\" \"%.scale\"\n" Obj.material.bumpmaptexture.name to:out_Geom_file
+			)
+	)
+	
+	fn load_emissiontexture Obj &out_Geom_file =
+	(
+		if Obj.material.useEmission as string == "true" then
+		(
+       
+			if (classof obj.material.emissionTexture == LuxrenderBlackbody) do
+			(
+			format "LightGroup \"%\"\n" obj.material.emissionTexture.group to:out_Geom_file	
+			format "Texture \"%:light:L\" \"color\" \"blackbody\" \"float temperature\" [%]\n" Obj.name obj.material.emissionTexture.temperature to:out_Geom_file
+			format "AreaLightSource \"area\" \"texture L\" [\"%:light:L\"]\n" Obj.name to:out_Geom_file
+			format "\"float power\" [%]\n" obj.material.emissionTexture.power to:out_Geom_file
+			format "\"float efficacy\" [%]\n" obj.material.emissionTexture.efficacy to:out_Geom_file
+			format "\"float gain\" [%]\n" obj.material.emissionTexture.gain to:out_Geom_file
+			)
+			if (classof obj.material.emissionTexture == LuxrenderImageMap) do
+			(
+			format "LightGroup \"%\"\n" obj.material.emissionTexture.group to:out_Geom_file		
+			format "Texture \"%:light:L\" \"color\" \"imagemap\" \"string wrap\"[\"repeat\"]\"string filename\" [\"%\"]\n" Obj.name obj.material.emissionTexture.filename to:out_Geom_file
+			format "AreaLightSource \"area\" \"texture L\" [\"%:light:L\"]\n" Obj.name to:out_Geom_file
+			format "\"float power\" [%]\n" obj.material.emissionTexture.power to:out_Geom_file
+			format "\"float efficacy\" [%]\n" obj.material.emissionTexture.efficacy to:out_Geom_file
+			format "\"float gain\" [%]\n" obj.material.emissionTexture.gain to:out_Geom_file
+			)
+			        
+		)
+    )
+	
+	fn write_emissiontexture Obj &out_Geom_file =
+	(
+		if (Obj.material.emissionTexture != undefined) do
+			(
+			format "\"texture emission\" [\"%\"]\n" Obj.material.emissionTexture.name to:out_Geom_file
+			)
 	)
 	
 	fn write_simgatexture Obj &out_Geom_file =
@@ -121,6 +180,7 @@
 		format "Texture \"%\"\n" Obj.name to:out_Geom_file
 		format "\"color\" \"imagemap\" \"string wrap\" [\"repeat\"]\n" to:out_Geom_file
 		format "\"string filename\" [\"%\"]\n" Obj.filename to:out_Geom_file
+
 	)
 	fn write_texturemap_float Obj &out_Geom_file=
 	(
@@ -140,6 +200,8 @@
 	
 	fn WriteShaders Obj  &out_Geom_file = 
 	(
+		--addModifier obj (Edit_Mesh ())
+
 		Local MeshArrays = #(#(), #(), #(), #())
 		num_faces = Obj.numfaces
 		--	print (classof Obj.material)
@@ -153,48 +215,14 @@
 			
 			if classof Obj.material == LuxrenderMatte  then 
 			(
-				if Obj.material.useBumpmap as string == "true" then
-				(
-					if (Obj.material.bumpmapTexture != undefined) do
-					(
-						write_bumpmaptexture Obj.material.bumpmapTexture out_Geom_file
-						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-					)
-				)
-				
-				
-				
-
-				if (Obj.material.kdTexture != undefined) do
-				(
-					getandwriteMaterialTexture Obj.material.kdTexture out_Geom_file
-				)
-				
+				load_diffuse Obj out_Geom_file
+				load_bump Obj out_Geom_file
+				load_emissiontexture Obj out_Geom_file
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				format "\"string type\" \"matte\"\n" to:out_Geom_file
-				if (obj.material.kdTexture != undefined) do
-				(
-					format "\"texture Kd\" [\"%\"]\n" obj.material.kdTexture.name to:out_Geom_file
-				)
-				
-				if (Obj.material.kdTexture == undefined) do
-				(
-					format "\"color Kd\" [% % %]\n" (Obj.material.kdColor.r / 255) (Obj.material.kdColor.g / 255) (Obj.material.kdColor.b / 255) to:out_Geom_file	
-				)
-				
-				if (Obj.material.bumpmapTexture == undefined) then
-				(
-					if (Obj.material.useBumpmap as string == "true") then
-					(
-						format "\"float bumpmap\" [%]\n" Obj.material.bumpMap to:out_Geom_file
-					)
-				)
-				
-				if (Obj.material.bumpmapTexture != undefined) do
-				(
-					format "\"texture bumpmap\" [\"%\"]\n" Obj.material.bumpmapTexture.name to:out_Geom_file
-					format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-				)
+				write_diffuse Obj out_Geom_file
+				write_bump Obj out_Geom_file
+				write_emissiontexture Obj out_Geom_file
 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 			)
 			
@@ -202,14 +230,13 @@
 	----METAL BEGIN
 			if classOf obj.material == LuxrenderMetal then
 			(
-				if (Obj.material.KtTexture != undefined) do
-				(
-					write_bumpmaptexture Obj.material.KtTexture out_Geom_file
-					format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-				)
-				
+
+				load_bump Obj out_Geom_file
+				load_emissiontexture Obj out_Geom_file
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				format "\"string type\" \"metal\"\n" to:out_Geom_file
+				write_bump Obj out_Geom_file
+				write_emissiontexture Obj out_Geom_file
 				
 				if (obj.material.metalname == 1)do
 				(
@@ -233,11 +260,7 @@
 				)
 				format "\"float vroughness\"[%]\n" obj.material.vexponent to:out_Geom_file
 				format "\"float uroughness\"[%]\n" obj.material.uexponent to:out_Geom_file
-					if (Obj.material.bumpmapTexture != undefined) do
-					(
-						format "\"texture bumpmap\" [\"%\"]\n" Obj.material.KtTexture.name to:out_Geom_file
-						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-					)
+					
 					
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
@@ -303,32 +326,16 @@
 			
 			if classOf obj.material == LuxrenderGlossy then
 			(
-				if Obj.material.useBumpmap as string == "true" then
-				(
-					if (Obj.material.bumpmapTexture != undefined) do
+				load_diffuse Obj out_Geom_file
+				load_emissiontexture Obj out_Geom_file
+				load_bump Obj out_Geom_file
+				load_specular Obj out_Geom_file
+					if (Obj.material.useior) then
 					(
-						write_bumpmaptexture Obj.material.bumpmapTexture out_Geom_file
-						format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-					)
-				)
-					
-				if (Obj.material.useior) then
-				(
-					if (Obj.material.iorTexture != undefined)do
-					(
+						if (Obj.material.iorTexture != undefined)do
+						(
 						write_texturemap_float Obj.material.iorTexture out_Geom_file
-					)
-					
-				)
-				
-				if Obj.material.kdTexture != undefined then
-				(
-					write_texturemap Obj.material.kdTexture out_Geom_file
-				)
-					
-					if Obj.material.ksTexture != undefined then
-					(
-						write_texturemap Obj.material.ksTexture out_Geom_file
+						)
 					)
 					
 					if Obj.material.iorTexture != undefined then
@@ -352,53 +359,48 @@
 					)
 					
 					format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-					format "\"string type\" \"glossy\"\n" to:out_Geom_file
+		            if Obj.material.useGlossylossy as string != "true" then
+						(
+						format "\"string type\" \"glossy\"\n" to:out_Geom_file
+						)
+					else
+						(
+						format "\"string type\" \"glossy_lossy\"\n" to:out_Geom_file
+						)
+					write_diffuse Obj out_Geom_file
+					write_specular Obj out_Geom_file
+					format "\"float vroughness\"[%]\n" obj.material.vroughness to:out_Geom_file
+				    format "\"float uroughness\"[%]\n" obj.material.uroughness to:out_Geom_file
+					write_bump Obj out_Geom_file
 					
 					if Obj.material.vRoughnessTexture !=undefined then
-					(
+						(
 						format " \"texture vroughness\" [\"%\"]\n" Obj.material.vRoughnessTexture.name to:out_Geom_file
 						format " \"float vroughness\" [%]\n" Obj.material.vRoughness to:out_Geom_file
-					)
+						)
 					
 					if Obj.material.uRoughnessTexture !=undefined then
-					(
+						(
 						format " \"texture uroughness\" [\"%\"]\n" Obj.material.uRoughnessTexture.name to:out_Geom_file
 						format " \"float uroughness\" [%]\n" Obj.material.uRoughness to:out_Geom_file
-					)
+						)
 					
-					if Obj.material.ksTexture != undefined then
-					(
-						format " \"texture Ks\" [\"%\"]\n" Obj.material.ksTexture.name to:out_Geom_file
-					)
-
-					if Obj.material.kdTexture != undefined then
-					(
-						format " \"texture Kd\" [\"%\"]\n" Obj.material.kdTexture.name to:out_Geom_file
-					)
-					if Obj.material.kdTexture == undefined then
-					(	
-						format " \"color Kd\" [% % %]\n" (Obj.material.Kdcolor.r / 255) (Obj.material.Kdcolor.g / 255) (Obj.material.Kdcolor.b / 255)  to:out_Geom_file
-					)
 					
 					if (Obj.material.useior) then
-					(
-						if Obj.material.iorTexture != undefined then
 						(
+							if Obj.material.iorTexture != undefined then
+							(
 							format " \"texture index\" [\"%\"]\n" Obj.material.iorTexture.name to:out_Geom_file
-						)
-						if Obj.material.iorTexture == undefined then
-						(
+							)
+							if Obj.material.iorTexture == undefined then
+							(
 							format " \"float index\" [%]\n" Obj.material.ior to:out_Geom_file
+							)
 						)
-					)
 					
-					if Obj.material.ksTexture == undefined then
-					(
-						format " \"color Ks\" [% % %]\n" (Obj.material.kscolor.r / 255) (Obj.material.kscolor.g / 255) (Obj.material.kscolor.b / 255) to:out_Geom_file
-					)
 					
 					if (Obj.material.useka) then
-					(
+						(
 						if Obj.material.katexture != undefined then
 						(
 							format " \"texture Ka\" [\"%\"]\n" Obj.material.katexture.name to:out_Geom_file
@@ -407,25 +409,9 @@
 						(
 							format " \"color Ka\" [% % %]\n" (Obj.material.kacolor.r / 255) (Obj.material.kacolor.g / 255) (Obj.material.kacolor.b / 255)  to:out_Geom_file
 						)
-					)
+						)
 
 					format " \"float d\" [%]\n" Obj.material.kadepth to:out_Geom_file
-					
-					if (Obj.material.bumpmapTexture == undefined) then
-					(
-						if (Obj.material.useBumpmap as string == "true") then
-						(
-							format "\"float bumpmap\" [%]\n" Obj.material.bumpMap to:out_Geom_file
-						)
-					)
-					if (obj.material.useBumpmap as string == "true") then
-					(
-						if (Obj.material.bumpmapTexture != undefined) then
-						(
-							format "\"texture bumpmap\" [\"%\"]\n" Obj.material.bumpmapTexture.name to:out_Geom_file
-							format "\"float gain\" [%] \n" Obj.material.bumpMap to:out_Geom_file
-						)
-					)
 					format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 			)
 				
@@ -562,44 +548,86 @@
 			
 			if classof obj.material == LuxrenderCarPaint then
 			(
+				load_diffuse Obj out_Geom_file
+				if (Obj.material.ks1Texture != undefined) do
+				(
+				getandwriteMaterialTexture Obj.material.ks1Texture out_Geom_file
+				if (Obj.material.ks1color.value as float != 255) then
+				(
+				format "Texture \"%.scale\" \"color\" \"scale\" \"texture tex1\" [\"%\"] \"color tex2\" [% % %]\n" Obj.material.ks1texture.name Obj.material.ks1texture.name (Obj.material.Ks1color.r / 255) (Obj.material.Ks1color.g / 255) (Obj.material.Ks1color.b / 255)   to:out_Geom_file
+				)
+				)
+				if (Obj.material.ks2Texture != undefined) do
+				(
+				getandwriteMaterialTexture Obj.material.ks2Texture out_Geom_file
+				if (Obj.material.ks2color.value as float != 255) then
+				(
+				format "Texture \"%.scale\" \"color\" \"scale\" \"texture tex1\" [\"%\"] \"color tex2\" [% % %]\n" Obj.material.ks2texture.name Obj.material.ks2texture.name (Obj.material.Ks2color.r / 255) (Obj.material.Ks2color.g / 255) (Obj.material.Ks2color.b / 255)   to:out_Geom_file
+				)
+				)
+				if (Obj.material.ks3Texture != undefined) do
+				(
+				getandwriteMaterialTexture Obj.material.ks3Texture out_Geom_file
+				if (Obj.material.ks3color.value as float != 255) then
+				(
+				format "Texture \"%.scale\" \"color\" \"scale\" \"texture tex1\" [\"%\"] \"color tex2\" [% % %]\n" Obj.material.ks3texture.name Obj.material.ks3texture.name (Obj.material.Ks3color.r / 255) (Obj.material.Ks3color.g / 255) (Obj.material.Ks3color.b / 255)   to:out_Geom_file
+				)
+				)
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
-				format "\"string type\" \"carpaint\" " to:out_Geom_file
-				
-				paintnameString = ""
-				--"Blue Matte", "Blue", "White", "2k Acrylack", "BMW 339", "Opel Titan", "Polaris Silber", "Ford F8"
-				if obj.material.paintname == 1 then
+				format "\"string type\" \"carpaint\"\n" to:out_Geom_file
+				write_diffuse Obj out_Geom_file
+				if (Obj.material.ks1Texture != undefined) then
 				(
-					paintnameString = toLower  "Blue Matte"
-				)
-				if obj.material.paintname == 2 then
+				if (Obj.material.ks1color.value as float != 255) then
 				(
-					paintnameString = toLower  "Blue"
+				format "\"texture Ks1\" \"%.scale\"\n" Obj.material.ks1texture.name to:out_Geom_file
 				)
-				if obj.material.paintname == 3 then
+				else
 				(
-					paintnameString = toLower  "White"
+				format "\"texture Ks1\" \"%\"\n" Obj.material.ks1texture.name to:out_Geom_file	
 				)
-				if obj.material.paintname == 4 then
+				)
+				else
 				(
-					paintnameString = toLower  "2k Acrylack"
+				format " \"color Ks1\" [% % %]\n" (Obj.material.Ks1color.r / 255) (Obj.material.Ks1color.g / 255) (Obj.material.Ks1color.b / 255)  to:out_Geom_file
 				)
-				if obj.material.paintname == 5 then
+				if (Obj.material.ks2Texture != undefined) then
 				(
-					paintnameString = toLower  "BMW339"
-				)
-				if obj.material.paintname == 6 then
+				if (Obj.material.ks2color.value as float != 255) then
 				(
-					paintnameString = toLower  "Opel Titan"
+				format "\"texture Ks2\" \"%.scale\"\n" Obj.material.ks2texture.name to:out_Geom_file
 				)
-				if obj.material.paintname == 7 then
+				else
 				(
-					paintnameString = toLower  "Polaris Silber"
+				format "\"texture Ks2\" \"%\"\n" Obj.material.ks2texture.name to:out_Geom_file	
 				)
-				if obj.material.paintname == 8 then
+				)
+				else
 				(
-					paintnameString = toLower "Ford F8"
+				format " \"color Ks2\" [% % %]\n" (Obj.material.Ks2color.r / 255) (Obj.material.Ks2color.g / 255) (Obj.material.Ks2color.b / 255)  to:out_Geom_file
 				)
-				
+								if (Obj.material.ks3Texture != undefined) then
+				(
+				if (Obj.material.ks3color.value as float != 255) then
+				(
+				format "\"texture Ks3\" \"%.scale\"\n" Obj.material.ks3texture.name to:out_Geom_file
+				)
+				else
+				(
+				format "\"texture Ks3\" \"%\"\n" Obj.material.ks3texture.name to:out_Geom_file	
+				)
+				)
+				else
+				(
+				format " \"color Ks3\" [% % %]\n" (Obj.material.Ks3color.r / 255) (Obj.material.Ks3color.g / 255) (Obj.material.Ks3color.b / 255)  to:out_Geom_file
+				)
+				format "\"float R1\" [%]\n" Obj.material.floatR1 to:out_Geom_file
+				format "\"float R2\" [%]\n" Obj.material.floatR2 to:out_Geom_file
+				format "\"float R3\" [%]\n" Obj.material.floatR3 to:out_Geom_file
+				format "\"float M1\" [%]\n" Obj.material.floatM1 to:out_Geom_file
+				format "\"float M2\" [%]\n" Obj.material.floatM2 to:out_Geom_file
+				format "\"float M3\" [%]\n" Obj.material.floatM3 to:out_Geom_file
+
 				if (obj.material.useka)do
 				(
 					--if (obj.material.katexture == undefined )do
@@ -615,8 +643,6 @@
 					
 				)
 				
-				format "\t\"string name\" [\"%\"]\n" paintnameString to:out_Geom_file--name from dropdown
-				format " \"float d\" [%]\n" obj.material.kadepth to:out_Geom_file
 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				
 			)
@@ -709,7 +735,7 @@
 			
 			else if classOf Lt == LuxSky then
 			(
-				format "AttributeBegin # %\n"	 Lt.name to:out_file	
+				format "AttributeBegin # %\n" Lt.name to:out_file	
 				format "LightGroup \"Sky\"\n" to:out_file
 				format "LightSource \"sky\"\n" to:out_file
 				format "\"vector sundir\" [0 0 1]" to:out_file
@@ -1400,6 +1426,8 @@
 				launchafterexport = state
 			)
 		)
+		
+		
 		rollout about_script "About" width:232 height:185 rolledup:true
 		(
 			label lbl1 "Written by Stig Atle steffensen - www.stigatle.net" pos:[40,16] width:160 height:32
@@ -1467,6 +1495,8 @@
 				--print (f as string)
 			)
 		)
+
+		
 
 		try(closeRolloutFloater theNewFloater)catch()
 		theNewFloater = newRolloutFloater "LuxMaxscript Exporter" 250 500
