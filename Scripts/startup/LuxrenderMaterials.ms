@@ -20,9 +20,9 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 	(
 		kdColor type:#color default:[90,90,90] ui:mkdColor
 		kdTexture type:#textureMap ui:mkdTexture
-		--useSigma type:#boolean ui:museSigma
-		--sigma type:#float ui:msigma
-		--sigmaTexture type:#textureMap ui:msigmaTexture
+		useSigma type:#boolean ui:museSigma
+		sigma type:#float ui:msigma
+		sigmaTexture type:#textureMap ui:msigmaTexture
 		useBumpmap type:#boolean ui:museBumpmap
 		bumpmap type:#float ui:mbumpmap
 		bumpmapTexture type:#textureMap ui:mbumpmapTexture
@@ -46,15 +46,15 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 		group "Advanced Parameters"
 		(
 			-- Oren-Nayar parameters
-			--checkbox museSigma "Sigma ..........." across:3
-			--spinner msigma "" range:[0,100,0] width:50 align:#left
-		--	mapbutton msigmaTexture "T" width:128 height:16 align:#right
+			checkbox museSigma "Sigma ..........." across:3
+			spinner msigma "" range:[0,90,0] width:50 align:#left
+			mapbutton msigmaTexture "T" width:128 height:16 align:#right
 			
-			--on museSigma changed s do
-			--(
-			--	msigma.enabled = s
-			--	msigmaTexture.enabled = s
-			--)
+			on museSigma changed s do
+			(
+			msigma.enabled = s
+			msigmaTexture.enabled = s
+			)
 
 			-- Bumpmap parameters
 			checkbox museBumpmap "Bumpmap ......." across:3
@@ -93,9 +93,8 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 		
 		on params open do
 		(
-			--msigma.enabled = museSigma.state
-			--msigmaTexture.enabled = museSigma.state
-			
+			msigma.enabled = musesigma.state
+			msigmatexture.enabled = musesigma.state
 			mbumpmap.enabled = museBumpmap.state
 			mbumpmapTexture.enabled = museBumpmap.state
 			memissionTexture.enabled = museEmission.state
@@ -537,8 +536,11 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		displacement type:#float ui:mdisplacement
 		displacementTexture type:#textureMap ui:mdisplacementTexture
 		
-		uexponent type:#float ui:spn_exponentu  default:0.001
-		vexponent type:#float ui:spn_exponentv  default:0.001
+		uroughness type:#float default:0.1 ui:spn_exponentu
+		vroughness type:#float default:0.1 ui:spn_exponentv
+		--spinner spn_exponentv "V-roughness" width:88  range:[0.000,1.000,0.001] type:#float align:#left enabled:true scale:0.001 default:0.001
+		uroughnesstexture type:#textureMap ui:b_exponentuTexture
+		vroughnesstexture type:#textureMap ui:b_exponentvTexture
 		
 	)
 
@@ -547,13 +549,15 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 	(
 		dropdownList mname "Name:" pos:[8,8] width:136 height:40 items:#("Aluminium", "Amorphous carbon", "Gold", "Copper", "NK Data")
 		
-		GroupBox grp1 "Advanced Parameters" pos:[4,69] width:252 height:112
-		label lb_exponentu "U-Exponent . . . . . . " pos:[8,88] width:95 height:13 enabled:true across:3
-		spinner spn_exponentu "" pos:[80,88] width:68 height:16 enabled:true range:[0.001,1,0.001] type:#float scale:0.001
-		mapButton spn_exponentuTexture "None" pos:[152,88] width:96 height:18 enabled:false  align:#right
-		label lb_exponentv "V-Exponent . . . . . . " pos:[8,112] width:94 height:13 enabled:true across:3
-		spinner spn_exponentv "" pos:[80,111] width:68 height:16 enabled:true range:[0.001,1,0.001] type:#float scale:0.001
-		mapButton spn_exponentvTexture "None" pos:[152,112] width:96 height:18 enabled:false
+		GroupBox grp1 "Advanced Parameters" pos:[4,69] width:340 height:112
+		label lb_exponentu "U-Exponent" pos:[8,85] across:3 enabled:true
+		spinner spn_exponentu "" width:68  range:[0.000,1.000,0.001] type:#float pos:[80,85] align:#left enabled:true scale:0.001 default:0.001
+		mapbutton b_exponentuTexture "None" width:120 height:18 pos:[160,85] align:#right enabled:true
+		label lb_exponentv "V-Exponent" pos:[8,110] across:3 enabled:true
+		spinner spn_exponentv ""  width:68 range:[0.000,1.000,0.001] type:#float pos:[80,110] align:#left enabled:true scale:0.001 default:0.001
+		mapbutton b_exponentvTexture "None" width:120 height:18 pos:[160,110] align:#right enabled:true
+
+		
 
 		-- Bumpmap parameters
 			checkbox museBumpmap "Bumpmap ......." across:3
@@ -1239,45 +1243,56 @@ plugin material LuxTest name:"LR Rough Glass" classID:#(0x3686056d, 0x66e575a8) 
 --MatteTranslucent
 plugin material LuxMatteTrans name:"LR MatteTranslucent" classID:#(0x40755a6a, 0x4f0109c6) extends:Standard replaceUI:true version:1
 (
-parameters main rollout:paramsEm
+parameters main rollout:params
 	(
-		--AreaLightSourceMap type:#textureMap ui:m_emissionTexture
-		diffusecolor type:#color default:[100,100,100] ui:mDiffuse
-		kdtexture type:#textureMap ui:mkdTexture
-		
-		on diffusecolor set val do delegate.diffuse_color = val
-		transmitivitycolor type:#color default:[100,100,100] ui:mTransmission
-		--sigma type:#float default:1.5 ui:spn_sigma
-		--KtTexture
-		KtTexture type:#textureMap ui:mTransmissionTexture
-		
-			--useSigma type:#boolean ui:museSigma
-			--sigma type:#float ui:msigma
-			--sigmaTexture type:#textureMap ui:msigmaTexture
+		ktcolor type:#color default:[255,255,255] ui:mktcolor
+		kttexture type:#textureMap ui:mkttexture
+		krcolor type:#color default:[255,255,255] ui:mkrcolor
+		on krcolor set val do delegate.diffuse_color = val
+		krTexture type:#textureMap ui:mkrtexture
+		useSigma type:#boolean ui:museSigma
+		sigma type:#float ui:msigma
+		sigmaTexture type:#textureMap ui:msigmaTexture
+		useBumpmap type:#boolean ui:museBumpmap
+		bumpmap type:#float ui:mbumpmap
+		bumpmapTexture type:#textureMap ui:mbumpmapTexture
 		
 	)
 	
-	rollout paramsEm "settings" width:296 height:96
+	rollout params "settings" width:296 height:96
 	(
-		--mapButton m_emissionTexture "T" pos:[-69,7] width:300 height:20
-		colorPicker mDiffuse "diffuse color:" pos:[32,8] width:104 height:18
-		colorPicker mTransmission "Transmission color:" pos:[0,30] width:134 height:18
-		mapButton mkdTexture "MKDTexture" pos:[144,8] width:128 height:16
-		mapButton mTransmissionTexture "transmission Texture" pos:[144,32] width:128 height:16
-	--	checkbox museSigma "Sigma ..........." pos:[0,56] width:89 height:15 across:3
-	--	spinner msigma "" pos:[88,56] width:50 height:16 range:[0,100,0]
-	--	mapButton msigmaTexture "T" pos:[144,56] width:128 height:16
-			
-	--	on museSigma changed s do
-	--	(
-	----		msigma.enabled = s
-	--		msigmaTexture.enabled = s
-	--	)
-	)
-	on paramsEm open do
-	(
-		--AreaLightSourceMap = LuxrenderBlackbody()
+		colorpicker mkrcolor "Reflection: " pos:[11,20] 
+		mapbutton mkrtexture"None" width:128 height:20 pos:[180,20]
 		
+		colorpicker mktcolor "Transmission: " pos:[11,60] align:#left height:18
+		mapbutton mkttexture"None" width:128 height:20 pos:[180,60] align:#right 
+		
+		checkbox museSigma "Sigma ..........." across:3
+		spinner msigma "" range:[0,90,0] width:50 align:#left
+		mapbutton msigmaTexture "T" width:128 height:16 align:#right
+			
+		on museSigma changed s do
+		(
+			msigma.enabled = s
+			msigmaTexture.enabled = s
+		)
+		
+		checkbox museBumpmap "Bumpmap ......." across:3
+		spinner mbumpmap "" scale:0.01 range:[0,1,0] width:50 align:#left
+		mapbutton mbumpmapTexture "T" width:128 height:16 align:#right
+		
+		on museBumpmap changed s do
+		(
+			mbumpmap.enabled = s
+			mbumpmapTexture.enabled = s
+		)
+	)
+	on params open do
+	(
+		msigma.enabled = musesigma.state
+		msigmatexture.enabled = musesigma.state
+		mbumpmap.enabled = museBumpmap.state
+		mbumpmapTexture.enabled = museBumpmap.state
 	)
 )
 
