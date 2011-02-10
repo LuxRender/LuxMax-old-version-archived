@@ -216,6 +216,69 @@
 			)
 	)
 	
+	fn load_transmission Obj &out_Geom_file =
+	(
+	if (Obj.material.ktTexture != undefined) do
+				(
+					getandwriteMaterialTexture Obj.material.ktTexture out_Geom_file
+					if (Obj.material.ktcolor.value as float != 255) then
+					(
+					format "Texture \"%.scale\" \"color\" \"scale\" \"texture tex1\" [\"%\"] \"color tex2\" [% % %]\n" Obj.material.kttexture.name Obj.material.kttexture.name (Obj.material.Ktcolor.r / 255) (Obj.material.Ktcolor.g / 255) (Obj.material.Ktcolor.b / 255)   to:out_Geom_file
+					)
+				)	
+	)
+	
+	fn write_transmission Obj &out_Geom_file =
+	(
+		if (Obj.material.ktTexture != undefined) then
+			(
+			if (Obj.material.ktcolor.value as float != 255) then
+				(
+				format "\"texture Kt\" \"%.scale\"\n" Obj.material.kttexture.name to:out_Geom_file
+				)
+			else
+				(
+				format "\"texture Kt\" \"%\"\n" Obj.material.kttexture.name to:out_Geom_file	
+				)
+			)
+		else
+		(
+		format " \"color Kt\" [% % %]\n" (Obj.material.Ktcolor.r / 255) (Obj.material.Ktcolor.g / 255) (Obj.material.Ktcolor.b / 255)  to:out_Geom_file
+		)	
+	)
+	
+	
+	fn load_reflection Obj &out_Geom_file =
+	(
+	if (Obj.material.krTexture != undefined) do
+				(
+					getandwriteMaterialTexture Obj.material.krTexture out_Geom_file
+					if (Obj.material.krcolor.value as float != 255) then
+					(
+					format "Texture \"%.scale\" \"color\" \"scale\" \"texture tex1\" [\"%\"] \"color tex2\" [% % %]\n" Obj.material.krtexture.name Obj.material.krtexture.name (Obj.material.Krcolor.r / 255) (Obj.material.Krcolor.g / 255) (Obj.material.Krcolor.b / 255)   to:out_Geom_file
+					)
+				)	
+	)
+	
+	fn write_reflection Obj &out_Geom_file =
+	(
+		if (Obj.material.krTexture != undefined) then
+			(
+			if (Obj.material.krcolor.value as float != 255) then
+				(
+				format "\"texture Kr\" \"%.scale\"\n" Obj.material.krtexture.name to:out_Geom_file
+				)
+			else
+				(
+				format "\"texture Kr\" \"%\"\n" Obj.material.krtexture.name to:out_Geom_file	
+				)
+			)
+		else
+		(
+		format " \"color Kr\" [% % %]\n" (Obj.material.Krcolor.r / 255) (Obj.material.Krcolor.g / 255) (Obj.material.Krcolor.b / 255)  to:out_Geom_file
+		)	
+	)
+	
 	fn write_simgatexture Obj &out_Geom_file =
 	(
 		format "\"texture sigma\" [\"%\"]\n" Obj.filename to:out_Geom_file
@@ -318,42 +381,27 @@
 			
 			if classOf obj.material == LuxrenderGlass then
 			(
-				if (obj.material.KtTexture != undefined) do
-				(
-					getandwriteMaterialTexture Obj.material.KtTexture out_Geom_file
-				)
-				if (obj.material.KrTexture != undefined) do
-				(
-					getandwriteMaterialTexture Obj.material.KrTexture out_Geom_file
-				)
-				
+				load_transmission Obj out_Geom_file
+				load_reflection Obj out_Geom_file
+				load_bump Obj out_Geom_file
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				format "\"string type\" \"glass\"\n" to:out_Geom_file
-				
-				if (obj.material.KtTexture != undefined) do
-				(
-					format "\"texture Kt\" [\"%\"]\n" obj.material.KtTexture.name to:out_Geom_file
-				)
-				if (obj.material.KrTexture != undefined) do
-				(
-					format "\"texture Kr\" [\"%\"]\n" obj.material.KrTexture.name to:out_Geom_file
-				)
-				
-				if (obj.material.KtTexture == undefined) do
-				(
-					format "\"color Kt\" [% % %]\n" (Obj.material.kt.r / 255) (Obj.material.kt.g / 255) (Obj.material.kt.b / 255) to:out_Geom_file	
-				)
-				
-				if (obj.material.iorActive as string == "true")do
+				write_transmission Obj out_Geom_file
+				write_reflection Obj out_Geom_file
+				if (obj.material.usearchitectural as string == "true") then
 				(
 					format " \"bool architectural\" [\"true\"]\n" to:out_Geom_file
 				)
-				
-				if (obj.material.iorActive as string == "false")do
+				else
 				(
 					format " \"bool architectural\" [\"false\"]\n" to:out_Geom_file
 				)
 				format " \"float index\" [%]\n" Obj.material.ior to:out_Geom_file
+				if (obj.material.usedispersive as string == "true") do
+				(
+					format "\"float cauchyb\" [%]\n" Obj.material.cauchyb to:out_Geom_file
+				)
+				write_bump Obj out_Geom_file
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
@@ -381,18 +429,7 @@
 				load_emissiontexture Obj out_Geom_file
 				load_bump Obj out_Geom_file
 				load_specular Obj out_Geom_file
-					if (Obj.material.useior) then
-					(
-						if (Obj.material.iorTexture != undefined)do
-						(
-						write_texturemap_float Obj.material.iorTexture out_Geom_file
-						)
-					)
 					
-					if Obj.material.iorTexture != undefined then
-					(
-						write_texturemap Obj.material.iorTexture out_Geom_file
-					)
 					
 					if Obj.material.katexture != undefined then
 					(
@@ -434,19 +471,6 @@
 						(
 						format " \"texture uroughness\" [\"%\"]\n" Obj.material.uRoughnessTexture.name to:out_Geom_file
 						format " \"float uroughness\" [%]\n" Obj.material.uRoughness to:out_Geom_file
-						)
-					
-					
-					if (Obj.material.useior) then
-						(
-							if Obj.material.iorTexture != undefined then
-							(
-							format " \"texture index\" [\"%\"]\n" Obj.material.iorTexture.name to:out_Geom_file
-							)
-							if Obj.material.iorTexture == undefined then
-							(
-							format " \"float index\" [%]\n" Obj.material.ior to:out_Geom_file
-							)
 						)
 					
 					

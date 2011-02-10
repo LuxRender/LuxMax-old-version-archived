@@ -121,10 +121,6 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 		katexture type:#textureMap ui:mAbsorptionTexture
 		kadepth type:#float ui:mDepth default:0.15
 		
-		useior type:#boolean ui:chk_ior
-		ior type:#float ui:spn_ior
-		iorTexture type:#textureMap ui:m_IOR
-		
 		uroughness type:#float default:0.1 ui:spn_exponentu
 		vroughness type:#float default:0.1 ui:spn_exponentv
 		--spinner spn_exponentv "V-roughness" width:88  range:[0.000,1.000,0.001] type:#float align:#left enabled:true scale:0.001 default:0.001
@@ -180,10 +176,6 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 		)
 		group "Advanced Parameters"
 		(
-			checkbox chk_ior "IOR . . . . . . . . " across:3
-			spinner spn_ior "" width:68 range:[1,50,1.5] align:#left
-			mapbutton m_IOR "T" width:120 height:20 align:#right
-		
 			label lb_exponentu "U-Exponent . . . . . . " across:3 enabled:true
 			spinner spn_exponentu "" width:68  range:[0.000,1.000,0.001] type:#float align:#left enabled:true scale:0.001 default:0.001
 			mapbutton b_exponentuTexture "None" width:120 height:18 align:#right enabled:true
@@ -204,11 +196,7 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 				memissionTexture.enabled = s
 			)
 		)
-		on chk_ior changed s do
-		(
-			spn_ior.enabled = s
-			m_IOR.enabled = s
-		)
+		
 		on museBumpmap changed s do
 		(
 			mbumpmap.enabled = s
@@ -245,8 +233,6 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 		(
 			mAbsorption.enabled = museabsorption.state
 			mAbsorptionTexture.enabled = museabsorption.state
-			spn_ior.enabled = chk_ior.state
-			m_ior.enabled = chk_ior.state
 			
 			mbumpmap.enabled = museBumpmap.state
 			mbumpmapTexture.enabled = museBumpmap.state
@@ -277,79 +263,83 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 ( 
 	parameters main rollout:params
 	(
-		Kt type:#color default:[255,255,255] ui:mTransmission
-		on Kt set val do delegate.diffuse_color = val
-		KtTexture type:#textureMap ui:mTransmissionTexture
-		Kr type:#color default:[255,255,255] ui:mReflection
-		KrTexture type:#textureMap ui:mReflectionTexture
-	)
-
-	parameters main rollout:paramsIOR
-	(
-		iorActive type:#boolean default:false ui:chk_ior
+		ktcolor type:#color default:[255,255,255] ui:mktcolor
+		on ktcolor set val do delegate.diffuse_color = val
+		kttexture type:#textureMap ui:mkttexture
+		krcolor type:#color default:[255,255,255] ui:mkrcolor
+		krTexture type:#textureMap ui:mkrtexture
+		usearchitectural type:#boolean default:false ui:musearchitectural
 		ior type:#float ui:spn_ior default:1.5
-		iorTexture type:#textureMap ui:m_IOR
-		iorstring type:#string default:"yesior"
-		iorint type:#integer default:0
+		iortexture type:#textureMap ui:miortexture
+		useBumpmap type:#boolean ui:museBumpmap
+		bumpmap type:#float ui:mbumpmap
+		bumpmapTexture type:#textureMap ui:mbumpmapTexture
+		usedispersive type:#boolean ui:musedispersive
+		cauchyb type:#float ui:mcauchyb
+	
 	)
-
-	parameters main rollout:paramsBump
-	(
-		bumpmap type:#float ui:spn_bump
-		bumpmapMap type:#textureMap ui:m_Bumpmap
-	)
+	
 	
 	rollout params "Glass Parameters"
 	(
-		colorpicker mTransmission "Transmission: " pos:[11,8]
-		mapbutton mTransmissionTexture"None" width:128 height:20 pos:[180,8]
-		colorpicker mReflection "Reflection: " pos:[24,32]
-		mapbutton mReflectionTexture"None" width:128 height:20 pos:[180,32]
+	group  "Main Parameters"
+	(
+		colorpicker mktcolor "Transmission: " pos:[11,20] align:#left height:18
+		mapbutton mkttexture"None" width:128 height:20 pos:[180,20] align:#right 
+		colorpicker mkrcolor "Reflection: " pos:[11,60] 
+		mapbutton mkrtexture"None" width:128 height:20 pos:[180,60]
 	)
 
-	rollout paramsIOR "IOR" width:312 height:64
+	group "IOR Parameters"
 	(
-		checkbox chk_ior "enable architectural mode" pos:[23,7] width:200 height:15 
-		--label lb_Transmission "1.0 for Architectural glass . . . . ." pos:[8,0] width:140 height:13 across:3
-		spinner spn_ior "IOR:" pos:[16,24] width:100 height:16 range:[1,50,1.5]
-		mapButton m_IOR "T" pos:[176,24] width:128 height:20
- 
-		on chk_ior changed state do
-		(
-			if (chk_ior.checked)then
-			(
-				iorActive = true
-				iorstring = "yesior"
-				iorint = 1
-			)
-			else
-			(
-				iorActive = false
-				iorstring = "noior"
-				iorint = 0
-			)
-		--iorActive
-		)
+		spinner spn_ior "IOR:" range:[1,50,1.5] pos:[11,110]  width:68 align:#left default:1.51
+		mapButton miortexture "T" width:128 height:20 pos:[180,110] align:#right 
+		checkbox musearchitectural "enable architectural mode" align:#left enabled:true
 	)
 	
-	rollout paramsBump "Bump Map"
+	
+	on museior changed s do
 	(
-		spinner spn_bump "Bumpmap:" range:[0,1,0] pos:[38,8] width:110
-		mapbutton m_Bumpmap "T" width:128 height:20 pos:[180,8]
+		spn_ior.enabled = s
+		miortexture.enabled = s
+		musearchitectural.enabled =s
 	)
 	
-	on chk_ior changed s do
-		(
-			chk_ior.state = s
-		--	iorActive = true
-			--mbumpmapTexture.enabled = s
-		)
+	group "Bump Parameters"
+	
+	(
+	        checkbox museBumpmap "Bump" enabled:true pos:[10,200] align:#left
+			spinner mbumpmap "" scale:0.01 range:[0,1,0] pos:[80,200] width:68 align:#left
+			mapbutton mbumpmapTexture "T" pos:[180,200]  align:#right height:20 width:128
+	)
+	
+	on museBumpmap changed s do
+	(
+			mbumpmap.enabled = s
+			mbumpmapTexture.enabled = s
+	)
+	
+	group "Dispersive Refraction"
+	
+	(
+		checkbox musedispersive "Use Dispersive Refraction" enabled:true pos:[10,260] align:#left
+		spinner mcauchyb "cauchyb value" range:[0,1,0.5] pos:[220,260] align:#right width:68
+	)
+	
+	on musedispersive changed s do
+	(
+		mcauchyb.enabled = s
+	)
+	
 	on params open do
 		(
-			chk_ior.enabled = iorActive.state
-			iorActive = true
+		mbumpmap.enabled = museBumpmap.state
+		mbumpmapTexture.enabled = museBumpmap.state
+		mcauchyb.enabled = musedispersive.state
+			
 		)
-	
+		
+	)
 )
 
 -- // Area Light
