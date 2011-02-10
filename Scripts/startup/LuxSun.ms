@@ -12,7 +12,6 @@ plugin light LuxSun name:"LR Sun" classID:#(0x6c044fc0, 0x11b5394c) extends:SkyL
 		nsamples type:#integer default:1 ui:spn_nsamples animatable:true
 		turbidity type:#float ui:spn_turbidity default:2 animatable:true
 		relsize type:#float UI:spn_relsize default:1.0 animatable:true
-		
 		radius1 type:#float animatable:true default:20.0
 	)
 	
@@ -27,6 +26,7 @@ plugin light LuxSun name:"LR Sun" classID:#(0x6c044fc0, 0x11b5394c) extends:SkyL
 		(
 			
 		)
+
 	)
 	
 	tool create

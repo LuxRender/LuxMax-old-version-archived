@@ -9,8 +9,6 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 		nsamples type:#integer default:1 ui:spn_nsamples animatable:true
 		turbidity type:#float ui:spn_turbidity default:2 animatable:true
 		relsize type:#float UI:spn_relsize default:1.0 animatable:true
-		
-
 	)
 	
 	rollout params "LR Sky" width:162 height:143
@@ -20,7 +18,9 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 		spinner spn_turbidity "Turbidity" pos:[16,56] width:136 height:16 range:[0,30,0]
 		spinner spn_relsize "Relative size" pos:[16,80] width:136 height:16 type:#float
 		
-		
+		on params open do
+		(
+		)
 	)
 	
 	tool create

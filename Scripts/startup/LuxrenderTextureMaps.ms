@@ -116,6 +116,15 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		vdelta type:#float default:0 ui:m_vdelta
 	)
 	
+	parameters main rollout:paramsBlackbody
+	(
+		temperature type:#float default:6500 ui:mTemp
+		power type:#float default:100 ui:mPower
+		efficacy type:#float default:17 ui:mEfficacy
+		gain type:#float default:1 ui:mGain
+		group type:#string default:"default"ui:mGroup
+	)
+	
 	rollout params "ImageMap Parameters" width:360 height:144
 	(
 		label lb_filename "Bitmap:" pos:[8,48] width:35 height:13
@@ -180,6 +189,16 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		
 		spinner m_udelta "U Delta:" range:[-100, 100, 0] width:100 align:#right
 		spinner m_vdelta "V Delta:" range:[-100, 100, 0] width:100 align:#right
+	)
+	
+	rollout paramsBlackbody "Blackbody Parameters"
+	(
+		spinner mTemp "Temperature (Kelvin):" range:[1000,10000,6500]
+		spinner mPower "Power (W):" range:[0,10000,100]
+		spinner mEfficacy "Efficacy (LM/W):" range:[0,100,17]
+		spinner mGain "Gain:" range:[0,100,1] align:#right
+		
+		edittext mGroup "Group:" text:"default" width:300 align:#right
 	)
 )
 
