@@ -49,6 +49,57 @@
 		tStr
 	)
 	
+	fn preview_selected_material &temp_mat_file =
+	(
+		if (activeMeditSlot == undefined) then
+		(
+			messagebox "error.."
+		)
+		else 
+		(
+			format "#matname is = %\n" (meditMaterials[activeMeditSlot].name) to:temp_mat_file
+			---------------------------------------------------------------------------------------------------------------------------
+			format "LookAt 0.0 -3.0 0.5 0.0 -2.0 0.5 0.0 0.0 1.0\n" to:temp_mat_file
+			format "Camera \"perspective\" \"float fov\" [22.5]\n" to:temp_mat_file
+			format "Film \"fleximage\" \"integer xresolution\" [140] \"integer yresolution\" [140] \"integer ldr_writeinterval\" [3600] \"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [1] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"string filename\" [\"matpreview\"]\n" to:temp_mat_file
+			format "PixelFilter \"mitchell\" \"float xwidth\" [1.500000] \"float ywidth\" [1.500000] \"float B\" [0.333330] \"float C\" [0.333330] \"bool supersample\" [\"true\"]\n" to:temp_mat_file
+			format "Sampler \"lowdiscrepancy\" \"string pixelsampler\" [\"hilbert\"] \"integer pixelsamples\" [16]\n" to:temp_mat_file
+			format "SurfaceIntegrator \"distributedpath\" \"integer directsamples\" [1] \"integer diffusereflectdepth\" [1] \"integer diffusereflectsamples\" [4] \"integer diffuserefractdepth\" [4] \"integer diffuserefractsamples\" [1] \"integer glossyreflectdepth\" [1] \"integer glossyreflectsamples\" [2] \"integer glossyrefractdepth\" [4] \"integer glossyrefractsamples\" [1] \"integer specularreflectdepth\" [2] \"integer specularrefractdepth\" [4]\n" to:temp_mat_file
+			format "WorldBegin\n" to:temp_mat_file
+			---------------------------------------------------------------------------------------------------------------------------
+			--MATERIAL FOR PREVIEW OBJECT
+			---------------------------------------------------------------------------------------------------------------------------
+			format "AttributeBegin\n" to:temp_mat_file
+			format "Include\"temp_matpreview.lxm\"\n" to:temp_mat_file
+			format "Transform [0.5 0.0 0.0 0.0  0.0 0.5 0.0 0.0  0.0 0.0 0.5 0.0  0.0 0.0 0.5 1.0]\n" to:temp_mat_file
+			format "TransformBegin\n" to:temp_mat_file
+			format "Scale 1.000000 1.000000 1.000000\n" to:temp_mat_file
+			format "TransformEnd\n" to:temp_mat_file
+			format "Shape \"sphere\" \"float radius\" [1.0]\n" to:temp_mat_file
+			format "AttributeEnd\n" to:temp_mat_file
+			--MATERIAL FOR PREVIEW OBJECT
+			---------------------------------------------------------------------------------------------------------------------------
+			format "AttributeBegin\n" to:temp_mat_file
+			format "Transform [5.0 0.0 0.0 0.0  0.0 5.0 0.0 0.0  0.0 0.0 5.0 0.0  0.0 0.0 0.0 1.0]\n" to:temp_mat_file
+			format "Texture \"checks::pattern\" \"float\" \"checkerboard\"\"integer dimension\" [2] \"string aamode\" [\"supersample\"]\"string mapping\" [\"uv\"] \"float uscale\" [36.8] \"float vscale\" [36.0]\n" to:temp_mat_file
+			format "Texture \"checks\" \"color\" \"mix\" \"texture amount\" [\"checks::pattern\"] \"color tex1\" [0.9 0.9 0.9] \"color tex2\" [0.0 0.0 0.0]\n" to:temp_mat_file
+			format "Material \"matte\" \"texture Kd\" [\"checks\"]\n" to:temp_mat_file
+			format "Shape \"loopsubdiv\" \"integer nlevels\" [3] \"bool dmnormalsmooth\" [\"true\"] \"bool dmsharpboundary\" [\"false\"] \"integer indices\" [ 0 1 2 0 2 3 1 0 4 1 4 5 5 4 6 5 6 7 ]\"point P\" [ 1.000000 1.000000 0.000000 -1.000000 1.000000 0.000000 -1.000000 -1.000000 0.000000 1.000000 -1.000000 0.000000 1.000000 3.000000 0.000000 -1.000000 3.000000 0.000000 1.000000 3.000000 2.000000 -1.000000 3.000000 2.000000] \"normal N\" [ 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 -0.707083 0.707083 0.000000 -0.707083 0.707083 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000] \"float uv\" [ 0.333334 0.000000 0.333334 0.333334 0.000000 0.333334 0.000000 0.000000 0.666667 0.000000 0.666667 0.333333 1.000000 0.000000 1.000000 0.333333 ]\n" to:temp_mat_file
+			format "AttributeEnd\n" to:temp_mat_file
+			format "AttributeBegin\n" to:temp_mat_file
+			format "Transform [1.0 0.0 0.0 0.0  0.0 1.0 0.0 0.0  0.0 0.0 1.0 0.0  1.0 -1.0 4.0 1.0]\n" to:temp_mat_file
+			format "Texture \"pL\" \"color\" \"blackbody\" \"float temperature\" [6500.0]\n" to:temp_mat_file
+			format "LightSource \"point\" \"texture L\" [\"pL\"] \"float gain\" [0.002]\n" to:temp_mat_file
+			format "AttributeEnd\n" to:temp_mat_file
+			format "WorldEnd\n" to:temp_mat_file
+			forpreview = 0
+			
+			
+			
+		)
+	)
+	
+	
 	fn load_diffuse Obj &out_Geom_file =
 	(
 	if (Obj.material.kdTexture != undefined) do
