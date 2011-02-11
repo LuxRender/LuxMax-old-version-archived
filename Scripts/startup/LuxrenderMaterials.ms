@@ -118,7 +118,8 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 		useka type:#boolean default:false ui:museabsorption
 		kacolor type:#color default:[90,90,90] ui:mAbsorption
 		katexture type:#textureMap ui:mAbsorptionTexture
-		kadepth type:#float ui:mDepth default:0.15
+		d type:#float ui:mDepth default:0.15
+		dtexture type:#textureMap ui:mDepthTexture
 		
 		uroughness type:#float default:0.1 ui:spn_exponentu
 		vroughness type:#float default:0.1 ui:spn_exponentv
@@ -157,10 +158,11 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 			colorpicker mSpec ""  align:#left height:18
 			mapbutton mSpecTexture"None" width:120 height:18 align:#right
 			checkbox museabsorption "Absorption . . . ." align:#left across:3
-			colorpicker mAbsorption "" align:#left height:18 enabled:false
-			mapbutton mAbsorptionTexture "None" width:120 height:18 align:#right enabled:false
-			label lb_depth "Absorption Depth . . . . . . . . . . . . . . . . . . . . ." align:#left across:2
-			spinner mDepth "" width:60 align:#right range:[0,15,0.15] scale:0.01
+			colorpicker mAbsorption "" align:#left height:18 
+			mapbutton mAbsorptionTexture "None" width:120 height:18 align:#right 
+			label lb_depth "Absorption Depth . . . . . . . . . . . . . . . . . . . . ." align:#left across:2 
+			spinner mDepth "" width:60 align:#left range:[0,15,0.15] scale:0.01 
+			mapbutton mDepthTexture "None" width:120 height:18 align:#right 
 		)
 		
 		
@@ -169,9 +171,8 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 		(
 			mAbsorption.enabled = s
 			mAbsorptionTexture.enabled = s
-			useka = s
-			print "useKa"
-			print useKa
+			mDepth.enabled = s
+			mDepthTexture.enabled = s
 		)
 		group "Advanced Parameters"
 		(
@@ -232,6 +233,9 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0xfe1ebdc, 0x3b7b37e6
 		(
 			mAbsorption.enabled = museabsorption.state
 			mAbsorptionTexture.enabled = museabsorption.state
+			mDepth.enabled = museabsorption.state
+			mDepthTexture.enabled = museabsorption.state
+			
 			
 			mbumpmap.enabled = museBumpmap.state
 			mbumpmapTexture.enabled = museBumpmap.state
@@ -1067,12 +1071,16 @@ plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x65
 		
 		useka type:#boolean default:false ui:museabsorption
 		kacolor type:#color default:[90,90,90] ui:mAbsorption
-	--	katexture type:#textureMap ui:mAbsorptionTexture
-		kadepth type:#float ui:mDepth default:4
+		katexture type:#textureMap ui:mAbsorptionTexture
+		d type:#float ui:mDepth default:0.15
+		dtexture type:#textureMap ui:mDepthTexture
 		
 		useBumpmap type:#boolean ui:museBumpmap
 		bumpmap type:#float ui:mbumpmap
-		--bumpmapTexture type:#textureMap ui:mbumpmapTexture
+		bumpmapTexture type:#textureMap ui:mbumpmapTexture
+		
+		useEmission type:#boolean ui:museEmission
+		emissionTexture type:#textureMap ui:memissionTexture
 		
 		useSubdivision type:#boolean ui:museSubdivision
 		Subdivision type:#float ui:mSubdivision
@@ -1123,35 +1131,38 @@ plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x65
 
 		group "Advanced Parameters"
 		(
-			--Absorption parameters
-			checkbox museabsorption "Absorption . . . ." align:#left across:3
-			colorpicker mAbsorption "" align:#left height:18 enabled:false
-			--mapbutton mAbsorptionTexture "None" width:120 height:18 align:#right enabled:false
-			label lb_depth "Absorption Depth" align:#left across:3
-			spinner mDepth "" width:60 align:#right range:[0,15,0.15] scale:0.01
+			checkbox museabsorption "Absorption" align:#left across:3
+			colorpicker mAbsorption "" align:#left height:18 
+			mapbutton mAbsorptionTexture "None" width:120 height:18 align:#right 
+			label lb_depth "Absorption Depth" align:#left across:2 
+			spinner mDepth "" width:60 align:#left range:[0,15,0.15] scale:0.01 
+			mapbutton mDepthTexture "None" width:120 height:18 align:#right 
 			-- Bumpmap parameters
-			checkbox museBumpmap "Bumpmap . . . ." across:3 enabled:false
+			checkbox museBumpmap "Bumpmap . . . ." across:3 enabled:true
 			spinner mbumpmap "" scale:0.01 range:[0,1,0] width:68 align:#left
-			--mapbutton mbumpmapTexture "T" width:120 height:18 align:#right
+			mapbutton mbumpmapTexture "T" width:120 height:18 align:#right
 			
 			-- Emission paramters
-			checkbox memission "Emission Texture . . . . . . . . . . " across:2 enabled:false
-			mapbutton memissionTexture "T" width:120 height:18 align:#right
-		)
+			checkbox museEmission "Emission Texture ..............." across:2
+			mapbutton memissionTexture "T" width:128 height:16 align:#right
+			on museEmission changed s do
+			(
+				memissionTexture.enabled = s
+			)
+		
 		on museabsorption changed s do
 		(
 			mAbsorption.enabled = s
-			--mAbsorptionTexture.enabled = s
+			mAbsorptionTexture.enabled = s
+			mDepth.enabled = s
+			mDepthTexture.enabled = s
 		)
 		on museBumpmap changed s do
 		(
 			mbumpmap.enabled = s
 			mbumpmapTexture.enabled = s
 		)
-		on memission changed s do
-		(
-			memissionTexture.enabled = s
-		)
+		)	
 		group "Subdivision Parameters"
 		(
 			checkbox museSubdivision "Subdivision . . ." across:3 enabled:true
@@ -1179,13 +1190,15 @@ plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x65
 		)
 		on params open do
 		(
-			--mAbsorption.enabled = museabsorption.state
-			--mAbsorptionTexture.enabled = museabsorption.state
+			mAbsorption.enabled = museabsorption.state
+			mAbsorptionTexture.enabled = museabsorption.state
+			mDepth.enabled = museabsorption.state
+			mDepthTexture.enabled = museabsorption.state
 			
-		--	mbumpmap.enabled = museBumpmap.state
-		--	mbumpmapTexture.enabled = museBumpmap.state
+			mbumpmap.enabled = museBumpmap.state
+			mbumpmapTexture.enabled = museBumpmap.state
 			
-			memissionTexture.enabled = memission.state
+			memissionTexture.enabled = museemission.state
 			
 			msubdivision.enabled = museSubdivision.state
 			mSharpenBounds.enabled = museSubdivision.state
