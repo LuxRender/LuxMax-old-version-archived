@@ -1601,6 +1601,11 @@
 					btn3.text = "Browse to luxconsole.exe"
 					
 				)
+				if (luxconsolepath != undefined) do
+				(
+					btn3.text = luxconsolepath
+					
+				)
 			)
 			on btn1 pressed do
 			(
