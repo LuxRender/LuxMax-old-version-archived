@@ -595,6 +595,30 @@
 
 			)
 				
+						if classOf obj.material == LuxrenderGlossyTranslucent then
+			(
+				load_diffuse Obj out_Geom_file
+				load_transmission Obj out_Geom_file
+				load_emissiontexture Obj out_Geom_file
+				load_bump Obj out_Geom_file
+				load_uroughness Obj out_Geom_file
+				load_vroughness Obj out_Geom_file
+				load_specular Obj out_Geom_file
+				load_absorption Obj out_Geom_file
+				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+				format "\"string type\" \"glossytranslucent\"\n" to:out_Geom_file
+				write_diffuse Obj out_Geom_file
+				write_transmission Obj out_Geom_file
+				write_specular Obj out_Geom_file
+				write_bump Obj out_Geom_file
+				write_uroughness Obj out_Geom_file
+				write_vroughness Obj out_Geom_file
+				write_absorption Obj out_Geom_file
+				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file					
+					
+
+			)
+			
 			if classOf obj.material == LuxrenderLight then
 			(
 				tempmap = getSubTexmap obj.material 1
