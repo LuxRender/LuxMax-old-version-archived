@@ -33,10 +33,12 @@
 		format string to:out_Geom_file
 	)
 	
-		fn PbrtColor c =
+	fn PbrtColor c =
 	(
 		return ( ((c.r / 255)) as string + " " + ((c.g / 255)) as string + " " + ((c.b / 255)) as string )
 	)
+	
+--MATERIALS ATTRIBUTES FUNCTIONS BEGIN	
 	
 	fn replaceChar str oChar rChar = 
 	(
@@ -451,6 +453,8 @@
 			write_texturemap Obj out_Geom_file
 		)
 	)
+	
+--MATERIALS ATTRIBUTES FUNCTIONS FINISH	
 
 	
 	fn WriteShaders Obj  &out_Geom_file = 
@@ -466,7 +470,7 @@
 			if (classof Obj.material != undefined) then
 			(
 			
-			--MATTE MATERIAL BEGIN	
+--MATTE MATERIAL BEGIN	
 			
 			if classof Obj.material == LuxrenderMatte  then 
 			(
@@ -484,7 +488,8 @@
 			)
 			
 			
-	----METAL BEGIN
+--METAL MATERIAL BEGIN
+			
 			if classOf obj.material == LuxrenderMetal then
 			(
 
@@ -522,6 +527,8 @@
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
+--GLASS MATERIAL BEGIN
+			
 			if classOf obj.material == LuxrenderGlass then
 			(
 				load_transmission Obj out_Geom_file
@@ -548,6 +555,8 @@
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
+--GLASS2 MATERIAL BEGIN
+			
 			if classOf obj.material == LuxGlass2 then
 			(
 				format "Texture \"my_ior\" \"fresnel\" \"%\" \"float value\" [%]\n" Obj.material.preset Obj.material.ior to:out_Geom_file
@@ -565,6 +574,8 @@
 				format "Interior \"my_volume\" \n" to:out_Geom_file
 				format "NamedMaterial \"mymaterial\" \n" to:out_Geom_file
 			)
+			
+--GLOSSY,GLOSSY LOSSY MATERIAL BEGIN
 			
 			if classOf obj.material == LuxrenderGlossy then
 			(
@@ -594,8 +605,10 @@
 					
 
 			)
+			
+--GLOSSY TRANSLUCENT MATERIAL BEGIN
 				
-						if classOf obj.material == LuxrenderGlossyTranslucent then
+			if classOf obj.material == LuxrenderGlossyTranslucent then
 			(
 				load_diffuse Obj out_Geom_file
 				load_transmission Obj out_Geom_file
@@ -618,6 +631,8 @@
 					
 
 			)
+			
+--LIGHT MATERIAL BEGIN			
 			
 			if classOf obj.material == LuxrenderLight then
 			(
@@ -642,6 +657,8 @@
 					format "AreaLightSource \"area\" \"texture L\" [\"%\"]\n" obj.material.AreaLightSourceMap.name to:out_Geom_file
 				)
 			)
+			
+--MATTE TRANSLUCENT MATERIAL BEGIN
 				
 			if classOf obj.material == LuxMatteTrans then
 			(
@@ -655,8 +672,10 @@
 				write_transmission Obj out_Geom_file
 				write_sigma Obj out_Geom_file
 				write_bump Obj out_Geom_file
-				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
+				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 			)
+			
+--MIRROR MATERIAL BEGIN			
 			
 			if classof obj.material == LuxrenderMirror then
 			(
@@ -668,12 +687,16 @@
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
+--NULL MATERIAL BEGIN			
+			
 			if classof obj.material == LuxNullMaterial then
 			(
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				format "\"string type\" \"null\"\n" to:out_Geom_file
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
+			
+--TEST MATERIAL (DEVELOP PURPOSE) BEGIN			
 			
 			if classof obj.material == LuxTest then
 			(
@@ -714,6 +737,69 @@
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
+			if  classof obj.material == LuxMix then
+			(
+			
+	
+			
+			if (Obj.material.mixvalueTexture != undefined) do
+				(
+				format "Texture \"%\" \"float\" \"imagemap\" \"string wrap\" [\"repeat\"] \"string filename\" [\"%\"]\n" Obj.material.mixvalueTexture.name obj.material.mixvalueTexture.filename to:out_Geom_file
+				format "Texture \"%.scale\" \"float\" \"scale\" \"texture tex1\" [\"%\"] \"float tex2\" [%]\n" Obj.material.mixvalueTexture.name Obj.material.mixvalueTexture.name Obj.material.mixvalue to:out_Geom_file
+				)
+			
+		
+			--store whole material
+			originalMaterial = obj.material
+			--store slot 1
+			originalMaterial1 = obj.material.material1
+			--store slot2
+			originalMaterial2 = obj.material.material2
+
+			--apply slot1 material to object
+			obj.material = originalMaterial1
+			--write out
+			format "MakeNamedMaterial \"%\"\n" originalmaterial1.name to:out_Geom_file
+				
+			writeshaders obj out_geom_file
+				
+			format "NamedMaterial \"%\"\n" originalmaterial1.name to:out_Geom_file
+
+			--apply slot2 material
+			obj.material = originalMaterial2
+			--write out
+			format "MakeNamedMaterial \"%\"\n" originalmaterial2.name to:out_Geom_file
+			writeshaders obj out_geom_file
+			
+			format "NamedMaterial \"%\"\n" originalmaterial2.name to:out_Geom_file
+
+			--apply original material back to object
+			obj.material = originalMaterial
+			format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+			format "\"string type\" \"mix\"\n" to:out_Geom_file
+			
+			if (Obj.material.mixvalueTexture != undefined) then
+			(
+				format "\"texture amount\" \"%.scale\"\n" Obj.material.mixvaluetexture.name to:out_Geom_file
+			)
+			else
+			(
+				format "\"float amount\" [%]\n" Obj.material.mixvalue to:out_Geom_file
+			)
+			
+			format "\"string namedmaterial1\" [\"%\"] \"string namedmaterial2\" [\"%\"]\n" originalMaterial1.name originalMaterial2.name to:out_Geom_file
+			format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+		
+			)
+			
+			
+			
+			
+
+			
+			
+--VELVET MATERIAL BEGIN			
+			
 			if classof obj.material == velvet then
 			(
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
@@ -726,10 +812,14 @@
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
+--PORTAL2 MATERIAL BEGIN 			
+			
 			if classof obj.material == LuxrenderPortal2 then
 			(
 				--format "PortalShape \"trianglemesh\"\n" to:out_Geom_file
 			)
+			
+--CARPAINT MATERIAL BEGIN			
 			
 			if classof obj.material == LuxrenderCarPaint then
 			(
@@ -821,10 +911,8 @@
 				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				
 			)
-				--format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
+				
 			)
-			--AttributeEnd
-			--format "AttributeEnd\n" to:out_Geom_file
 		)
 	)
 
@@ -1687,4 +1775,4 @@
 		addRollout luxmaxgeom theNewFloater
 		addRollout preview_material theNewFloater
 		addRollout about_script theNewFloater
-	
+		

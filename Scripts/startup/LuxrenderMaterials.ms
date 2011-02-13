@@ -1462,35 +1462,7 @@ parameters main rollout:params
 	)
 )
 
-
---  	 plugin material LuxMix name:"LR Mix" classID:#(0x166c0818, 0x1c027268) extends:Blend replaceUI:false version:1
---  	(
---  		parameters main rollout:main
---  		(
---  			--TransmissionTexture type:#textureMap ui:mTransmissionTexture
---  			namedmaterial1 type:#textureMap --ui:btn3
---  			namedmaterial2 type:#textureMap --ui:btn10
---  			mixmat type:#float ui:spn_mix default:0.5
---  			
---  		)
---  		rollout main "Settings" width:264 height:328
---  		(
---  			spinner spn_mix "Mix amount:" pos:[16,152] width:106 height:16 enabled:true range:[0,1,1] type:#float default:0.5
---  			listbox lbx1 "ListBox" pos:[8,32] width:248 height:6 items:(for o in  scenematerials collect o.name)
---  			listbox lbx2 "ListBox" pos:[8,184] width:248 height:8 items:(for o in  scenematerials collect o.name)
---  			
---  			on lbx1 selected sel do
---  			(
---  			--lbx1 selection changed
---  				print lbx1.selected as string
---  			)
---  		)
---  		-->print lbx1.selected as string
---  		
---  		
---  	) 
-
-	
+--LuxNullMaterial	
 	plugin material LuxNullMaterial name:"LR NullMaterial" classID:#(0x128af87a, 0x6e0169dc) extends:Standard replaceUI:true version:1
 	(
 		parameters main rollout:paramsEm
@@ -1508,7 +1480,7 @@ parameters main rollout:params
 			
 		)
 	)
-	--Class_ID(0x1a82153d, 0x7175d56)
+--LuxGlass2 Material
 	Plugin material LuxGlass2 name:"LR Glass2" classID:#(0x1a82153d,0x7175d56)extends:standard replaceUI:true version:1
 	(
 		
@@ -1573,7 +1545,9 @@ parameters main rollout:params
 --    "float p2" [10.000000]
 --    "float p3" [2.000000]
 --    "float thickness" [0.1000000]
-	-- Class_ID(0x64952715, 0x24c86046)
+	
+	
+	--Velvet Material
 	Plugin material velvet name:"LR Velvet" classID:#(0x64952715,0x24c86046)extends:standard replaceUI:true version:1
 	(
 		parameters main rollout:paramsEm
@@ -1598,42 +1572,28 @@ parameters main rollout:params
 		
 		
 	)
--- 	Plugin material mixmat name:"LR Mix" classID:#(0x66c758d0, 0x26a85575)extends:Blend replaceUI:true version:1
--- 	(
--- 		parameters main rollout:paramsEm
--- 		(
--- 			
--- 		)
--- 		rollout paramsEm "settings" width:160 height:190
--- 		(
--- 			materialButton btn1 "MaterialButton" pos:[8,8] width:144 height:24
--- 			materialButton btn2 "MaterialButton" pos:[8,40] width:144 height:24
--- 			spinner spn5 "" pos:[24,72] width:128 height:16
--- 			
--- 		)
--- 		on btn1 picked mtl do
--- 		(
--- 			print mtl
--- 		)
--- 		
--- 	)
-		Plugin material mixmatblend name:"LR Mix blend" classID:#(0x64c752d0, 0x26a85575)extends:Blend replaceUI:false version:1
+
+	--LUXMIX MATERIAL
+		Plugin material LuxMix name:"LR Blend" classID:#(0x1dd40858, 0x1b266b58) extends:standard replaceUI:true version:1
 	(
 		parameters main rollout:paramsEm
 		(
-			mixamount type:#float default:0.5 ui:spn5
-			--on mixAmount set val do delegate.test = val
-			kdTexture type:#textureMap ui:mkdTexture
+			material1 type:#material ui: mmaterial1
+			material2 type:#material ui: mmaterial2
+			mixvalue type:#float ui:mmixvalue
+			mixvalueTexture type:#textureMap ui:mmixvalueTexture
+			
 			
 		)
 		rollout paramsEm "settings" width:160 height:64
 		(
-			spinner spn5 "LR MIX AMOUNT" pos:[24,8] width:128 height:16
-			mapbutton mkdTexture"None" width:128 height:16 align:#right
-		)
-		
+		materialButton mmaterial1 "MaterialButton" pos:[8,8] width:144 height:24
+		materialButton mmaterial2 "MaterialButton" pos:[8,40] width:144 height:24
+		spinner mmixvalue "" range:[0,90,0] width:50 align:#left
+		mapbutton mmixvalueTexture "T" width:128 height:16 align:#right
+		)	
 	)
-	--0x6b0906a2, 0x159a3fc0
+
 	plugin material LuxrenderPortal2 name:"LR Portal" classID:#(0x5ed626b6, 0x586b74bd) extends:Standard replaceUI:true version:1
 	(
 	   rollout params "Portal Parameters"
