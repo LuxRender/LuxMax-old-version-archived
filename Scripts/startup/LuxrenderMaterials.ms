@@ -432,7 +432,7 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 		bumpmapTexture type:#textureMap ui:mbumpmapTexture
 		usedispersive type:#boolean ui:musedispersive
 		cauchyb type:#float ui:mcauchyb
-	
+		usepreset type:#float ui:musepreset	
 	)
 	
 	
@@ -448,25 +448,47 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 
 	group "IOR Parameters"
 	(
-		spinner spn_ior "IOR:" range:[1,50,1.5] pos:[11,110]  width:68 align:#left default:1.51
+		spinner spn_ior "IOR:" range:[1.000000,50.000000,1.5] pos:[11,110]  width:68 align:#left default:1.51
 		mapButton miortexture "T" width:128 height:20 pos:[180,110] align:#right 
-		checkbox musearchitectural "enable architectural mode" align:#left enabled:true
+		checkbox musepreset "Use Presets" pos:[11,150]
+		dropdownlist miorpresets "Common IOR Presets" items:#("Water_20c","Whisky","Glass_Flint_29","Glass_Flint_55","Glass_Flint_71","Nylon","Plastic","Plexiglass","Amethyst","Crystal","Diamond","Saphire") height:6 pos:[180,150] width:128 height:20
+		checkbox musearchitectural "enable architectural mode" align:#left enabled:true pos:[11,190]
 	)
 	
-	
-	on museior changed s do
+
+	on miorpresets selected i do
 	(
-		spn_ior.enabled = s
-		miortexture.enabled = s
-		musearchitectural.enabled =s
-	)
 	
+    format "You selected '%'!\n" miorpresets.items[i]
+	if miorpresets.items[i] as string == "Water_20c" then  ( ior = 1.33283 )
+	if miorpresets.items[i] as string == "Whisky" then  ( ior = 1.356 )
+	if miorpresets.items[i] as string == "Glass_Flint_55" then  ( ior = 1.669 )
+	if miorpresets.items[i] as string == "Glass_Flint_29" then  ( ior = 1.569 )
+	if miorpresets.items[i] as string == "Glass_Flint_71" then  ( ior = 1.805 )
+	if miorpresets.items[i] as string == "Nylon" then  ( ior = 1.53 )
+	if miorpresets.items[i] as string == "Plastic" then  ( ior = 1.47 )
+	if miorpresets.items[i] as string == "Plexiglass" then  ( ior = 1.488 )
+	if miorpresets.items[i] as string == "Amethyst" then  ( ior = 1.554 )
+	if miorpresets.items[i] as string == "Crystal" then  ( ior = 2.000 )
+	if miorpresets.items[i] as string == "Diamond" then  ( ior = 2.417)
+	if miorpresets.items[i] as string == "Saphire" then  ( ior = 1.767 )
+	)
+
+
+
+	
+	
+	on musepreset changed s do
+	(
+		miorpresets.enabled = s
+	)
+
 	group "Bump Parameters"
 	
 	(
-	        checkbox museBumpmap "Bump" enabled:true pos:[10,200] align:#left
-			spinner mbumpmap "" scale:0.01 range:[0,1,0] pos:[80,200] width:68 align:#left
-			mapbutton mbumpmapTexture "T" pos:[180,200]  align:#right height:20 width:128
+	        checkbox museBumpmap "Bump" enabled:true pos:[10,230] align:#left
+			spinner mbumpmap "" scale:0.01 range:[0,1,0] pos:[80,230] width:68 align:#left
+			mapbutton mbumpmapTexture "T" pos:[180,230]  align:#right height:20 width:128
 	)
 	
 	on museBumpmap changed s do
@@ -478,8 +500,8 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 	group "Dispersive Refraction"
 	
 	(
-		checkbox musedispersive "Use Dispersive Refraction" enabled:true pos:[10,260] align:#left
-		spinner mcauchyb "cauchyb value" range:[0,1,0.5] pos:[220,260] align:#right width:68
+		checkbox musedispersive "Use Dispersive Refraction" enabled:true pos:[10,280] align:#left
+		spinner mcauchyb "cauchyb value" range:[0,1,0.5] pos:[220,280] align:#right width:68
 	)
 	
 	on musedispersive changed s do
@@ -492,6 +514,7 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 		mbumpmap.enabled = museBumpmap.state
 		mbumpmapTexture.enabled = museBumpmap.state
 		mcauchyb.enabled = musedispersive.state
+		miorpresets.enabled = musepreset.state
 			
 		)
 		
@@ -525,148 +548,7 @@ plugin material LuxrenderLight name:"LR Light" classID:#(0x23131fb9, 0x5134a570)
 	)
 )
 
---// RoughGlass
 
-/* plugin material LuxrenderRoughGlass name:"LR RoughGlass" classID:#(0x24fa894, 0x727a5aca) extends:Standard replaceUI:true version:1
-( 
-	parameters main rollout:params
-	(
-		Kr type:#color default:[100,100,100] ui:mroughReflection
-		KrTexture type:#textureMap ui:mReflectionTexture
-		
-		Ktcolor type:#color default:[255,255,255] ui:mTransmission
-		KtTexture type:#textureMap ui:mTransmissionTexture
-
-		usecauchyb type:#boolean ui:useCauchyb
-		cauchyb type:#float ui:mcauchyb
-		cauchybTexture type:#textureMap ui:mcauchybTexture
-		
-		useior type:#boolean ui:chk_ior
-		ior type:#float ui:spn_ior
-		iorTexture type:#textureMap ui:m_IOR
-		
-		useBumpmap type:#boolean ui:museBumpmap
-		bumpmap type:#float ui:mbumpmap
-		bumpmapTexture type:#textureMap ui:mbumpmapTexture
-		
-		emission type:#boolean ui:memission
-		emissionTexture type:#textureMap ui:memissionTexture
-		
-		useSubdivision type:#boolean ui:museSubdivision
-		Subdivision type:#float ui:mSubdivision
-		isSharpen type:#boolean ui:mSharpenBounds
-		isSmooth type:#boolean ui:mSmooth
-		
-		useDisplacement type:#boolean ui:museDisplacement
-		displacement type:#float ui:mdisplacement
-		displacementTexture type:#textureMap ui:mdisplacementTexture
-	)
-
-	rollout params "RoughGlass Parameters"
-	(
-		group "RoughGlass Parameters"
-		(
-			label lb_Transmission "Transmission . . . . ." align:#left across:3
-			colorpicker mTransmission "" height:18
-			mapbutton mTransmissionTexture"None" width:120 height:18 align:#right
-			label lb_Reflection "mReflection . . . . . . . " align:#left across:3
-			colorpicker mroughReflection "" height:18
-			--colorpicker mkdColor "Diffuse: " across:2
-			mapbutton mReflectionTexture"None" width:120 height:18 align:#right
-		)
-		group "Dispersive Refraction"
-		(
-			checkbox useCauchyb "Dispersive Refraction"
-			label lb_cauchyb "Cauchyb . . . . . . . " across:3 align:#left
-			spinner mcauchyb ""  width:68 scale:0.001 range:[0, 1, 0.02] align:#left
-		)
-		group "Advanced Parameters"
-		(
-			mapbutton mcauchybTexture "None" width:120 height:18 align:#right
-			checkbox chk_ior "IOR . . . . . . . . " across:3
-			spinner spn_ior "" width:68 range:[1,50,1.5] align:#left
-			mapbutton m_IOR "T" width:120 height:20 align:#right
-			
-			label lb_exponentu "U-Exponent . . . . . . " across:3 enabled:false
-			spinner spn_exponentu "" width:68  range:[1,1000000,50] align:#left enabled:false
-			mapbutton spn_exponentuTexture "None" width:120 height:18 align:#right enabled:false
-			label lb_exponentv "V-Exponent . . . . . . " across:3 enabled:false
-			spinner spn_exponentv ""  width:68 range:[1,1000000,50] align:#left enabled:false
-			mapbutton spn_exponentvTexture "None" width:120 height:18 align:#right enabled:false
-
-			-- Bumpmap parameters
-			checkbox museBumpmap "Bumpmap . . . ." across:3 enabled:true
-			spinner mbumpmap "" scale:0.01 range:[0,1,0] width:68 align:#left
-			mapbutton mbumpmapTexture "T" width:120 height:18 align:#right
-
-			-- Emission paramters
-			checkbox memission "Emission Texture . . . . . . . . . . " across:2 enabled:false
-			mapbutton memissionTexture "T" width:120 height:18 align:#right
-		)
-		on mTransmission changed new_col do
-		(
-			Ktcolor = mTransmission.color
-			print ("ktcolor =" + mTransmission.color as string)
-		)	
-		
-		on chk_ior changed s do
-		(
-			spn_ior.enabled = s
-			m_IOR.enabled = s
-		)
-		on museBumpmap changed s do
-		(
-			mbumpmap.enabled = s
-			mbumpmapTexture.enabled = s
-		)
-		on memission changed s do
-		(
-			memissionTexture.enabled = s
-		)			
-		group "Subdivision Parameters"
-		(
-			checkbox museSubdivision "Subdivision . . ." across:3 enabled:true
-			spinner msubdivision "" scale:1 range:[0,12,0] type:#integer width:50 align:#left  enabled:false
-			label lb0 ""
-			checkbox mSharpenBounds "Sharpen Bounds" enabled:false
-			checkbox mSmooth "Smooth" enabled:false
-		)
-		on museSubdivision changed s do
-		(
-			msubdivision.enabled = s
-			mSharpenBounds.enabled = s
-			mSmooth.enabled = s
-		)
-		group "Displacement Map Parameters"
-		(
-			checkbox museDisplacement "Displacement . ." across:3  enabled:true
-			spinner mdisplacement "" scale:0.1 range:[-10,10,0] width:50 align:#left
-			mapbutton mDisplacementTexture "T" width:120 height:18 align:#right
-		)
-		on museDisplacement changed s do
-		(
-			mdisplacement.enabled = s
-			mDisplacementTexture.enabled = s
-		)
-		on params open do
-		(
-			spn_ior.enabled = chk_ior.state
-			m_ior.enabled = chk_ior.state
-			
-			mbumpmap.enabled = museBumpmap.state
-			mbumpmapTexture.enabled = museBumpmap.state
-			
-			memissionTexture.enabled = memission.state
-			
-			msubdivision.enabled = museSubdivision.state
-			mSharpenBounds.enabled = museSubdivision.state
-			mSmooth.enabled = museSubdivision.state
-			
-			mdisplacement.enabled = museDisplacement.state
-			mDisplacementTexture.enabled = museDisplacement.state
-		)
-	)
-) */
 
 --// Metal
 
@@ -1193,7 +1075,7 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 * )
 */
 
---// Car Paintm
+
 
 plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x6546d259) extends:Standard replaceUI:true version:1
 ( 
@@ -1362,47 +1244,121 @@ plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x65
 		)
 	)
 )
---plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x6546d259) extends:Standard replaceUI:true version:1
-plugin material LuxTest name:"LR Rough Glass" classID:#(0x3686056d, 0x66e575a8) extends:Standard replaceUI:true version:1
-(
-	parameters main rollout:luxrough
- 	(
-		transmissioncolor type:#color default:[100,100,100] ui:mTransmission
-		on transmissioncolor set val do delegate.diffuse_color = val
-		roughreflectioncolor type:#color default:[100,100,100] ui:mroughReflection
-		uroughness type:#float default:0.001 ui:spn_exponentu
-		vroughness type:#float default:0.001  ui:spn_exponentv
-		ior type:#float default:1.5 ui:spn_index
-		cauchyb type:#float default:0.0 ui:spn_cauchyb
-		--useTransmissionmap type:#boolean ui:mUseTransmissionMap
-		--useReflectionmap type:#boolean ui:mUseReflectionMap
-		kttexture type:#textureMap ui:mTransmissionTexture
-		krtexture type:#textureMap ui:mReflectionTexture
- 	)
-	
-	rollout luxrough "Settings:" width:336 height:264
+
+plugin material LuxRoughGlass name:"LR Rough Glass" classID:#(0x3686056d, 0x66e575a8) extends:Standard replaceUI:true version:1
+( 
+	parameters main rollout:params
 	(
-		colorPicker mTransmission "Transmission color:" pos:[13,7] width:134 height:18
-		--checkbox mUseTransmissionMap "Transmission Texture . . . . ." across:2 
-		mapButton mTransmissionTexture "None" pos:[200,8] width:120 height:18
-		colorPicker mroughReflection "RoughReflection color:" pos:[32,56] width:153 height:18
-	--	checkbox mUseReflectionMap "Transmission Texture . . . . ." across:2 
-		mapButton mReflectionTexture "T" pos:[200,48] width:120 height:18 
- 
-		spinner spn_exponentu "U-roughness" pos:[42,80] width:88 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001 default:0.001
-		spinner spn_exponentv "V-roughness" pos:[42,96] width:88 height:16 enabled:true range:[0,1,0.001] type:#float scale:0.001 default:0.001
-		spinner spn_index "IOR:" pos:[48,112] width:68 height:16 enabled:true range:[0,100,0.1] type:#float --default:1.5
- --default:1.5
-		spinner spn_cauchyb "cauchyb" pos:[48,128] width:68 height:16 enabled:true range:[0,100,0.1] type:#float default:0
+		ktcolor type:#color default:[255,255,255] ui:mktcolor
+		on ktcolor set val do delegate.diffuse_color = val
+		kttexture type:#textureMap ui:mkttexture
+		krcolor type:#color default:[255,255,255] ui:mkrcolor
+		krTexture type:#textureMap ui:mkrtexture
+		uroughness type:#float default:0.1 ui:spn_exponentu
+		vroughness type:#float default:0.1 ui:spn_exponentv
+		uroughnesstexture type:#textureMap ui:b_exponentuTexture
+		vroughnesstexture type:#textureMap ui:b_exponentvTexture
+		ior type:#float ui:spn_ior default:1.5
+		iortexture type:#textureMap ui:miortexture
+		useBumpmap type:#boolean ui:museBumpmap
+		bumpmap type:#float ui:mbumpmap
+		bumpmapTexture type:#textureMap ui:mbumpmapTexture
+		usedispersive type:#boolean ui:musedispersive
+		cauchyb type:#float ui:mcauchyb
+		usepreset type:#float ui:musepreset	
 	)
 	
-	on useTransmissionmap changed s do
+	
+	rollout params "Glass Parameters"
 	(
-		useTransmissionmap.enabled = s
+	group  "Main Parameters"
+	(
+		colorpicker mktcolor "Transmission: " pos:[11,20] align:#left height:18
+		mapbutton mkttexture"None" width:128 height:20 pos:[180,20] align:#right 
+		colorpicker mkrcolor "Reflection: " pos:[11,60] 
+		mapbutton mkrtexture"None" width:128 height:20 pos:[180,60]
 	)
-		on mUseReflectionMap changed s do
+
+	group "IOR Parameters"
 	(
-		mUseReflectionMap.enabled = s
+		spinner spn_ior "IOR:" range:[1.000000,50.000000,1.5] pos:[11,110]  width:68 align:#left default:1.51
+		mapButton miortexture "T" width:128 height:20 pos:[180,110] align:#right 
+		checkbox musepreset "Use Presets" pos:[11,150]
+		dropdownlist miorpresets "Common IOR Presets" items:#("Water_20c","Whisky","Glass_Flint_29","Glass_Flint_55","Glass_Flint_71","Nylon","Plastic","Plexiglass","Amethyst","Crystal","Diamond","Saphire") height:6 pos:[180,150] width:128 height:20
+		
+	)
+	
+
+	on miorpresets selected i do
+	(
+	
+    format "You selected '%'!\n" miorpresets.items[i]
+	if miorpresets.items[i] as string == "Water_20c" then  ( ior = 1.33283 )
+	if miorpresets.items[i] as string == "Whisky" then  ( ior = 1.356 )
+	if miorpresets.items[i] as string == "Glass_Flint_55" then  ( ior = 1.669 )
+	if miorpresets.items[i] as string == "Glass_Flint_29" then  ( ior = 1.569 )
+	if miorpresets.items[i] as string == "Glass_Flint_71" then  ( ior = 1.805 )
+	if miorpresets.items[i] as string == "Nylon" then  ( ior = 1.53 )
+	if miorpresets.items[i] as string == "Plastic" then  ( ior = 1.47 )
+	if miorpresets.items[i] as string == "Plexiglass" then  ( ior = 1.488 )
+	if miorpresets.items[i] as string == "Amethyst" then  ( ior = 1.554 )
+	if miorpresets.items[i] as string == "Crystal" then  ( ior = 2.000 )
+	if miorpresets.items[i] as string == "Diamond" then  ( ior = 2.417)
+	if miorpresets.items[i] as string == "Saphire" then  ( ior = 1.767 )
+	)
+
+	on musepreset changed s do
+	(
+		miorpresets.enabled = s
+	)
+
+	group "Bump Parameters"
+	
+	(
+	        checkbox museBumpmap "Bump" enabled:true pos:[10,230] align:#left
+			spinner mbumpmap "" scale:0.01 range:[0,1,0] pos:[80,230] width:68 align:#left
+			mapbutton mbumpmapTexture "T" pos:[180,230]  align:#right height:20 width:128
+	)
+	
+	on museBumpmap changed s do
+	(
+			mbumpmap.enabled = s
+			mbumpmapTexture.enabled = s
+	)
+	
+	group "Dispersive Refraction"
+	
+	(
+		checkbox musedispersive "Use Dispersive Refraction" enabled:true pos:[10,280] align:#left
+		spinner mcauchyb "cauchyb value" range:[0,1,0.5] pos:[220,280] align:#right width:68
+	)
+	
+	on musedispersive changed s do
+	(
+		mcauchyb.enabled = s
+	)
+	
+	group "Roughness"
+	(
+	label lb_exponentu "U-Exponent . . . . . . " across:3 enabled:true
+	spinner spn_exponentu "" width:68  range:[0.000,1.000,0.001] type:#float align:#left enabled:true scale:0.001 default:0.001
+	mapbutton b_exponentuTexture "None" width:120 height:18 align:#right enabled:true
+	label lb_exponentv "V-Exponent . . . . . . " across:3 enabled:true
+	spinner spn_exponentv ""  width:68 range:[0.000,1.000,0.001] type:#float align:#left enabled:true scale:0.001 default:0.001
+	mapbutton b_exponentvTexture "None" width:120 height:18 align:#right enabled:true
+	)
+	
+	
+	
+	on params open do
+		(
+		mbumpmap.enabled = museBumpmap.state
+		mbumpmapTexture.enabled = museBumpmap.state
+		mcauchyb.enabled = musedispersive.state
+		miorpresets.enabled = musepreset.state
+			
+		)
+		
 	)
 )
 

@@ -696,47 +696,32 @@
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
---TEST MATERIAL (DEVELOP PURPOSE) BEGIN			
+--ROUGH GLASS			
 			
-			if classof obj.material == LuxTest then
+			if classof obj.material == LuxRoughGlass then
 			(
-				if (obj.material.KtTexture != undefined) then
-				(
-					write_texturemap Obj.material.ktTexture out_Geom_file
-				)
-				if (obj.material.KrTexture != undefined) then
-				(
-					write_texturemap Obj.material.KrTexture out_Geom_file
-				)
-				
+				load_transmission Obj out_Geom_file
+				load_reflection Obj out_Geom_file
+				load_uroughness Obj out_Geom_file
+				load_vroughness Obj out_Geom_file
+				load_bump Obj out_Geom_file
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				format "\"string type\" \"roughglass\"\n" to:out_Geom_file
-				if (obj.material.KtTexture != undefined) then
-				(
-					format " \"texture Kt\" [\"%\"]\n" obj.material.KtTexture.name to:out_Geom_file
-				)
-				if (obj.material.KrTexture != undefined) then
-				(
-					format " \"texture Kr\" [\"%\"]\n" obj.material.KrTexture.name to:out_Geom_file
-				)
+				write_transmission Obj out_Geom_file
+				write_reflection Obj out_Geom_file
+				write_uroughness Obj out_Geom_file
+				write_vroughness Obj out_Geom_file
 				
-				if (obj.material.KtTexture == undefined) then
+				format " \"float index\" [%]\n" Obj.material.ior to:out_Geom_file
+				if (obj.material.usedispersive as string == "true") do
 				(
-					format "\"color Kt\" [% % %]\n" (Obj.material.transmissioncolor.r / 255) (Obj.material.transmissioncolor.g / 255) (Obj.material.transmissioncolor.b / 255)  to:out_Geom_file
+					format "\"float cauchyb\" [%]\n" Obj.material.cauchyb to:out_Geom_file
 				)
-				
-				if (obj.material.KrTexture == undefined) then
-				(
-					format "\"color Kr\" [% % %]\n" (Obj.material.roughreflectioncolor.r / 255) (Obj.material.roughreflectioncolor.g / 255) (Obj.material.roughreflectioncolor.b / 255)  to:out_Geom_file
-				)
-				
-				format "\"float vroughness\" [%]\n" obj.material.vroughness to:out_Geom_file
-				format "\"float uroughness\" [%]\n" obj.material.uroughness to:out_Geom_file
-				format "\"float index\" [%]\n" obj.material.ior to:out_Geom_file
-				format "\"float cauchyb\" [%]\n" obj.material.cauchyb to:out_Geom_file
+				write_bump Obj out_Geom_file
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
+--LUXMIX MATERIAL BEGIN			
 			if  classof obj.material == LuxMix then
 			(
 			
