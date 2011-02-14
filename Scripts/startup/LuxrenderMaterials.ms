@@ -1,7 +1,7 @@
 -- Luxrender Materials plug-ins for 3dsmax
 dxshadermanager.SetVisible false
 mental_ray_Preferences.mrExtensionsActive =  false
---// Matte
+
 	fn replaceChar str oChar rChar = 
 		(
 			tStr = ""
@@ -13,6 +13,7 @@ mental_ray_Preferences.mrExtensionsActive =  false
 			tStr
 		)
 		
+--//Matte
 		
 plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72) extends:Standard replaceUI:true version:1
 ( 
@@ -432,7 +433,13 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 		bumpmapTexture type:#textureMap ui:mbumpmapTexture
 		usedispersive type:#boolean ui:musedispersive
 		cauchyb type:#float ui:mcauchyb
-		usepreset type:#float ui:musepreset	
+		usepreset type:#float ui:musepreset
+		usefilm type:#boolean ui:musefilm
+		film type:#float ui:mfilm 
+		filmtexture type:#textureMap ui:mfilmtexture
+		filmior type:#float ui:mfilmior
+		filmiortexture type:#textureMap ui:mfilmiortexture
+		usefilmiorpreset type:#boolean ui:musefilmiorpreset
 	)
 	
 	
@@ -458,8 +465,6 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 
 	on miorpresets selected i do
 	(
-	
-    format "You selected '%'!\n" miorpresets.items[i]
 	if miorpresets.items[i] as string == "Water_20c" then  ( ior = 1.33283 )
 	if miorpresets.items[i] as string == "Whisky" then  ( ior = 1.356 )
 	if miorpresets.items[i] as string == "Glass_Flint_55" then  ( ior = 1.669 )
@@ -486,7 +491,7 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 	group "Bump Parameters"
 	
 	(
-	        checkbox museBumpmap "Bump" enabled:true pos:[10,230] align:#left
+	        checkbox museBumpmap "Bump" enabled:true pos:[11,230] align:#left
 			spinner mbumpmap "" scale:0.01 range:[0,1,0] pos:[80,230] width:68 align:#left
 			mapbutton mbumpmapTexture "T" pos:[180,230]  align:#right height:20 width:128
 	)
@@ -500,7 +505,7 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 	group "Dispersive Refraction"
 	
 	(
-		checkbox musedispersive "Use Dispersive Refraction" enabled:true pos:[10,280] align:#left
+		checkbox musedispersive "Use Dispersive Refraction" enabled:true pos:[11,280] align:#left
 		spinner mcauchyb "cauchyb value" range:[0,1,0.5] pos:[220,280] align:#right width:68
 	)
 	
@@ -509,12 +514,61 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 		mcauchyb.enabled = s
 	)
 	
+	group "Thin Film Coating"
+	(
+		checkbox musefilm "Use" pos:[11,330]
+		spinner mfilm "Film:" range:[1,1500,200] pos:[80,330]  width:68 align:#left default:200
+		mapButton mfilmtexture "T" width:128 height:20 pos:[180,330] align:#right 
+		spinner mfilmior "IOR:" range:[1,1500,200] pos:[80,380]  width:68 align:#left default:1.51
+		mapButton mfilmiortexture "T" width:128 height:20 pos:[180,380] align:#right 
+		checkbox musefilmiorpreset "IOR Presets" pos:[80,430]
+		dropdownlist mfilmiorpresets "Common IOR Presets" items:#("Water_20c","Whisky","Glass_Flint_29","Glass_Flint_55","Glass_Flint_71","Nylon","Plastic","Plexiglass","Amethyst","Crystal","Diamond","Saphire") height:6 pos:[180,430] width:128 height:20
+	)
+	
+	on musefilm changed s do
+	(
+		mfilm.enabled = s
+		mfilmtexture.enabled = s
+		mfilmior.enabled = s
+		mfilmiortexture.enabled = s
+		musefilmiorpreset.enabled = s
+	)
+	
+	on musefilmiorpreset changed s do
+	(
+		mfilmiorpresets.enabled = s
+	)
+	
+	on mfilmiorpresets selected i do
+	(
+	if mfilmiorpresets.items[i] as string == "Water_20c" then  ( filmior = 1.33283 )
+	if mfilmiorpresets.items[i] as string == "Whisky" then  ( filmior = 1.356 )
+	if mfilmiorpresets.items[i] as string == "Glass_Flint_55" then  ( filmior = 1.669 )
+	if mfilmiorpresets.items[i] as string == "Glass_Flint_29" then  ( filmior = 1.569 )
+	if mfilmiorpresets.items[i] as string == "Glass_Flint_71" then  ( filmior = 1.805 )
+	if mfilmiorpresets.items[i] as string == "Nylon" then  ( filmior = 1.53 )
+	if mfilmiorpresets.items[i] as string == "Plastic" then  ( filmior = 1.47 )
+	if mfilmiorpresets.items[i] as string == "Plexiglass" then  ( filmior = 1.488 )
+	if mfilmiorpresets.items[i] as string == "Amethyst" then  ( filmior = 1.554 )
+	if mfilmiorpresets.items[i] as string == "Crystal" then  ( filmior = 2.000 )
+	if mfilmiorpresets.items[i] as string == "Diamond" then  ( filmior = 2.417)
+	if mfilmiorpresets.items[i] as string == "Saphire" then  ( filmior = 1.767 )
+	)
+	
 	on params open do
 		(
 		mbumpmap.enabled = museBumpmap.state
 		mbumpmapTexture.enabled = museBumpmap.state
 		mcauchyb.enabled = musedispersive.state
 		miorpresets.enabled = musepreset.state
+			
+		mfilm.enabled = musefilm.state
+		mfilmtexture.enabled = musefilm.state
+		mfilmior.enabled = musefilm.state
+		mfilmiortexture.enabled = musefilm.state
+		musefilmiorpreset.enabled = musefilm.state
+
+		mfilmiorpresets.enabled = musefilmiorpreset.state
 			
 		)
 		
@@ -535,20 +589,13 @@ plugin material LuxrenderLight name:"LR Light" classID:#(0x23131fb9, 0x5134a570)
 		mapButton m_emissionTexture "T" pos:[-69,7] width:300 height:20
 		
 	)
-	--on paramsEm open do
-	--(
---		AreaLightSourceMap = LuxrenderBlackbody()
---	)
+	
 	
 	on create do
 	(
-		--AreaLightSourceMap = LuxrenderBlackbody()-- name:""
-		--AreaLightSourceMap = LuxrenderBlackbody ()
-		--edt1.text = "Default"
+	
 	)
 )
-
-
 
 --// Metal
 
@@ -710,7 +757,118 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 	)
 )
 
---plugin material LuxRenderBoundVolume name:"LR BoundVolume" classID:#(0x24171fb3, 0x5934a470) extends:Standard replaceUI:true version:1
+--//ShinyMetal
+
+plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 0x5934a470) extends:Standard replaceUI:true version:1
+(
+		parameters main rollout:params
+	(
+		krcolor type:#color default:[255,255,255] ui:mkrcolor
+		krTexture type:#textureMap ui:mkrtexture
+		kscolor type:#color default:[90,90,90] ui:mSpec
+		kstexture type:#textureMap ui:mSpecTexture
+		uroughness type:#float default:0.1 ui:spn_exponentu
+		vroughness type:#float default:0.1 ui:spn_exponentv
+		uroughnesstexture type:#textureMap ui:b_exponentuTexture
+		vroughnesstexture type:#textureMap ui:b_exponentvTexture
+		useBumpmap type:#boolean ui:museBumpmap
+		bumpmap type:#float ui:mbumpmap
+		bumpmapTexture type:#textureMap ui:mbumpmapTexture
+		usefilm type:#boolean ui:musefilm
+		film type:#float ui:mfilm 
+		filmtexture type:#textureMap ui:mfilmtexture
+		filmior type:#float ui:mfilmior
+		filmiortexture type:#textureMap ui:mfilmiortexture
+		usefilmiorpreset type:#boolean ui:musefilmiorpreset
+	)
+	
+		rollout params "Shiny Metal Basic Parameters"
+	(		
+		
+	group "Main Parameters"
+	(
+		colorpicker mkrcolor "Reflection: " pos:[11,60] 
+		mapbutton mkrtexture"None" width:128 height:20 pos:[180,60]
+		colorpicker mSpec "Specular:"  align:#left height:18 pos:[11,100] 
+		mapbutton mSpecTexture "None"  pos:[180,100] width:128 height:20
+		label lb_exponentu "U-Exponent . . . . . . " across:3 enabled:true
+		spinner spn_exponentu "" width:68  range:[0.000,1.000,0.001] type:#float align:#left enabled:true scale:0.001 default:0.001
+		mapbutton b_exponentuTexture "None" width:120 height:18 align:#right enabled:true
+		label lb_exponentv "V-Exponent . . . . . . " across:3 enabled:true
+		spinner spn_exponentv ""  width:68 range:[0.000,1.000,0.001] type:#float align:#left enabled:true scale:0.001 default:0.001
+		mapbutton b_exponentvTexture "None" width:120 height:18 align:#right enabled:true
+		checkbox museBumpmap "Bumpmap . . . ." across:3 enabled:true
+		spinner mbumpmap "" scale:0.01 range:[0,1,0] width:68 align:#left
+		mapbutton mbumpmapTexture "T" width:120 height:18 align:#right
+	)
+	
+	on museBumpmap changed s do
+		(
+			mbumpmap.enabled = s
+			mbumpmapTexture.enabled = s
+		)
+	
+	group "Thin Film Coating"
+	(
+		checkbox musefilm "Use" pos:[11,230]
+		spinner mfilm "Film:" range:[1,1500,200] pos:[80,230]  width:68 align:#left default:200
+		mapButton mfilmtexture "T" width:128 height:20 pos:[180,230] align:#right 
+		spinner mfilmior "IOR:" range:[1,1500,200] pos:[80,280]  width:68 align:#left default:1.51
+		mapButton mfilmiortexture "T" width:128 height:20 pos:[180,280] align:#right 
+		checkbox musefilmiorpreset "IOR Presets" pos:[80,330]
+		dropdownlist mfilmiorpresets "Common IOR Presets" items:#("Water_20c","Whisky","Glass_Flint_29","Glass_Flint_55","Glass_Flint_71","Nylon","Plastic","Plexiglass","Amethyst","Crystal","Diamond","Saphire") height:6 pos:[180,330] width:128 height:20
+	)
+	
+	on musefilm changed s do
+	(
+		mfilm.enabled = s
+		mfilmtexture.enabled = s
+		mfilmior.enabled = s
+		mfilmiortexture.enabled = s
+		musefilmiorpreset.enabled = s
+	)
+	
+	on musefilmiorpreset changed s do
+	(
+		mfilmiorpresets.enabled = s
+	)
+	
+	on mfilmiorpresets selected i do
+	(
+	if mfilmiorpresets.items[i] as string == "Water_20c" then  ( filmior = 1.33283 )
+	if mfilmiorpresets.items[i] as string == "Whisky" then  ( filmior = 1.356 )
+	if mfilmiorpresets.items[i] as string == "Glass_Flint_55" then  ( filmior = 1.669 )
+	if mfilmiorpresets.items[i] as string == "Glass_Flint_29" then  ( filmior = 1.569 )
+	if mfilmiorpresets.items[i] as string == "Glass_Flint_71" then  ( filmior = 1.805 )
+	if mfilmiorpresets.items[i] as string == "Nylon" then  ( filmior = 1.53 )
+	if mfilmiorpresets.items[i] as string == "Plastic" then  ( filmior = 1.47 )
+	if mfilmiorpresets.items[i] as string == "Plexiglass" then  ( filmior = 1.488 )
+	if mfilmiorpresets.items[i] as string == "Amethyst" then  ( filmior = 1.554 )
+	if mfilmiorpresets.items[i] as string == "Crystal" then  ( filmior = 2.000 )
+	if mfilmiorpresets.items[i] as string == "Diamond" then  ( filmior = 2.417)
+	if mfilmiorpresets.items[i] as string == "Saphire" then  ( filmior = 1.767 )
+	)
+	
+	on params open do
+		(
+		mbumpmap.enabled = museBumpmap.state
+		mbumpmapTexture.enabled = museBumpmap.state
+
+		mfilm.enabled = musefilm.state
+		mfilmtexture.enabled = musefilm.state
+		mfilmior.enabled = musefilm.state
+		mfilmiortexture.enabled = musefilm.state
+		musefilmiorpreset.enabled = musefilm.state
+
+		mfilmiorpresets.enabled = musefilmiorpreset.state
+			
+		)
+		
+	)	
+	
+)
+
+/*--plugin material LuxRenderBoundVolume name:"LR BoundVolume" classID:#(0x24171fb3, 0x5934a470) extends:Standard replaceUI:true version:1
 -- ( 
 -- 	parameters main rollout:luxvolrol
 -- 	(
@@ -737,6 +895,9 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
  		
 -- 	)
  --)
+ */
+
+--//Mirror
 
  plugin material LuxrenderMirror name:"LR Mirror" classID:#(0x35fa878, 0x324a4aca) extends:Standard replaceUI:true version:1
 ( 
@@ -1076,6 +1237,7 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 */
 
 
+--//Carpaint
 
 plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x6546d259) extends:Standard replaceUI:true version:1
 ( 
@@ -1244,6 +1406,8 @@ plugin material LuxrenderCarPaint name:"LR Car Paint" classID:#(0x4d900917, 0x65
 		)
 	)
 )
+
+--//RoughGlass
 
 plugin material LuxRoughGlass name:"LR Rough Glass" classID:#(0x3686056d, 0x66e575a8) extends:Standard replaceUI:true version:1
 ( 
@@ -1494,14 +1658,14 @@ parameters main rollout:params
 	)
 	
 	
--- 	MakeNamedMaterial "3_SkinForearm_123.mat2"
+/*-- 	MakeNamedMaterial "3_SkinForearm_123.mat2"
 --    "string type" ["velvet"]
 --    "color Kd" [0.235145 0.031609 0.031609]
 --    "float p1" [-2.000000]
 --    "float p2" [10.000000]
 --    "float p3" [2.000000]
 --    "float thickness" [0.1000000]
-	
+*/
 	
 	--Velvet Material
 	Plugin material velvet name:"LR Velvet" classID:#(0x64952715,0x24c86046)extends:standard replaceUI:true version:1
@@ -1549,6 +1713,8 @@ parameters main rollout:params
 		mapbutton mmixvalueTexture "T" width:128 height:16 align:#right
 		)	
 	)
+	
+	--//Portal Material
 
 	plugin material LuxrenderPortal2 name:"LR Portal" classID:#(0x5ed626b6, 0x586b74bd) extends:Standard replaceUI:true version:1
 	(

@@ -27,6 +27,7 @@
 	global forpreview
 	global tempShaderBox
 	persistent global luxconsolepath
+
 	
 	fn writeToFile string &out_Geom_file =
 	(
@@ -186,6 +187,58 @@
 			else
 			(
 				format "\"float sigma\" [%]\n" Obj.material.sigma to:out_Geom_file
+			)
+		)	
+	)
+	
+	fn load_film Obj &out_Geom_file =
+	(
+		if Obj.material.usefilm as string == "true" then
+		(
+			if (Obj.material.filmTexture != undefined) do
+				(
+				format "Texture \"%\" \"float\" \"imagemap\" \"string wrap\" [\"repeat\"] \"string filename\" [\"%\"]\n" Obj.material.filmtexture.name obj.material.filmtexture.filename to:out_Geom_file
+				format "Texture \"%.scale\" \"float\" \"scale\" \"texture tex1\" [\"%\"] \"float tex2\" [%]\n" Obj.material.filmtexture.name Obj.material.filmtexture.name Obj.material.film to:out_Geom_file
+				)
+		)
+	)
+	
+	fn write_film Obj &out_Geom_file =
+	(	if Obj.material.usefilm as string == "true" then
+		(
+			if (Obj.material.filmTexture != undefined) then
+			(
+				format "\"texture film\" \"%.scale\"\n" Obj.material.filmtexture.name to:out_Geom_file
+			)
+			else
+			(
+				format "\"float film\" [%]\n" Obj.material.film to:out_Geom_file
+			)
+		)	
+	)
+	
+	fn load_filmindex Obj &out_Geom_file =
+	(
+		if Obj.material.usefilm as string == "true" then
+		(
+			if (Obj.material.filmiorTexture != undefined) do
+				(
+				format "Texture \"%\" \"float\" \"imagemap\" \"string wrap\" [\"repeat\"] \"string filename\" [\"%\"]\n" Obj.material.filmiortexture.name obj.material.filmiortexture.filename to:out_Geom_file
+				format "Texture \"%.scale\" \"float\" \"scale\" \"texture tex1\" [\"%\"] \"float tex2\" [%]\n" Obj.material.filmiortexture.name Obj.material.filmiortexture.name Obj.material.filmior to:out_Geom_file
+				)
+		)
+	)
+	
+	fn write_filmindex Obj &out_Geom_file =
+	(	if Obj.material.usefilm as string == "true" then
+		(
+			if (Obj.material.filmiorTexture != undefined) then
+			(
+				format "\"texture filmindex\" \"%.scale\"\n" Obj.material.filmiortexture.name to:out_Geom_file
+			)
+			else
+			(
+				format "\"float filmindex\" [%]\n" Obj.material.filmior to:out_Geom_file
 			)
 		)	
 	)
@@ -527,6 +580,28 @@
 				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
+--SHINY METAL MATERIAL BEGIN
+			
+			if classof obj.material == LuxrenderShinyMetal then
+			(
+			load_reflection Obj out_Geom_file
+			load_specular Obj out_Geom_file
+			load_uroughness Obj out_Geom_file
+			load_vroughness Obj out_Geom_file
+			load_bump Obj out_Geom_file
+			load_film Obj out_Geom_file
+			load_filmindex Obj out_Geom_file
+			format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+			format "\"string type\" \"shinymetal\"\n" to:out_Geom_file
+			write_reflection Obj out_Geom_file
+			write_specular Obj out_Geom_file
+			write_uroughness Obj out_Geom_file
+			write_vroughness Obj out_Geom_file
+			write_bump Obj out_Geom_file
+			write_film Obj out_Geom_file
+			write_filmindex Obj out_Geom_file
+			format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
+			)
 --GLASS MATERIAL BEGIN
 			
 			if classOf obj.material == LuxrenderGlass then
@@ -534,10 +609,14 @@
 				load_transmission Obj out_Geom_file
 				load_reflection Obj out_Geom_file
 				load_bump Obj out_Geom_file
+				load_film Obj out_Geom_file
+				load_filmindex Obj out_Geom_file
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				format "\"string type\" \"glass\"\n" to:out_Geom_file
 				write_transmission Obj out_Geom_file
 				write_reflection Obj out_Geom_file
+				write_film Obj out_Geom_file
+				write_filmindex Obj out_Geom_file
 				if (obj.material.usearchitectural as string == "true") then
 				(
 					format " \"bool architectural\" [\"true\"]\n" to:out_Geom_file
