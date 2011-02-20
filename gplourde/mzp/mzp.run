@@ -1,0 +1,5 @@
+name "LuxMax - LuxRender for 3dsmax"
+version 1
+treeCopy LuxMax to $scripts
+move "startup\LuxMax_Startup.ms" to "$scripts\Startup"
+move "plugins\*.*" to "$max\plugins"
