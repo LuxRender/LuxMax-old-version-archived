@@ -2,9 +2,69 @@
 
 getandwriteMaterialTexture = undefined
 	
---MATERIALS ATTRIBUTES FUNCTIONS BEGIN	
+	fn replaceChar str oChar rChar = 
+	(
+		tStr = ""
+		for i=1 to str.count do
+		(
+			if str[i] == oChar then tStr += rChar
+			else tStr += str[i] 
+		)
+		tStr
+	)
 	
-	fn load_diffuse Obj out_Geom_file =
+	fn preview_selected_material &temp_mat_file =
+	(
+		if (activeMeditSlot == undefined) then
+		(
+			messagebox "error.."
+		)
+		else 
+		(
+			format "#matname is = %\n" (meditMaterials[activeMeditSlot].name) to:temp_mat_file
+			---------------------------------------------------------------------------------------------------------------------------
+			format "LookAt 0.0 -3.0 0.5 0.0 -2.0 0.5 0.0 0.0 1.0\n" to:temp_mat_file
+			format "Camera \"perspective\" \"float fov\" [22.5]\n" to:temp_mat_file
+			format "Film \"fleximage\" \"integer xresolution\" [140] \"integer yresolution\" [140] \"integer ldr_writeinterval\" [3600] \"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [1] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"string filename\" [\"matpreview\"]\n" to:temp_mat_file
+			format "PixelFilter \"mitchell\" \"float xwidth\" [1.500000] \"float ywidth\" [1.500000] \"float B\" [0.333330] \"float C\" [0.333330] \"bool supersample\" [\"true\"]\n" to:temp_mat_file
+			format "Sampler \"lowdiscrepancy\" \"string pixelsampler\" [\"hilbert\"] \"integer pixelsamples\" [16]\n" to:temp_mat_file
+			format "SurfaceIntegrator \"distributedpath\" \"integer directsamples\" [1] \"integer diffusereflectdepth\" [1] \"integer diffusereflectsamples\" [4] \"integer diffuserefractdepth\" [4] \"integer diffuserefractsamples\" [1] \"integer glossyreflectdepth\" [1] \"integer glossyreflectsamples\" [2] \"integer glossyrefractdepth\" [4] \"integer glossyrefractsamples\" [1] \"integer specularreflectdepth\" [2] \"integer specularrefractdepth\" [4]\n" to:temp_mat_file
+			format "WorldBegin\n" to:temp_mat_file
+			---------------------------------------------------------------------------------------------------------------------------
+			--MATERIAL FOR PREVIEW OBJECT
+			---------------------------------------------------------------------------------------------------------------------------
+			format "AttributeBegin\n" to:temp_mat_file
+			format "Include\"temp_matpreview.lxm\"\n" to:temp_mat_file
+			format "Transform [0.5 0.0 0.0 0.0  0.0 0.5 0.0 0.0  0.0 0.0 0.5 0.0  0.0 0.0 0.5 1.0]\n" to:temp_mat_file
+			format "TransformBegin\n" to:temp_mat_file
+			format "Scale 1.000000 1.000000 1.000000\n" to:temp_mat_file
+			format "TransformEnd\n" to:temp_mat_file
+			format "Shape \"sphere\" \"float radius\" [1.0]\n" to:temp_mat_file
+			format "AttributeEnd\n" to:temp_mat_file
+			--MATERIAL FOR PREVIEW OBJECT
+			---------------------------------------------------------------------------------------------------------------------------
+			format "AttributeBegin\n" to:temp_mat_file
+			format "Transform [5.0 0.0 0.0 0.0  0.0 5.0 0.0 0.0  0.0 0.0 5.0 0.0  0.0 0.0 0.0 1.0]\n" to:temp_mat_file
+			format "Texture \"checks::pattern\" \"float\" \"checkerboard\"\"integer dimension\" [2] \"string aamode\" [\"supersample\"]\"string mapping\" [\"uv\"] \"float uscale\" [36.8] \"float vscale\" [36.0]\n" to:temp_mat_file
+			format "Texture \"checks\" \"color\" \"mix\" \"texture amount\" [\"checks::pattern\"] \"color tex1\" [0.9 0.9 0.9] \"color tex2\" [0.0 0.0 0.0]\n" to:temp_mat_file
+			format "Material \"matte\" \"texture Kd\" [\"checks\"]\n" to:temp_mat_file
+			format "Shape \"loopsubdiv\" \"integer nlevels\" [3] \"bool dmnormalsmooth\" [\"true\"] \"bool dmsharpboundary\" [\"false\"] \"integer indices\" [ 0 1 2 0 2 3 1 0 4 1 4 5 5 4 6 5 6 7 ]\"point P\" [ 1.000000 1.000000 0.000000 -1.000000 1.000000 0.000000 -1.000000 -1.000000 0.000000 1.000000 -1.000000 0.000000 1.000000 3.000000 0.000000 -1.000000 3.000000 0.000000 1.000000 3.000000 2.000000 -1.000000 3.000000 2.000000] \"normal N\" [ 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 -0.707083 0.707083 0.000000 -0.707083 0.707083 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000] \"float uv\" [ 0.333334 0.000000 0.333334 0.333334 0.000000 0.333334 0.000000 0.000000 0.666667 0.000000 0.666667 0.333333 1.000000 0.000000 1.000000 0.333333 ]\n" to:temp_mat_file
+			format "AttributeEnd\n" to:temp_mat_file
+			format "AttributeBegin\n" to:temp_mat_file
+			format "Transform [1.0 0.0 0.0 0.0  0.0 1.0 0.0 0.0  0.0 0.0 1.0 0.0  1.0 -1.0 4.0 1.0]\n" to:temp_mat_file
+			format "Texture \"pL\" \"color\" \"blackbody\" \"float temperature\" [6500.0]\n" to:temp_mat_file
+			format "LightSource \"point\" \"texture L\" [\"pL\"] \"float gain\" [0.002]\n" to:temp_mat_file
+			format "AttributeEnd\n" to:temp_mat_file
+			format "WorldEnd\n" to:temp_mat_file
+			forpreview = 0
+			
+			
+			
+		)
+	)
+	
+	
+	fn load_diffuse Obj &out_Geom_file =
 	(
 	if (Obj.material.kdTexture != undefined) do
 				(
@@ -16,7 +76,7 @@ getandwriteMaterialTexture = undefined
 				)	
 	)
 	
-	fn write_diffuse Obj out_Geom_file =
+	fn write_diffuse Obj &out_Geom_file =
 	(
 		if (Obj.material.kdTexture != undefined) then
 			(
@@ -35,7 +95,7 @@ getandwriteMaterialTexture = undefined
 		)	
 	)
 	
-	fn load_specular Obj out_Geom_file =
+	fn load_specular Obj &out_Geom_file =
 	(
 		if (Obj.material.ksTexture != undefined) do
 			(
@@ -47,7 +107,7 @@ getandwriteMaterialTexture = undefined
 			)
 	)
 	
-	fn write_specular Obj out_Geom_file =
+	fn write_specular Obj &out_Geom_file =
 	(
 		if (Obj.material.ksTexture != undefined) then
 		(
@@ -66,7 +126,7 @@ getandwriteMaterialTexture = undefined
 		)
 	)
 	
-	fn load_sigma Obj out_Geom_file =
+	fn load_sigma Obj &out_Geom_file =
 	(
 		if Obj.material.usesigma as string == "true" then
 		(
@@ -78,7 +138,7 @@ getandwriteMaterialTexture = undefined
 		)
 	)
 	
-	fn write_sigma Obj out_Geom_file =
+	fn write_sigma Obj &out_Geom_file =
 	(	if Obj.material.usesigma as string == "true" then
 		(
 			if (Obj.material.sigmaTexture != undefined) then
@@ -92,7 +152,7 @@ getandwriteMaterialTexture = undefined
 		)	
 	)
 	
-	fn load_film Obj out_Geom_file =
+	fn load_film Obj &out_Geom_file =
 	(
 		if Obj.material.usefilm as string == "true" then
 		(
@@ -104,7 +164,7 @@ getandwriteMaterialTexture = undefined
 		)
 	)
 	
-	fn write_film Obj out_Geom_file =
+	fn write_film Obj &out_Geom_file =
 	(	if Obj.material.usefilm as string == "true" then
 		(
 			if (Obj.material.filmTexture != undefined) then
@@ -118,7 +178,7 @@ getandwriteMaterialTexture = undefined
 		)	
 	)
 	
-	fn load_filmindex Obj out_Geom_file =
+	fn load_filmindex Obj &out_Geom_file =
 	(
 		if Obj.material.usefilm as string == "true" then
 		(
@@ -130,7 +190,7 @@ getandwriteMaterialTexture = undefined
 		)
 	)
 	
-	fn write_filmindex Obj out_Geom_file =
+	fn write_filmindex Obj &out_Geom_file =
 	(	if Obj.material.usefilm as string == "true" then
 		(
 			if (Obj.material.filmiorTexture != undefined) then
@@ -144,7 +204,7 @@ getandwriteMaterialTexture = undefined
 		)	
 	)
 	
-	fn load_uroughness Obj out_Geom_file =
+	fn load_uroughness Obj &out_Geom_file =
 	(
 			if (Obj.material.uroughnessTexture != undefined) do
 				(
@@ -154,7 +214,7 @@ getandwriteMaterialTexture = undefined
 		
 	)
 	
-	fn write_uroughness Obj out_Geom_file =
+	fn write_uroughness Obj &out_Geom_file =
 	(	
 			if (Obj.material.uroughnessTexture != undefined) then
 			(
@@ -167,7 +227,7 @@ getandwriteMaterialTexture = undefined
 		
 	)
 	
-	fn load_vroughness Obj out_Geom_file =
+	fn load_vroughness Obj &out_Geom_file =
 	(
 			if (Obj.material.vroughnessTexture != undefined) do
 				(
@@ -177,7 +237,7 @@ getandwriteMaterialTexture = undefined
 		
 	)
 	
-	fn write_vroughness Obj out_Geom_file =
+	fn write_vroughness Obj &out_Geom_file =
 	(	
 			if (Obj.material.vroughnessTexture != undefined) then
 			(
@@ -190,7 +250,7 @@ getandwriteMaterialTexture = undefined
 		
 	)
 	
-	fn load_bump Obj out_Geom_file =
+	fn load_bump Obj &out_Geom_file =
 	(
 		if Obj.material.useBumpmap as string == "true" then
 		(
@@ -202,7 +262,7 @@ getandwriteMaterialTexture = undefined
 		)
 	)
 	
-	fn write_bump Obj out_Geom_file =
+	fn write_bump Obj &out_Geom_file =
 	(
 		if (Obj.material.bumpmapTexture != undefined) do
 			(
@@ -210,7 +270,7 @@ getandwriteMaterialTexture = undefined
 			)
 	)
 	
-	fn load_absorption Obj out_Geom_file =
+	fn load_absorption Obj &out_Geom_file =
 	(
 		if Obj.material.useka as string == "true" then
 		(
@@ -228,7 +288,7 @@ getandwriteMaterialTexture = undefined
 		)
 	)
 	
-	fn write_absorption Obj out_Geom_file =
+	fn write_absorption Obj &out_Geom_file =
 	(
 		if Obj.material.useka as string == "true" then
 		(	
@@ -258,7 +318,7 @@ getandwriteMaterialTexture = undefined
 		)
 	)
 	
-	fn load_bump Obj out_Geom_file =
+	fn load_bump Obj &out_Geom_file =
 	(
 		if Obj.material.useBumpmap as string == "true" then
 		(
@@ -270,7 +330,7 @@ getandwriteMaterialTexture = undefined
 		)
 	)
 	
-	fn write_bump Obj out_Geom_file =
+	fn write_bump Obj &out_Geom_file =
 	(
 		if (Obj.material.bumpmapTexture != undefined) do
 			(
@@ -278,11 +338,11 @@ getandwriteMaterialTexture = undefined
 			)
 	)
 	
-	fn load_emissiontexture Obj out_Geom_file =
+	fn load_emissiontexture Obj &out_Geom_file =
 	(
 		if Obj.material.useEmission as string == "true" then
 		(
-	   
+       
 			if (classof obj.material.emissionTexture == LuxrenderBlackbody) do
 			(
 			format "LightGroup \"%\"\n" obj.material.emissionTexture.group to:out_Geom_file	
@@ -301,11 +361,11 @@ getandwriteMaterialTexture = undefined
 			format "\"float efficacy\" [%]\n" obj.material.emissionTexture.efficacy to:out_Geom_file
 			format "\"float gain\" [%]\n" obj.material.emissionTexture.gain to:out_Geom_file
 			)
-					
+			        
 		)
-	)
+    )
 	
-	fn write_emissiontexture Obj out_Geom_file =
+	fn write_emissiontexture Obj &out_Geom_file =
 	(
 		if (Obj.material.emissionTexture != undefined) do
 			(
@@ -313,7 +373,7 @@ getandwriteMaterialTexture = undefined
 			)
 	)
 	
-	fn load_transmission Obj out_Geom_file =
+	fn load_transmission Obj &out_Geom_file =
 	(
 	if (Obj.material.ktTexture != undefined) do
 				(
@@ -325,7 +385,7 @@ getandwriteMaterialTexture = undefined
 				)	
 	)
 	
-	fn write_transmission Obj out_Geom_file =
+	fn write_transmission Obj &out_Geom_file =
 	(
 		if (Obj.material.ktTexture != undefined) then
 			(
@@ -345,7 +405,7 @@ getandwriteMaterialTexture = undefined
 	)
 	
 	
-	fn load_reflection Obj out_Geom_file =
+	fn load_reflection Obj &out_Geom_file =
 	(
 	if (Obj.material.krTexture != undefined) do
 				(
@@ -357,7 +417,7 @@ getandwriteMaterialTexture = undefined
 				)	
 	)
 	
-	fn write_reflection Obj out_Geom_file =
+	fn write_reflection Obj &out_Geom_file =
 	(
 		if (Obj.material.krTexture != undefined) then
 			(
@@ -376,31 +436,31 @@ getandwriteMaterialTexture = undefined
 		)	
 	)
 	
-	fn write_simgatexture Obj out_Geom_file =
+	fn write_simgatexture Obj &out_Geom_file =
 	(
 		format "\"texture sigma\" [\"%\"]\n" Obj.filename to:out_Geom_file
 	)
 	
-	fn write_sigmaFloat Obj out_Geom_file =
+	fn write_sigmaFloat Obj &out_Geom_file =
 	(
 		format "\"float sigma\" [%]\n" Obj.sigma to:out_Geom_file
 	)
 	
-	fn write_texturemap Obj out_Geom_file =
+	fn write_texturemap Obj &out_Geom_file =
 	(
 		format "Texture \"%\"\n" Obj.name to:out_Geom_file
 		format "\"color\" \"imagemap\" \"string wrap\" [\"repeat\"]\n" to:out_Geom_file
 		format "\"string filename\" [\"%\"]\n" Obj.filename to:out_Geom_file
 
 	)
-	fn write_texturemap_float Obj out_Geom_file=
+	fn write_texturemap_float Obj &out_Geom_file=
 	(
 		format "Texture \"%\"\n" Obj.name to:out_Geom_file
 		format "\"float\" \"imagemap\" \"string wrap\" [\"repeat\"]\n" to:out_Geom_file
 		format "\"string filename\" [\"%\"]\n" Obj.filename to:out_Geom_file
 	)
 	
-	fn getandwriteMaterialTexture Obj out_Geom_file=
+	fn getandwriteMaterialTexture Obj &out_Geom_file=
 	(
 		if ( classof Obj == LuxrenderImageMap) then
 		(
@@ -411,8 +471,12 @@ getandwriteMaterialTexture = undefined
 --MATERIALS ATTRIBUTES FUNCTIONS FINISH	
 
 	
-	fn WriteShaders Obj  out_Geom_file = 
+	fn WriteShaders Obj  &out_Geom_file = 
 	(
+		--addModifier obj (Edit_Mesh ())
+
+		Local MeshArrays = #(#(), #(), #(), #())
+
 		--	print (classof Obj.material)
 			
 		if (true) then

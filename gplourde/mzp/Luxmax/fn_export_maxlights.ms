@@ -38,3 +38,83 @@ fn lux_export_mrSkyPortal obj =
 	
 	return (str as string)
 )
+
+fn lux_export_spot obj =
+(
+	numlightsource += 1
+	str = stringstream ""
+	
+	tm = $.transform
+	t = [0,0,-1]
+
+	r1 = obj.transform.row1
+	r2 = obj.transform.row2
+	r3 = obj.transform.row3
+	r4 = obj.transform.row4
+	
+	format "AttributeBegin # %\n" obj.name to:str
+	
+	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / 100.0) (r4.y / 100.0) (r4.z / 100.0)to:str
+	
+	format "LightGroup \"%\"\n" obj.name to:str
+	format "LightSource \"spot\"\n" to:str
+	luxWriteFloat "gain" obj.multiplier str
+	luxWriteColor "L" obj.color str
+	luxWritePoint "from" ([0, 0, 0]) str
+	luxWritePoint "to" t str
+	format "AttributeEnd # %\n\n" obj.name to:str
+	
+	return str as string
+)
+
+fn lux_export_direct obj =
+(
+	numlightsource += 1
+	str = stringstream ""
+	
+	tm = $.transform
+	t = [0,0,-1]
+
+	r1 = obj.transform.row1
+	r2 = obj.transform.row2
+	r3 = obj.transform.row3
+	r4 = obj.transform.row4
+	
+	format "AttributeBegin # %\n" obj.name to:str
+	
+	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / 100.0) (r4.y / 100.0) (r4.z / 100.0)to:str
+	
+	format "LightGroup \"%\"\n" obj.name to:str
+	format "LightSource \"distant\"\n" to:str
+	luxWriteFloat "gain" obj.multiplier str
+	luxWriteColor "L" obj.color str
+	luxWritePoint "from" ([0, 0, 0]) str
+	luxWritePoint "to" t str
+	format "AttributeEnd # %\n\n" obj.name to:str
+	
+	return str as string
+)
+
+fn lux_export_omni obj =
+(
+	numlightsource += 1
+	str = stringstream ""
+	
+	r1 = obj.transform.row1
+	r2 = obj.transform.row2
+	r3 = obj.transform.row3
+	r4 = obj.transform.row4
+	
+	format "AttributeBegin # %\n" obj.name to:str
+	
+	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / 100.0) (r4.y / 100.0) (r4.z / 100.0)to:str
+	
+	format "LightGroup \"%\"\n" obj.name to:str
+	format "LightSource \"omni\"\n" to:str
+	luxWriteFloat "gain" obj.multiplier str
+	luxWriteColor "L" obj.color str
+	luxWritePoint "from" ([0, 0, 0]) str
+	format "AttributeEnd # %\n\n" obj.name to:str
+	
+	return str as string
+)

@@ -8,6 +8,8 @@ global lux_main = "LuxMax Starting..."
 		
 	if (luxMax_Settings == undefined) then (persistent global luxMax_Settings = #())
 	
+	numlightsource = 0
+		
 	-- Cache rollouts
 	lux_Dimmensions = undefined
 	lux_LuxRenderEnginePresets = undefined
@@ -48,8 +50,10 @@ global lux_main = "LuxMax Starting..."
 	
 	include "luxmax\\fn_common.ms"
 	include "luxmax\\fn_ply.ms"
+	include "luxmax\\fn_export_lxo.ms"
 	include "luxmax\\fn_export_camera.ms"
 	include "luxmax\\fn_export_material.ms"
+	include "luxmax\\fn_export_maxlights.ms"
 	include "luxmax\\fn_export.ms"
 	include "luxmax\\rollout_sampler.ms"
 	include "luxmax\\rollout_filter.ms"
@@ -131,9 +135,9 @@ global lux_main = "LuxMax Starting..."
 			dropdownlist ddl_exttype "External type:" items:#("LuxRender GUI", "LuxConsole")
 			
 			checkbox chk_lxs "LXS" across:3 checked:true
-			checkbox chk_lxm "LXM" checked:false enabled:false
+			checkbox chk_lxm "LXM" checked:true enabled:true
+			checkbox chk_lxo "LXO" checked:true enabled:true
 			checkbox chk_ply "PLY" checked:true
-			--checkbox chk_lxo "LXO" checked:true enabled:false
 			
 			group "LuxRender Engine"
 			(
@@ -141,6 +145,12 @@ global lux_main = "LuxMax Starting..."
 				button btn_path "Path to LuxRender" width:260 align:#center enabled:true
 				checkbox chk_threads "Auto Threads" checked:true enabled:true
 			)
+			
+			group "Debug"
+			(
+				checkbox chk_scriptply "Debug: force maxscript export" checked:false
+			)
+			
 			on btn_path pressed do
 			(
 				lx_path = getSavePath caption:"LuxRender Path"
