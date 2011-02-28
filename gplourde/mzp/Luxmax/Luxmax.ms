@@ -454,7 +454,7 @@ global lux_main = "LuxMax Starting..."
 				if (ddl_camera.selected == undefined) then success = luxWriteLxs undefined
 				else success = luxWriteLxs (GetNodeByName ddl_camera.selected)
 				
-				if (((getLuxValue "chk_run")) == true and success == true) then shelllaunch ((getLuxValue "btn_path") + "\\luxrender.exe") (((getLuxValue "btn_outputpath") + "\\" + getSceneName() + ".lxs"))
+				if (((getLuxValue "chk_run")) == true and success == true) then shelllaunch ((getLuxValue "btn_path") + "\\luxrender.exe") (((getLuxValue "btn_outputpath") + "\\" + getSceneName() + "_" + GetFrame() + ".lxs"))
 			)
 			on btn_Animation pressed do
 			(

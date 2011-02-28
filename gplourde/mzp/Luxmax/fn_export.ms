@@ -1,22 +1,19 @@
 ( -- // Exporter functions
-	--// Get the current scene name minus the file extension
-	function getSceneName =
-	(
-		n = getFilenameFile maxFileName
-		return n
-	)
-
 	--// Main export function
 	function luxWriteLxs p_camera =
 	(
-		lxs = ((getLuxValue "btn_outputpath") + "\\" + getSceneName() + ".lxs")
-		lxm = ((getLuxValue "btn_outputpath") + "\\" + getSceneName() + ".lxm")
-		lxo = ((getLuxValue "btn_outputpath") + "\\" + getSceneName() + ".lxo")
+		numlightsource = 0
+		
+		_P =  ((getLuxValue "btn_outputpath") + "\\" + getSceneName())
+		
+		lxs =	(_P + "_" + GetFrame() + ".lxs")
+		lxm =	(_P + "\\" + GetFrame() + "\\" + "LuxRender-Materials.lxm")
+		lxo =	(_P + "\\" + GetFrame() + "\\" + "LuxRender-Geometry.lxo")
 		
 		makeDir (getFilenamePath lxs)
+		makeDir (getFilenamePath lxo)
 		
-		global numlightsource = 0
-		
+		if (GetLuxValue "chk_lxm") then (export_lxm lxm)
 		if (GetLuxValue "chk_lxo") then (export_lxo lxo)
 
 		str = stringstream ""
@@ -88,21 +85,23 @@
 				(
 					format "AttributeBegin #default\n" to:str
 					format "LightGroup \"default\"\n" to:str
-					format "LightSource \"sky\"\n" to:str
+					format "LightSource \"sunsky\"\n" to:str
+					luxWriteFloat "turbidity" 2 str 
 					luxWriteFloat "gain" 1.4 str
 					format "AttributeEnd # default\n\n" to:str
 				)
 			)
 			
-			format "Include \"%\"" ("./" + getSceneName() + ".lxo") to:str
+			format "Include \"%\"\n" (getSceneName() + "/" + GetFrame() + "/" + "LuxRender-Materials.lxm") to:str
+			format "Include \"%\"\n" (getSceneName() + "/" + GetFrame() + "/" + "LuxRender-Geometry.lxo") to:str
 			
-			format "\nWorldEnd\n" to:str
+			format "\nWorldEnd" to:str
 			
 			if (GetLuxValue "chk_lxs") then
 			(
-				f = openfile lxs mode:"w"
-				format "%\n" (str as string) to:f
-				close f
+				F_lxs = openfile lxs mode:"w"
+				format "%\n" (str as string) to:F_lxs
+				close F_lxs
 			)
 			
 			return true

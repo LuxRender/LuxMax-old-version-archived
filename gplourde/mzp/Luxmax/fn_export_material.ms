@@ -483,6 +483,18 @@ getandwriteMaterialTexture = undefined
 		(
 			if (classof Obj.material != undefined) then
 			(
+	
+			if classOf obj.material == LuxrenderLight then
+			(
+				if (classOf obj.material.AreaLightSourceMap == LuxrenderBlackbody) then
+					format "Texture \"area:light\" \"color\" \"blackbody\" \"float temperature\" [%]\n" obj.material.AreaLightSourceMap.temperature to:out_Geom_file
+				
+				if (classof obj.material.AreaLightSourceMap  == LuxrenderLampSpectrum) then
+					format "Texture \"%\" \"color\" \"lampspectrum\" \"string name\" [\"%\"]\n" obj.material.AreaLightSourceMap.name obj.material.AreaLightSourceMap.spectrumnamestring to:str
+				
+				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
+				format "\"string type\" \"matte\"\n" to:out_Geom_file
+			)
 			
 --MATTE MATERIAL BEGIN	
 			
@@ -498,7 +510,6 @@ getandwriteMaterialTexture = undefined
 				write_sigma Obj out_Geom_file
 				write_bump Obj out_Geom_file
 				write_emissiontexture Obj out_Geom_file
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 			)
 			
 			
@@ -538,7 +549,6 @@ getandwriteMaterialTexture = undefined
 				(
 					format "\t\"string filename\" [\"%\"]\n" obj.material.nkdatapath to:out_Geom_file
 				)
-				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
 --SHINY METAL MATERIAL BEGIN
@@ -561,7 +571,6 @@ getandwriteMaterialTexture = undefined
 			write_bump Obj out_Geom_file
 			write_film Obj out_Geom_file
 			write_filmindex Obj out_Geom_file
-			format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 --GLASS MATERIAL BEGIN
 			
@@ -592,7 +601,6 @@ getandwriteMaterialTexture = undefined
 					format "\"float cauchyb\" [%]\n" Obj.material.cauchyb to:out_Geom_file
 				)
 				write_bump Obj out_Geom_file
-				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
 --GLASS2 MATERIAL BEGIN
@@ -612,7 +620,6 @@ getandwriteMaterialTexture = undefined
 					format "\"bool dispersion\" [\"false\"] \n" to:out_Geom_file
 				)
 				format "Interior \"my_volume\" \n" to:out_Geom_file
-				format "NamedMaterial \"mymaterial\" \n" to:out_Geom_file
 			)
 			
 --GLOSSY,GLOSSY LOSSY MATERIAL BEGIN
@@ -640,8 +647,7 @@ getandwriteMaterialTexture = undefined
 				write_bump Obj out_Geom_file
 				write_uroughness Obj out_Geom_file
 				write_vroughness Obj out_Geom_file
-				write_absorption Obj out_Geom_file
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file					
+				write_absorption Obj out_Geom_file			
 					
 
 			)
@@ -666,38 +672,11 @@ getandwriteMaterialTexture = undefined
 				write_bump Obj out_Geom_file
 				write_uroughness Obj out_Geom_file
 				write_vroughness Obj out_Geom_file
-				write_absorption Obj out_Geom_file
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file					
+				write_absorption Obj out_Geom_file				
 					
 
 			)
-			
---LIGHT MATERIAL BEGIN			
-			
-			if classOf obj.material == LuxrenderLight then
-			(
-				tempmap = getSubTexmap obj.material 1
-			--	print (classOf tempmap)
 				
-				if (classOf tempmap == LuxrenderBlackbody) then
-				(
-					format "LightGroup \"%\"\n" obj.material.AreaLightSourceMap.group to:out_Geom_file
-					format "Texture \"area:light\" \"color\" \"blackbody\" \"float temperature\" [%]\n" obj.material.AreaLightSourceMap.temperature to:out_Geom_file
-					format "AreaLightSource \"area\" \"texture L\" [\"area:light\"]\n" to:out_Geom_file
-					format "\"float power\" [%]\n" obj.material.AreaLightSourceMap.power to:out_Geom_file
-					format "\"float efficacy\" [%]\n" obj.material.AreaLightSourceMap.efficacy to:out_Geom_file
-					format "\"float gain\" [%]\n" obj.material.AreaLightSourceMap.gain to:out_Geom_file
-					format "Material \"matte\" \"color Kd\" [0.8 0.8 0.8]" to:out_Geom_file
-				)
-				
-				if (classof tempmap == LuxrenderLampSpectrum) then
-				(
-					format "LightGroup \"%\"\n" obj.material.AreaLightSourceMap.spectrumgroupstring to:out_Geom_file
-					format "Texture \"%\" \"color\" \"lampspectrum\" \"string name\" [\"%\"]\n" obj.material.AreaLightSourceMap.name obj.material.AreaLightSourceMap.spectrumnamestring to:out_Geom_file
-					format "AreaLightSource \"area\" \"texture L\" [\"%\"]\n" obj.material.AreaLightSourceMap.name to:out_Geom_file
-				)
-			)
-			
 --MATTE TRANSLUCENT MATERIAL BEGIN
 				
 			if classOf obj.material == LuxMatteTrans then
@@ -712,7 +691,6 @@ getandwriteMaterialTexture = undefined
 				write_transmission Obj out_Geom_file
 				write_sigma Obj out_Geom_file
 				write_bump Obj out_Geom_file
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 			)
 			
 --MIRROR MATERIAL BEGIN			
@@ -724,7 +702,6 @@ getandwriteMaterialTexture = undefined
 				format "\"color Kr\" [% % %]" (obj.material.mirrorkdColor.r / 255) (obj.material.mirrorkdColor.g / 255) (obj.material.mirrorkdColor.b / 255) to:out_Geom_file
 				format "\"float film\" [%]\n" obj.material.mirror_film to:out_Geom_file
 				format "\"float filmindex\" [%]\n" obj.material.mirror_index to:out_Geom_file
-				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
 --NULL MATERIAL BEGIN			
@@ -733,7 +710,6 @@ getandwriteMaterialTexture = undefined
 			(
 				format "MakeNamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				format "\"string type\" \"null\"\n" to:out_Geom_file
-				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
 --ROUGH GLASS			
@@ -758,7 +734,6 @@ getandwriteMaterialTexture = undefined
 					format "\"float cauchyb\" [%]\n" Obj.material.cauchyb to:out_Geom_file
 				)
 				write_bump Obj out_Geom_file
-				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
 --LUXMIX MATERIAL BEGIN			
@@ -787,16 +762,12 @@ getandwriteMaterialTexture = undefined
 			format "MakeNamedMaterial \"%\"\n" originalmaterial1.name to:out_Geom_file
 				
 			writeshaders obj out_geom_file
-				
-			format "NamedMaterial \"%\"\n" originalmaterial1.name to:out_Geom_file
 
 			--apply slot2 material
 			obj.material = originalMaterial2
 			--write out
 			format "MakeNamedMaterial \"%\"\n" originalmaterial2.name to:out_Geom_file
 			writeshaders obj out_geom_file
-			
-			format "NamedMaterial \"%\"\n" originalmaterial2.name to:out_Geom_file
 
 			--apply original material back to object
 			obj.material = originalMaterial
@@ -813,7 +784,6 @@ getandwriteMaterialTexture = undefined
 			)
 			
 			format "\"string namedmaterial1\" [\"%\"] \"string namedmaterial2\" [\"%\"]\n" originalMaterial1.name originalMaterial2.name to:out_Geom_file
-			format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 		
 			)
 			
@@ -834,7 +804,6 @@ getandwriteMaterialTexture = undefined
 				format "\"float p1\" [%]\n"  Obj.material.p1 to:out_Geom_file
 				format "\"float p2\" [%]\n" Obj.material.p2 to:out_Geom_file
 				format "\"float p3\" [%]\n" Obj.material.p3 to:out_Geom_file
-				format "NamedMaterial \"%\"" Obj.material.name to:out_Geom_file
 			)
 			
 --PORTAL2 MATERIAL BEGIN 			
@@ -933,11 +902,30 @@ getandwriteMaterialTexture = undefined
 				write_bump Obj out_Geom_file
 				write_absorption Obj out_Geom_file
 				write_emissiontexture Obj out_Geom_file
-				format "NamedMaterial \"%\"\n" Obj.material.name to:out_Geom_file
 				
 			)
 				
 			)
 		)
 	)
+)
+
+function export_lxm lxm =
+(
+	str = stringstream ""
+	
+	materials = #()
+	
+	for obj in geometry do
+	(
+		--// Write the material if it doesnt exist only
+		if ((findItem materials obj.material) == 0) then
+			WriteShaders obj str
+		
+		appendifunique materials obj.material
+	)
+	
+	f = openfile lxm mode:"w"
+	format "%\n" (str as string) to:f
+	close f
 )

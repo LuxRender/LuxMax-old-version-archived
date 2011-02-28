@@ -116,9 +116,11 @@
 		catch
 		(
 			fclose stream
+			delete _trimsh
 			return false
 		)
 		fclose stream
+		delete _trimsh
 		return true
 	)
 )
