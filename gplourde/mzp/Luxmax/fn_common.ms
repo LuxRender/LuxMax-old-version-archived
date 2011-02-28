@@ -6,6 +6,23 @@ function luxWriteFloat key val f = (if (val != undefined) then format "\t\"float
 function luxWritePoint key val f = (if (val != undefined) then format "\t\"point %\" [% % %]\n" key val.x val.y val.z to:f else (format "warning: writing value key:% val:%\n" key val to:listener))
 function luxWriteColor key val f = (if (val != undefined) then format "\t\"color %\" [% % %]\n" key val.red val.green val.blue to:f else (format "warning: writing value key:% val:%\n" key val to:listener))
 
+function GetFrame =
+(
+	str = "000000"
+	_T = (slidertime.frame as integer) as string
+	str = replace str (7 - _T.count) (_T.count) _T
+	return str
+)
+
+--// Get the current scene name minus the file extension
+function getSceneName =
+(
+	if (maxFileName.count > 0) then
+		return (getFilenameFile maxFileName)
+
+	return "untitled"
+)
+
 (--// Generic UI Saving Functions
 
 	function GetLuxParam name =

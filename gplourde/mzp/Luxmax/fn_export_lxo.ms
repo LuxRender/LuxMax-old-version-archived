@@ -9,11 +9,9 @@ function export_lxo lxo =
 		--// Export ply files
 		--// Skip if ply export is disabled
 		if (GetLuxValue "chk_ply") then
-		(
-			--// Create ply saving location
-			makeDir ((getFilenamePath lxo) + "/" + (getFilenameFile lxo))
+		(		
 			--// Ply filename
-			n = ((getFilenamePath lxo) + (getFilenameFile lxo) + "/" + obj.name + ".ply")
+			n = ((getFilenamePath lxo) + "\\" + obj.name + ".ply")
 		
 			if (GetLuxValue "chk_scriptply") then (ply_export_script obj n 100) --// Force exort with script exporter
 			else
@@ -30,7 +28,7 @@ function export_lxo lxo =
 		)
 		
 		--// Relative path to the ply
-		n = ("./" + (getFilenameFile lxo) + "/" + obj.name + ".ply")
+		n = (getSceneName() + "/" + GetFrame() + "/" + obj.name + ".ply")
 		
 		format "\nAttributeBegin\n" to:str
 		
@@ -48,6 +46,32 @@ function export_lxo lxo =
 			luxWriteString "type" "matte" str
 			luxWriteColor "Kd" (obj.wirecolor / 255) str
 			format "NamedMaterial \"Wirecolor\"\n" to:str
+		)
+		--// Write material name
+		else
+		(		
+			format "\tNamedMaterial \"%\"\n" obj.material.name to:str
+			
+			if classOf obj.material == LuxrenderLight then
+			(	
+				numlightsource += 1
+				
+				if (classOf obj.material.AreaLightSourceMap == LuxrenderBlackbody) then
+				(
+					format "\tLightGroup \"%\"\n" obj.material.AreaLightSourceMap.group to:str
+
+					format "\tAreaLightSource \"area\" \"texture L\" [\"area:light\"]\n" to:str
+					format "\t\t\"float power\" [%]\n" obj.material.AreaLightSourceMap.power to:str
+					format "\t\t\"float efficacy\" [%]\n" obj.material.AreaLightSourceMap.efficacy to:str
+					format "\t\t\"float gain\" [%]\n" obj.material.AreaLightSourceMap.gain to:str
+				)
+				
+				if (classof obj.material.AreaLightSourceMap  == LuxrenderLampSpectrum) then
+				(
+					format "\tLightGroup \"%\"\n" obj.material.AreaLightSourceMap.spectrumgroupstring to:str
+					format "\t\tAreaLightSource \"area\" \"texture L\" [\"%\"]\n" obj.material.AreaLightSourceMap.name to:str
+				)
+			)
 		)
 		
 		format "\n" to:str
