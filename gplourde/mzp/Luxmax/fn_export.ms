@@ -78,6 +78,8 @@
 						Directionallight:			(format "%\n" (lux_export_direct lt) to:str)
 						TargetDirectionallight:	(format "%\n" (lux_export_direct lt) to:str)
 						miAreaLight:				(format "%\n" (lux_export_spot lt) to:str)
+						LuxSky:						(format "%\n" (lux_export_luxsky lt) to:str)
+						LuxSun:						(format "%\n" (lux_export_luxsun lt) to:str)
 					)
 				)
 				
