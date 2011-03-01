@@ -44,7 +44,7 @@ fn lux_export_spot obj =
 	numlightsource += 1
 	str = stringstream ""
 	
-	tm = $.transform
+	tm = obj.transform
 	t = [0,0,-1]
 
 	r1 = obj.transform.row1
@@ -72,7 +72,7 @@ fn lux_export_direct obj =
 	numlightsource += 1
 	str = stringstream ""
 	
-	tm = $.transform
+	tm = obj.transform
 	t = [0,0,-1]
 
 	r1 = obj.transform.row1
