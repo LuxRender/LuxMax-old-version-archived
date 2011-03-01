@@ -1,26 +1,37 @@
 (
+	global lux_renderBuffer = undefined
 	global lux_outputbmp = undefined
 	
-	function lux_OpenRenderBuffer =
+	rollout lux_renderBuffer "LuxRender -"
 	(
-		theFrm = dotNetObject "MaxCustomControls.MaxForm"
-		theFrm.width = 1280
-		theFrm.height = 720
-		theFrm.text = "LuxRender"
+		dotnetControl pictureBox1 "System.Windows.Forms.PictureBox" width:1280 height:720 pos:[12, 12]
+		timer timer1 "" interval:10000
 		
-		pictureBox1 =dotNetObject "System.Windows.Forms.PictureBox"
+		function updateRenderBuffer =
+		(
+			try (
+				_bitmapStream = dotNetObject "System.IO.FileStream" ((getLuxValue "btn_outputpath") + "\\" + getSceneName() + "_" + getFrame() + ".png") (dotNetClass "System.IO.FileMode").Open (dotNetClass "System.IO.FileAccess").Read (dotNetClass "System.IO.FileShare").ReadWrite
+				_bitmap = dotNetObject "System.Drawing.Bitmap" _bitmapStream
+				
+				pictureBox1.Image =_bitmap.Clone()
+				
+				_bitmapStream.Close()
+				_bitmap.Dispose()
+				_bitmapStream.Dispose()
+			) catch ()
+		)
 		
-		pictureBox1.Image = dotNetObject "System.Drawing.Bitmap" ("c:\\tmp\\teapot.png")
-		pictureBox1.width = 1280
-		pictureBox1.height = 720
-		pictureBox1.location = dotNetObject "System.Drawing.Point" 0 0
-	
-		theFrm.controls.add(pictureBox1)
-		
-		thePtr = DotNetObject "System.IntPtr" (windows.getMAXHWND())
-		theHwnd = DotNetObject "MaxCustomControls.Win32HandleWrapper" thePtr
-		theFrm.Show(theHwnd)
+		on timer1 tick do
+		(
+			updateRenderBuffer()
+		)
 	)
 	
-	lux_OpenRenderBuffer()
+	function lux_OpenRenderBuffer _title _width _height _updateinterval =
+	(
+		if (lux_renderBuffer != undefined) then try (destrydialog lux_renderBuffer) catch ()
+		createdialog lux_renderBuffer (_width + 24) (_height + 24)
+		lux_renderBuffer.title = ("LuxRender - " + _title)
+		lux_renderBuffer.timer1.interval = (_updateinterval * 1000)
+	)
 )
