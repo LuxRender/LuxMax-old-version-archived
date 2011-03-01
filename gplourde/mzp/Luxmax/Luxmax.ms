@@ -455,14 +455,21 @@ global lux_main = "LuxMax Starting..."
 				if (ddl_camera.selected == undefined) then success = luxWriteLxs undefined
 				else success = luxWriteLxs (GetNodeByName ddl_camera.selected)
 				
+				lxsFilename = stringStream ""
+				format "\"%/%_%.lxs\"" (getLuxValue "btn_outputpath") (getSceneName()) (GetFrame()) to:lxsFilename
+					
 				if (getLuxValue "ddl_exttype" == 1) then
 				(
-					if (((getLuxValue "chk_run")) == true and success == true) then shelllaunch ((getLuxValue "btn_path") + "\\luxrender.exe") (((getLuxValue "btn_outputpath") + "\\" + getSceneName() + "_" + GetFrame() + ".lxs"))
+					if (((getLuxValue "chk_run")) == true and success == true) then
+						shelllaunch ((getLuxValue "btn_path") + "\\luxrender.exe") (lxsFilename as string)
 				)
 				else
 				(
-					if (((getLuxValue "chk_run")) == true and success == true) then shelllaunch ((getLuxValue "btn_path") + "\\luxconsole.exe") (((getLuxValue "btn_outputpath") + "\\" + getSceneName() + "_" + GetFrame() + ".lxs"))
-					lux_OpenRenderBuffer (getSceneName() + " Frame: " + GetFrame()) renderwidth renderheight (getLuxValue "displayinterval")
+					if (((getLuxValue "chk_run")) == true and success == true) then
+					(
+						shelllaunch ((getLuxValue "btn_path") + "\\luxconsole.exe") (lxsFilename as string)
+						lux_OpenRenderBuffer (getSceneName() + " Frame: " + GetFrame()) renderwidth renderheight (getLuxValue "displayinterval")
+					)
 				)
 			)
 			on btn_Animation pressed do
