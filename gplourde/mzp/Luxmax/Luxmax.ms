@@ -49,6 +49,7 @@ global lux_main = "LuxMax Starting..."
 	)
 	
 	include "luxmax\\fn_common.ms"
+	include "luxmax\\fn_renderview.ms"
 	include "luxmax\\fn_ply.ms"
 	include "luxmax\\fn_export_lxo.ms"
 	include "luxmax\\fn_export_camera.ms"
@@ -377,7 +378,7 @@ global lux_main = "LuxMax Starting..."
 				
 				format "\t\"bool write_resume_flm\" [\"%\"]\n" (flm.state as string) to:str
 				format "\t\"bool write_exr\" [\"%\"]\n" (exr.state as string) to:str
-				format "\t\"bool write_png\" [\"%\"]\n" (png.state as string) to:str
+				format "\t\"bool write_png\" [\"%\"]\n" "true" to:str
 				format "\t\"bool write_tga\" [\"%\"]\n" (tga.state as string) to:str
 				
 				if (rgba.state == true) then
@@ -397,7 +398,7 @@ global lux_main = "LuxMax Starting..."
 				luxWriteFloat "reinhard_postscale" reinhard_postscale.value str
 				luxWriteFloat "reinhard_burn" reinhard_burn.value str
 				
-				LuxWriteString "filename" (getSceneName()) str
+				LuxWriteString "filename" (getSceneName() + "_" + getFrame()) str
 				luxWriteInteger "outlierrejection_k" outlierrejection_k.value str
 				
 				return str as string
@@ -454,7 +455,15 @@ global lux_main = "LuxMax Starting..."
 				if (ddl_camera.selected == undefined) then success = luxWriteLxs undefined
 				else success = luxWriteLxs (GetNodeByName ddl_camera.selected)
 				
-				if (((getLuxValue "chk_run")) == true and success == true) then shelllaunch ((getLuxValue "btn_path") + "\\luxrender.exe") (((getLuxValue "btn_outputpath") + "\\" + getSceneName() + "_" + GetFrame() + ".lxs"))
+				if (getLuxValue "ddl_exttype" == 1) then
+				(
+					if (((getLuxValue "chk_run")) == true and success == true) then shelllaunch ((getLuxValue "btn_path") + "\\luxrender.exe") (((getLuxValue "btn_outputpath") + "\\" + getSceneName() + "_" + GetFrame() + ".lxs"))
+				)
+				else
+				(
+					if (((getLuxValue "chk_run")) == true and success == true) then shelllaunch ((getLuxValue "btn_path") + "\\luxconsole.exe") (((getLuxValue "btn_outputpath") + "\\" + getSceneName() + "_" + GetFrame() + ".lxs"))
+					lux_OpenRenderBuffer (getSceneName() + " Frame: " + GetFrame()) renderwidth renderheight (getLuxValue "displayinterval")
+				)
 			)
 			on btn_Animation pressed do
 			(

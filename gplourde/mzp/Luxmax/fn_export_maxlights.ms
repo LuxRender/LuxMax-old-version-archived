@@ -110,7 +110,7 @@ fn lux_export_omni obj =
 	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / 100.0) (r4.y / 100.0) (r4.z / 100.0)to:str
 	
 	format "LightGroup \"%\"\n" obj.name to:str
-	format "LightSource \"omni\"\n" to:str
+	format "LightSource \"point\"\n" to:str
 	luxWriteFloat "gain" obj.multiplier str
 	luxWriteColor "L" obj.color str
 	luxWritePoint "from" ([0, 0, 0]) str
