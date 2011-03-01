@@ -4,8 +4,8 @@
 	
 	rollout lux_renderBuffer "LuxRender -"
 	(
-		dotnetControl pictureBox1 "System.Windows.Forms.PictureBox" width:1280 height:720 pos:[12, 12]
-		timer timer1 "" interval:10000
+		dotnetControl pictureBox1 "System.Windows.Forms.PictureBox" width:1 height:1 pos:[12, 12] bgcolor:black
+		timer timer1 "" interval:1000
 		
 		function updateRenderBuffer =
 		(
@@ -32,6 +32,9 @@
 		if (lux_renderBuffer != undefined) then try (destrydialog lux_renderBuffer) catch ()
 		createdialog lux_renderBuffer (_width + 24) (_height + 24)
 		lux_renderBuffer.title = ("LuxRender - " + _title)
+		lux_renderBuffer.pictureBox1.width = _width
+		lux_renderBuffer.pictureBox1.height = _height
+		
 		lux_renderBuffer.timer1.interval = (_updateinterval * 1000)
 	)
 )
