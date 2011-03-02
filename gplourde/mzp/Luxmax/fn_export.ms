@@ -72,7 +72,6 @@
 					(
 						Omnilight:					(format "%\n" (lux_export_omni lt) to:str)
 						miAreaLightomni:			(format "%\n" (lux_export_omni lt) to:str)
-						mr_Sky_Portal:			(format "%\n" (lux_export_mrSkyPortal lt) to:str)
 						targetSpot:				(format "%\n" (lux_export_spot lt) to:str)
 						freeSpot:					(format "%\n" (lux_export_spot lt) to:str)
 						Directionallight:			(format "%\n" (lux_export_direct lt) to:str)

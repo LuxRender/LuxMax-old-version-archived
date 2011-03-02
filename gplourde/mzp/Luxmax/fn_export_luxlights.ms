@@ -9,7 +9,16 @@ fn lux_export_luxsky obj =
 	luxWriteFloat "turbidity" obj.turbidity str 
 	luxWriteFloat "gain" obj.gain str
 	luxWriteInteger "nsamples" obj.nsamples str
-	format "AttributeEnd # default\n\n" to:str
+
+	for lt in lights do
+	(
+		case (classof lt) of
+		(
+			mr_Sky_Portal:			(format "%\n" (lux_export_mrSkyPortal lt) to:str)
+		)
+	)
+				
+	format "AttributeEnd # %\n\n" obj.name to:str
 
 	return str as string
 )
@@ -25,7 +34,16 @@ fn lux_export_luxsun obj =
 	luxWriteFloat "gain" obj.gain str
 	luxWriteInteger "nsamples" obj.nsamples str
 	luxWriteFloat "relsize" obj.relsize str
-	format "AttributeEnd # default\n\n" to:str
+	
+	for lt in lights do
+	(
+		case (classof lt) of
+		(
+			mr_Sky_Portal:			(format "%\n" (lux_export_mrSkyPortal lt) to:str)
+		)
+	)
+	
+	format "AttributeEnd # %\n\n" obj.name to:str
 
 	return str as string
 )

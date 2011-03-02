@@ -9,7 +9,7 @@ fn lux_export_mrSkyPortal obj =
 	
 	points = #(p0, p1, p2, p3)
 	
-	format "AttributeBegin # \"%\"\n" obj.name to:str
+	--format "AttributeBegin # \"%\"\n" obj.name to:str
 
 	r1 = obj.transform.row1
 	r2 = obj.transform.row2
@@ -26,15 +26,15 @@ fn lux_export_mrSkyPortal obj =
 	format "\t\"float gain\" [1.0]\n" to:str
 	format "\tMaterial \"matte\" \"color Kd\" [0.8 0.8 0.8]\n" to:str
 	*/
-	format "\tPortalShape \"mesh\"\n" to:str
-	format "\t\"integer triindices\" [2 3 1 0 2 1]\n" to:str
+	format "\tPortalShape \"trianglemesh\"\n" to:str
+	format "\t\"integer indices\" [2 3 1 0 2 1]\n" to:str
 	format "\t\"point P\" [" to:str
 	for p in points do
 	(
 		format "% % % " (p.x / 100.0) (p.y / 100.0) (p.z / 100.0) to:str
 	)
 	format "]\n" to:str
-	format "AttributeEnd\n" to:str
+	--format "AttributeEnd\n" to:str
 	
 	return (str as string)
 )
@@ -111,8 +111,8 @@ fn lux_export_omni obj =
 	
 	format "LightGroup \"%\"\n" obj.name to:str
 	format "LightSource \"point\"\n" to:str
-	luxWriteFloat "gain" obj.multiplier str
-	luxWriteColor "L" obj.color str
+	--luxWriteFloat "gain" obj.multiplier str
+	--luxWriteColor "L" obj.color str
 	luxWritePoint "from" ([0, 0, 0]) str
 	format "AttributeEnd # %\n\n" obj.name to:str
 	
