@@ -20,8 +20,11 @@
 		WriteFloat stream (v[2] / ws)
 		WriteFloat stream (v[3] / ws)
 	)
-	function ply_WriteFaceVertexNormal stream n =
+	function ply_WriteFaceVertexNormal stream n tm =
 	(
+		normalTransform = copy tm
+		normalTransform.position = [0,0,0]
+		n = n * (inverse) normalTransform
 		n = normalize n
 		
 		WriteFloat stream n[1] 
@@ -88,15 +91,15 @@
 				normals = (meshop.getFaceRNormals _trimsh i)
 				
 				ply_WriteFaceVertex stream _trimsh f[1] tm ws
-				ply_WriteFaceVertexNormal stream normals[1]
+				ply_WriteFaceVertexNormal stream normals[1] tm
 				if (exportUV == true) then ply_WriteFaceTVertex stream _trimsh tf[1] 
 				
 				ply_WriteFaceVertex stream _trimsh f[2] tm ws
-				ply_WriteFaceVertexNormal stream normals[2]
+				ply_WriteFaceVertexNormal stream normals[2] tm
 				if (exportUV == true) then ply_WriteFaceTVertex stream _trimsh tf[2]
 				
 				ply_WriteFaceVertex stream _trimsh f[3] tm ws
-				ply_WriteFaceVertexNormal stream normals[3]
+				ply_WriteFaceVertexNormal stream normals[3] tm
 				if (exportUV == true) then ply_WriteFaceTVertex stream _trimsh tf[3]
 			)
 
