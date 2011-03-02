@@ -77,7 +77,7 @@ function export_lxo lxo =
 		format "\n" to:str
 		
 		if (classof obj.material == LuxrenderPortal2 or classof obj.material == LuxrenderPortal) then
-			format "PortalShape \"plymesh\" \"string filename\" [\"%\"]" n to:str
+			format "Shape \"plymesh\" \"string filename\" [\"%\"]" n to:str
 		else
 			format "Shape \"plymesh\" \"string filename\" [\"%\"]" n to:str
 		
