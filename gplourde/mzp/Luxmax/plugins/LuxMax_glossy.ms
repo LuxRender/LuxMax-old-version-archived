@@ -64,11 +64,14 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0x6eee3747, 0x278b3ac
 		luxWriteFloat "d"  this.dfloat str
 		)
 		
+		if this.usebumpmap == true then
+		(	
 		if this.bumpmapTexture != undefined then
 			format "\t\"texture bumpmap\" [\"%\"]\n" this.bumpmapTexture.name to:str
 		else
 			luxWriteFloat "bumpmap"  this.bumpmap str
-		
+		)
+	
 		luxWriteString "type" "glossy" str
 		
 		return str as string

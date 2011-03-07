@@ -28,10 +28,13 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 		else
 			luxWriteFloat "sigma"  this.sigma str
 		
+		if this.usebumpmap == true then
+		(	
 		if this.bumpmapTexture != undefined then
 			format "\t\"texture bumpmap\" [\"%\"]\n" this.bumpmapTexture.name to:str
 		else
 			luxWriteFloat "bumpmap"  this.bumpmap str
+		)
 		
 		luxWriteString "type" "matte" str
 		
