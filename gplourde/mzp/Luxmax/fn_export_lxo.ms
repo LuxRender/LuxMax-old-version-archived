@@ -14,6 +14,7 @@ function export_lxo lxo =
 			n = ((getFilenamePath lxo) + "\\" + obj.name + ".ply")
 		
 			if (GetLuxValue "chk_scriptply") then (ply_export_script obj n 100) --// Force exort with script exporter
+			
 			else
 			(
 				--// If the c++ expoter is present, use it
@@ -44,7 +45,7 @@ function export_lxo lxo =
 		(
 			format "MakeNamedMaterial \"Wirecolor\"\n" to:str
 			luxWriteString "type" "matte" str
-			luxWriteColor "Kd" (obj.wirecolor / 255) str
+			luxWriteColor "Kd" obj.wirecolor str
 			format "NamedMaterial \"Wirecolor\"\n" to:str
 		)
 		--// Write material name
@@ -52,25 +53,30 @@ function export_lxo lxo =
 		(		
 			format "\tNamedMaterial \"%\"\n" obj.material.name to:str
 			
-			if classOf obj.material == LuxrenderLight then
+			_m = obj.material
+			
+			if (CheckLuxRenderCompat _m == true) then
+			(
+				if (_m.interior != undefined) do format "\nInterior  \"%\"\n" _m.interior.name to:str
+				if (_m.exterior != undefined) do format "\nExterior  \"%\"\n" _m.exterior.name to:str
+			)
+			
+			if (CheckLuxRenderCompat _m == true and _m.useEmission == true) then
 			(	
 				numlightsource += 1
-				
-				if (classOf obj.material.AreaLightSourceMap == LuxrenderBlackbody) then
-				(
-					format "\tLightGroup \"%\"\n" obj.material.AreaLightSourceMap.group to:str
+						
+				format "\tLightGroup \"%\"\n" _m.arealightgroup to:str
 
-					format "\tAreaLightSource \"area\" \"texture L\" [\"area:light\"]\n" to:str
-					format "\t\t\"float power\" [%]\n" obj.material.AreaLightSourceMap.power to:str
-					format "\t\t\"float efficacy\" [%]\n" obj.material.AreaLightSourceMap.efficacy to:str
-					format "\t\t\"float gain\" [%]\n" obj.material.AreaLightSourceMap.gain to:str
-				)
+				format "\tAreaLightSource \"area\"\n" to:str
 				
-				if (classof obj.material.AreaLightSourceMap  == LuxrenderLampSpectrum) then
-				(
-					format "\tLightGroup \"%\"\n" obj.material.AreaLightSourceMap.spectrumgroupstring to:str
-					format "\t\tAreaLightSource \"area\" \"texture L\" [\"%\"]\n" obj.material.AreaLightSourceMap.name to:str
-				)
+				if (_m.emissionTexture != undefined) then
+					format "\t\t\"texture L\" [\"%\"]\n" _m.emissionTexture.name to:str
+				else
+					LuxWriteColor "L" _m.emissionColor str
+				
+				format "\t\t\"float power\" [%]\n" _m.power to:str
+				format "\t\t\"float efficacy\" [%]\n" _m.efficacy to:str
+				format "\t\t\"float gain\" [%]\n" _m.gain to:str
 			)
 		)
 		

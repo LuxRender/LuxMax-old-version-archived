@@ -49,7 +49,7 @@ global lux_main = "LuxMax Starting..."
 	)
 	
 	include "luxmax\\fn_common.ms"
-	include "luxmax\\fn_renderview.ms"
+	--include "luxmax\\fn_renderview.ms"
 	include "luxmax\\fn_ply.ms"
 	include "luxmax\\fn_export_lxo.ms"
 	include "luxmax\\fn_export_camera.ms"
@@ -468,8 +468,7 @@ global lux_main = "LuxMax Starting..."
 				(
 					if (((getLuxValue "chk_run")) == true and success == true) then
 					(
-						shelllaunch ((getLuxValue "btn_path") + "\\luxconsole.exe") (lxsFilename as string)
-						lux_OpenRenderBuffer (getSceneName() + " Frame: " + GetFrame()) renderwidth renderheight (getLuxValue "displayinterval")
+						--lux_OpenRenderBuffer (getSceneName() + " Frame: " + GetFrame()) renderwidth renderheight (getLuxValue "displayinterval") (lxsFilename as string)
 					)
 				)
 			)
