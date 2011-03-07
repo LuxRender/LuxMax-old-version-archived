@@ -8,7 +8,7 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 	
 	function GetTextureMaps =
 	(
-		texturemaps = #(this.kdTexture, this.sigmaTexture, this.emissionTexture)
+		texturemaps = #(this.kdTexture, this.sigmaTexture, this.bumpmapTexture, this.emissionTexture)
 		return texturemaps
 	)
 	
@@ -27,6 +27,11 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 			format "\t\"texture sigma\" [\"%\"]\n" this.sigmaTexture.name to:str
 		else
 			luxWriteFloat "sigma"  this.sigma str
+		
+		if this.bumpmapTexture != undefined then
+			format "\t\"texture bumpmap\" [\"%\"]\n" this.bumpmapTexture.name to:str
+		else
+			luxWriteFloat "bumpmap"  this.bumpmap str
 		
 		luxWriteString "type" "matte" str
 		
