@@ -40,9 +40,15 @@ function export_volumes =
 	(
 		if (classof obj == LuxRenderVolume) then
 		(
+			_absorption = #(0, 0, 0)
+			
+			_absorption[1] = (-log(amax #(obj.absorption.r / 255, 1e-30) )/(obj.absdepth * obj.absscale) * 1)
+			_absorption[2] = (-log(amax #(obj.absorption.g / 255, 1e-30) )/(obj.absdepth * obj.absscale) * 1)
+			_absorption[3] = (-log(amax #(obj.absorption.b / 255, 1e-30) )/(obj.absdepth * obj.absscale) * 1)
+			
 			format "MakeNamedVolume \"%\" \"clear\"\n" obj.name to:str
-			luxWriteFloat "fresnel" 1.0 str
-			luxWriteColor "absorption" white str
+			luxWriteFloat "fresnel" obj.ior str
+			format "\t\"color absorption\" [% % %]\n" _absorption[1] _absorption[2] _absorption[3] to:str
 			format "\n" to:str
 		)
 	)

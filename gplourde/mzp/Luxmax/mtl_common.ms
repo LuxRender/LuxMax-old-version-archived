@@ -17,7 +17,11 @@ parameters common_parameters rollout:common
 
 rollout common "Common Parameters"
 (
-	fn volumeFilter obj = classof obj == LuxRenderVolume
+	fn volumeFilter obj = (
+	(
+		print obj
+		classof obj) as string == "LuxRenderVolume"
+	)
 		
 	group "Volume"
 	(
@@ -67,8 +71,6 @@ rollout common "Common Parameters"
 		spinner mGain " " range:[0,100,1] align:#right fieldwidth:65
 	)
 	
-	--imgtag img_tag "imgtag" align:#center width:310 height:69 transparent:red across:1
-	
 	on museEmission changed s do
 	(
 		memissionTexture.enabled = s
@@ -76,9 +78,6 @@ rollout common "Common Parameters"
 
 	on common open do
 	(
-		--_logo = openbitmap (getdir #scripts + "\\luxmax\\res\\luxrenderlogo.png")
-		--img_tag.bitmap = _logo
-		
 		mbumpmap.enabled = museBumpmap.state
 		mbumpmapTexture.enabled = museBumpmap.state
 		memissionTexture.enabled = museEmission.state
