@@ -1,11 +1,12 @@
-plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0x6eee3747, 0x278b3ac2) extends:Standard replaceUI:true version:2
+plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 0x5934a470) extends:Standard replaceUI:true version:2
+
 (
 	include "luxmax\\fn_common.ms"
 	include "luxmax\\mtl_logo.ms"
 	
 	function GetTextureMaps =
 	(
-		texturemaps = #(this.kdTexture, this.ksTexture, this.roughnessTexture, this.uroughnessTexture, this.vroughnessTexture, this.kaTexture, this.bumpmapTexture, this.emissionTexture)
+		texturemaps = #(this.krTexture, thisksTexture, this.filmTexture, this.filmindexTexture, this.bumpmapTexture, this.emissionTexture)
 		return texturemaps
 	)
 	
@@ -15,11 +16,11 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0x6eee3747, 0x278b3ac
 		
 		format "MakeNamedMaterial \"%\"\n" this.name to:str
 		
-		if this.kdTexture != undefined then
-			format "\t\"texture Kd\" [\"%\"]\n" this.kdTexture.name to:str
+		if this.krTexture != undefined then
+			format "\t\"texture Kr\" [\"%\"]\n" this.krTexture.name to:str
 		else
-			luxWriteColor "Kd"  this.kdColor str
-
+			luxWriteColor "Kr"  this.krColor str
+		
 		if this.ksTexture != undefined then
 			format "\t\"texture ks\" [\"%\"]\n" this.ksTexture.name to:str
 		else
@@ -52,17 +53,21 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0x6eee3747, 0x278b3ac
 			
 		)
 		
-		if this.useabsorption == true then
+		
+		if this.usefilm == true then
 		(	
-		if this.kaTexture != undefined then
-		(
-			format "\t\"texture ka\" [\"%\"]\n" this.kaTexture.name to:str
-		)
+			(	
+			if this.filmTexture != undefined then
+				format "\t\"texture film\" [\"%\"]\n" this.filmTexture.name to:str
 			else
-		(
-		luxWriteColor "Ka"  this.kaColor str
-		)
-		luxWriteFloat "d"  this.dfloat str
+				luxWriteFloat "film"  this.film str
+			)
+			(	
+			if this.filmindexTexture != undefined then
+				format "\t\"texture filmindex\" [\"%\"]\n" this.filmindexTexture.name to:str
+			else
+				luxWriteFloat "filmindex"  this.filmindex str
+			)
 		)
 		
 		if this.usebumpmap == true then
@@ -72,16 +77,16 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0x6eee3747, 0x278b3ac
 		else
 			luxWriteFloat "bumpmap"  this.bumpmap str
 		)
-	
-		luxWriteString "type" "glossy" str
+		
+		luxWriteString "type" "shinymetal" str
 		
 		return str as string
 	)
 	
 	parameters main rollout:params
 	(
-		kdColor type:#color default:[90,90,90] ui:mkdColor 
-		kdTexture type:#textureMap ui:mkdTexture
+		krColor type:#color default:[90,90,90] ui:mkrColor 
+		krTexture type:#textureMap ui:mkrTexture
 		ksColor type:#color ui:mksColor default:[30,30,30]
 		ksTexture type:#textureMap ui:mksTexture
 		roughness type:#float ui:mroughness default:0.0001
@@ -91,19 +96,22 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0x6eee3747, 0x278b3ac
 		vroughness type:#float ui:mvroughness default:0.0001
 		vroughnessTexture type:#textureMap ui:mvroughnessTexture
 		useanisotropy type:#boolean ui:museanisotropy
-		useabsorption type:#boolean ui:museabsorption
-		kaColor type:#color default:[90,90,90] ui:mkaColor 
-		kaTexture type:#textureMap ui:mkaTexture
-		dfloat type:#float ui:mdfloat 
+		usefilm type:#boolean ui:musefilm
+		film type:#float ui:mfilm 
+		filmtexture type:#textureMap ui:mfilmtexture
+		filmindex type:#float ui:mfilmindex
+		filmindextexture type:#textureMap ui:mfilmindextexture
+		
+		
 		
 	)
 	
-	rollout params "Glossy Parameters"
+	rollout params "Shiny Metal Parameters"
 	(
-		label lb1 "Diffuse . . . . . . . . ."  align:#left across:3
-		colorpicker mkdColor "" align:#left width:80 height:16
-		mapbutton mkdTexture"None" width:110 height:16 align:#right
-		
+		label lbreflection"Reflection . . . . . . . . ."  align:#left across:3
+		colorpicker mkrColor "" align:#left width:80 height:16
+		mapbutton mkrTexture"None" width:110 height:16 align:#right
+
 		label lbspecular "Specular . . . . . . . . . ." across:3 align:#left
 		colorpicker mksColor "" align:#left width:80 height:16
 		mapbutton mksTexture "None" width:110 height:16 align:#right
@@ -121,14 +129,15 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0x6eee3747, 0x278b3ac
 		spinner mvroughness " " scale:0.0001 range:[0.0001,1,0.1] width:50 align:#left fieldwidth:65
 		mapbutton mvroughnessTexture "None" width:110 height:16 align:#right
 		
-		checkbox museabsorption "Use Absorption" across:1 align:#left
-		label lbabsorptioncolor "Absorption Color . . . . . . . ." across:3 align:#left
-		colorpicker mkaColor "" align:#left width:80 height:16
-		mapbutton mkaTexture"None" width:110 height:16 align:#right
-		label labsorptiondepth "Absorption Depth . . . . . . ." across:3 align:#left
-		spinner mdfloat "" scale:0.001 range:[0,15,0.15] width:50 align:#left fieldwidth:65
+		checkbox musefilm "Use Thin Film Coating" align:#left across:1
+		label lbfillm "Film Thickness in nm" align:#left across:3
+		spinner mfilm ""scale:0.01 range:[1,1500,200] width:50 align:#left fieldwidth:65
+		mapbutton mfilmTexture "" width:110 height:16 align:#right
+		label lbfillmindex "Film IOR" align:#left across:3
+		spinner mfilmindex ""scale:0.001 range:[1,6,1.5] width:50 align:#left fieldwidth:65
+		mapbutton mfilmindexTexture "" width:110 height:16 align:#right
 		
-	
+		
 		on museanisotropy changed s do
 		(	
 		    lbu.enabled = s
@@ -139,29 +148,28 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0x6eee3747, 0x278b3ac
 			mvroughnessTexture.enabled = s
 		)	
 		
-		on museabsorption changed s do
+		on musefilm changed s do
 		(
-			labsorptiondepth.enabled = s
-			lbabsorptioncolor.enabled = s
-			mkacolor.enabled = s
-			mkaTexture.enabled = s
-			mdfloat.enabled = s
-		)	
+		mfilm.enabled = s
+		mfilmtexture.enabled = s
+		mfilmindex.enabled = s
+		mfilmindextexture.enabled = s
+		)
+		
 		
 		on params open do
 		(
 			mental_ray_Preferences.mrExtensionsActive = false
-			lbabsorptioncolor.enabled = museabsorption.state
-			mkacolor.enabled = museabsorption.state
-			mkaTexture.enabled = museabsorption.state
-			mdfloat.enabled = museabsorption.state
 			lbu.enabled = museanisotropy.state
 			lbv.enabled = museanisotropy.state
 			muroughness.enabled = museanisotropy.state
 			muroughnessTexture.enabled = museanisotropy.state
 			mvroughness.enabled = museanisotropy.state
 			mvroughnessTexture.enabled = museanisotropy.state
-			labsorptiondepth.enabled = museabsorption.state
+			mfilm.enabled = musefilm.state
+			mfilmtexture.enabled = musefilm.state
+			mfilmindex.enabled = musefilm.state
+			mfilmindextexture.enabled = musefilm.state
 		)
 	)
 	

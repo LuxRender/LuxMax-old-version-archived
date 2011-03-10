@@ -2,6 +2,7 @@ plugin material LuxMatteTrans name:"LR MatteTranslucent" classID:#(0x40755a6a, 0
 
 (
 	include "luxmax\\fn_common.ms"
+	include "luxmax\\mtl_logo.ms"
 	
 	function GetTextureMaps =
 	(

@@ -5,6 +5,7 @@
 plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72) extends:Standard replaceUI:true version:2
 (
 	include "luxmax\\fn_common.ms"
+	include "luxmax\\mtl_logo.ms"
 	
 	function GetTextureMaps =
 	(
