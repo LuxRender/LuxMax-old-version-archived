@@ -1,6 +1,7 @@
 Plugin material LuxrenderMix name:"LR Mix" classID:#(0x1dd40858, 0x1b266b58) extends:standard replaceUI:true version:2
 (
 	include "luxmax\\fn_common.ms"
+	include "luxmax\\mtl_logo.ms"
 	
 	function GetTextureMaps =
 	(

@@ -2,6 +2,7 @@
 Plugin material LuxRenderGlass2 name:"LR Glass2" classID:#(0x1a82153d,0x7175d56)extends:standard replaceUI:true version:2
 (
 	include "luxmax\\fn_common.ms"
+	include "luxmax\\mtl_logo.ms"
 	
 	function GetTextureMaps =
 	(

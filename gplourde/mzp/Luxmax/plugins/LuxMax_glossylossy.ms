@@ -1,6 +1,7 @@
 plugin material LuxrenderGlossyLossy name:"LR GlossyLossy" classID:#(0x2df9511d, 0x6bcc74de) extends:Standard replaceUI:true version:2
 (
 	include "luxmax\\fn_common.ms"
+	include "luxmax\\mtl_logo.ms"
 	
 	function GetTextureMaps =
 	(
@@ -83,11 +84,11 @@ plugin material LuxrenderGlossyLossy name:"LR GlossyLossy" classID:#(0x2df9511d,
 		kdTexture type:#textureMap ui:mkdTexture
 		ksColor type:#color ui:mksColor default:[30,30,30]
 		ksTexture type:#textureMap ui:mksTexture
-		roughness type:#float ui:mroughness
+		roughness type:#float ui:mroughness default:0.0001
 		roughnessTexture type:#textureMap ui:mroughnessTexture
-		uroughness type:#float ui:muroughness
+		uroughness type:#float ui:muroughness default:0.0001
 		uroughnessTexture type:#textureMap ui:muroughnessTexture
-		vroughness type:#float ui:mvroughness
+		vroughness type:#float ui:mvroughness default:0.0001
 		vroughnessTexture type:#textureMap ui:mvroughnessTexture
 		useanisotropy type:#boolean ui:museanisotropy
 		useabsorption type:#boolean ui:museabsorption
@@ -108,16 +109,16 @@ plugin material LuxrenderGlossyLossy name:"LR GlossyLossy" classID:#(0x2df9511d,
 		mapbutton mksTexture "None" width:110 height:16 align:#right
 		
 		label lbroughness "Roughness. . . . . . ." across:3 align:#left
-		spinner mroughness " " scale:0.001 range:[0.001,1,0.1] width:50 align:#left fieldwidth:65
+		spinner mroughness " " scale:0.0001 range:[0.0001,1,0.1] width:50 align:#left fieldwidth:65
 		mapbutton mroughnessTexture "None" width:110 height:16 align:#right
 		
 		checkbox museanisotropy "Use Anisotropic Roughness" across:1 align:#left
 		
 		label lbu "u-roughness . . . . . . . " across:3 align:#left
-		spinner muroughness " " scale:0.001 range:[0.001,1,0.1] width:50 align:#left fieldwidth:65
+		spinner muroughness " " scale:0.0001 range:[0.0001,1,0.1] width:50 align:#left fieldwidth:65
 		mapbutton muroughnessTexture "None" width:110 height:16 align:#right
 		label lbv "v-roughness . . . . . . . " across:3 align:#left
-		spinner mvroughness " " scale:0.001 range:[0.001,1,0.1] width:50 align:#left fieldwidth:65
+		spinner mvroughness " " scale:0.0001 range:[0.0001,1,0.1] width:50 align:#left fieldwidth:65
 		mapbutton mvroughnessTexture "None" width:110 height:16 align:#right
 		
 		checkbox museabsorption "Use Absorption" across:1 align:#left
