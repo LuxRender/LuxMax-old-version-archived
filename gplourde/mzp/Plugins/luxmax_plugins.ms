@@ -2,6 +2,8 @@
 
 --// Include texture maps
 include "luxmax\\plugins\\LuxMax_imagemap.ms"
+include "luxmax\\plugins\\LuxMax_colorscale.ms"
+include "luxmax\\plugins\\LuxMax_floatscale.ms"
 
 --// Include Materials
 include "luxmax\\plugins\\LuxMax_matte.ms"
