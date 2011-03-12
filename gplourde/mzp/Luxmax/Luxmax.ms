@@ -60,7 +60,7 @@ global lux_main = "LuxMax Starting..."
 	include "luxmax\\rollout_sampler.ms"
 	include "luxmax\\rollout_filter.ms"
 	include "luxmax\\rollout_integrator.ms"
-		
+	
 	( --// Main rollouts
 		rollout lux_Dimmensions "Dimmensions" rolledup:true
 		(
