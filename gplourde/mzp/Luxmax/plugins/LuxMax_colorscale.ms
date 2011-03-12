@@ -12,7 +12,7 @@ plugin TextureMap LuxrenderColorScale name:"LR Color Scale" classID:#(0x310d8e68
 	(
 		str = stringstream ""
 
-		format "Texture \"%\" \"float\" \"scale\"\n" this.name to:str
+		format "Texture \"%\" \"color\" \"scale\"\n" this.name to:str
 		
 		if (this.maptex1 != undefined) then
 			format "\t \"texture tex1\" [\"%\"]\n" this.maptex1.name to:str
