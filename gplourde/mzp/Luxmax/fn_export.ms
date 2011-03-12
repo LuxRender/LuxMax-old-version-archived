@@ -19,7 +19,7 @@
 		str = stringstream ""
 		
 		(
-			format "# Main Scene File\n" to:str
+			format "# Main Scene File\r\n" to:str
 
 			-- Camera
 			writeCamera p_camera str
@@ -45,23 +45,23 @@
 			-- Film
 			format "%" (lux_Film.GetLuxRenderString()) to:str
 			
-			format "\nWorldBegin\n\n" to:str
+			format "\r\nWorldBegin\r\n\r\n" to:str
 			
 			( --// Write Light sources
 				--// Use environment map if available
 				if (environmentMap != undefined and environmentMap.bitmap != undefined) then
 				(
-					format "# Enviromentmap\n" to:str
-					format "AttributeBegin\n" to:str
-					format "Rotate 90.0 0 0 1\n" to:str
-					format "Scale 1 1 1\n" to:str
-					format "LightGroup \"environment\"\n" to:str 
-					format "LightSource \"infinite\"\n" to:str
-					format "\"string mapping\" [\"angular\"]\n" to:str 
-					format "\"string mapname\" [\"%\"]\n" (fixWindowsPath environmentmap.bitmap.filename) to:str
-					format "\"float gamma\" [1.0]\n" to:str
-					format "\"float envgain\" [1.0]\n" to:str
-					format "AttributeEnd\n\n" to:str
+					format "# Enviromentmap\r\n" to:str
+					format "AttributeBegin\r\n" to:str
+					format "Rotate 90.0 0 0 1\r\n" to:str
+					format "Scale 1 1 1\r\n" to:str
+					format "LightGroup \"environment\"\r\n" to:str 
+					format "LightSource \"infinite\"\r\n" to:str
+					format "\"string mapping\" [\"angular\"]\r\n" to:str 
+					format "\"string mapname\" [\"%\"]\r\n" (fixWindowsPath environmentmap.bitmap.filename) to:str
+					format "\"float gamma\" [1.0]\r\n" to:str
+					format "\"float envgain\" [1.0]\r\n" to:str
+					format "AttributeEnd\r\n\r\n" to:str
 					numlightsource += 1
 				)
 
@@ -70,39 +70,39 @@
 				(
 					case (classof lt) of
 					(
-						Omnilight:					(format "%\n" (lux_export_omni lt) to:str)
-						miAreaLightomni:			(format "%\n" (lux_export_omni lt) to:str)
-						targetSpot:				(format "%\n" (lux_export_spot lt) to:str)
-						freeSpot:					(format "%\n" (lux_export_spot lt) to:str)
-						Directionallight:			(format "%\n" (lux_export_direct lt) to:str)
-						TargetDirectionallight:	(format "%\n" (lux_export_direct lt) to:str)
-						miAreaLight:				(format "%\n" (lux_export_spot lt) to:str)
-						LuxSky:						(format "%\n" (lux_export_luxsky lt) to:str)
-						LuxSun:						(format "%\n" (lux_export_luxsun lt) to:str)
+						Omnilight:					(format "%\r\n" (lux_export_omni lt) to:str)
+						miAreaLightomni:			(format "%\r\n" (lux_export_omni lt) to:str)
+						targetSpot:				(format "%\r\n" (lux_export_spot lt) to:str)
+						freeSpot:					(format "%\r\n" (lux_export_spot lt) to:str)
+						Directionallight:			(format "%\r\n" (lux_export_direct lt) to:str)
+						TargetDirectionallight:	(format "%\r\n" (lux_export_direct lt) to:str)
+						miAreaLight:				(format "%\r\n" (lux_export_spot lt) to:str)
+						LuxSky:						(format "%\r\n" (lux_export_luxsky lt) to:str)
+						LuxSun:						(format "%\r\n" (lux_export_luxsun lt) to:str)
 					)
 				)
 				
 				if (numlightsource < 1) then
 				(
-					format "AttributeBegin #default\n" to:str
-					format "LightGroup \"default\"\n" to:str
-					format "LightSource \"sunsky\"\n" to:str
+					format "AttributeBegin #default\r\n" to:str
+					format "LightGroup \"default\"\r\n" to:str
+					format "LightSource \"sunsky\"\r\n" to:str
 					luxWriteFloat "turbidity" 2 str 
 					luxWriteFloat "gain" 1.4 str
-					format "AttributeEnd # default\n\n" to:str
+					format "AttributeEnd # default\r\n\r\n" to:str
 				)
 			)
 			
-			format "Include \"%\"\n" (getSceneName() + "/" + GetFrame() + "/" + "LuxRender-Materials.lxm") to:str
-			format "Include \"%\"\n" (getSceneName() + "/" + GetFrame() + "/" + "LuxRender-Geometry.lxo") to:str
+			format "Include \"%\"\r\n" (getSceneName() + "/" + GetFrame() + "/" + "LuxRender-Materials.lxm") to:str
+			format "Include \"%\"\r\n" (getSceneName() + "/" + GetFrame() + "/" + "LuxRender-Geometry.lxo") to:str
 			
-			format "\nWorldEnd" to:str
+			format "\r\nWorldEnd" to:str
 			
 			if (GetLuxValue "chk_lxs") then
 			(
-				F_lxs = openfile lxs mode:"w"
-				format "%\n" (str as string) to:F_lxs
-				close F_lxs
+				F_lxs = dotNetObject "System.IO.StreamWriter" lxs
+				F_lxs.Write (str as string)
+				F_lxs.Close()
 			)
 			
 			return true

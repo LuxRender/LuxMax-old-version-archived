@@ -13,22 +13,22 @@ function FormatFloat n =
 )
 
 --// Generic functions to outpuf luxrender types
-function luxWriteString key val f = (if (val != undefined) then format "\t\"string %\" [\"%\"]\n" key val to:f else (format "warning: writing value key:% val:%\n" key val to:listener))
-function luxWriteBool key val f = (if (val != undefined) then format "\t\"bool %\" [\"%\"]\n" key val to:f  else (format "warning: writing value key:% val:%\n" key val to:listener))
-function luxWriteInteger key val f = (if (val != undefined) then format "\t\"integer %\" [%]\n" key val to:f else (format "warning: writing value key:% val:%\n" key val to:listener))
+function luxWriteString key val f = (if (val != undefined) then format "\t\"string %\" [\"%\"]\r\n" key val to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
+function luxWriteBool key val f = (if (val != undefined) then format "\t\"bool %\" [\"%\"]\r\n" key val to:f  else (format "warning: writing value key:% val:%\r\n" key val to:listener))
+function luxWriteInteger key val f = (if (val != undefined) then format "\t\"integer %\" [%]\r\n" key val to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
 function luxWriteFloat key val f =
 (
 	if (val != undefined) then
 	(
-		format "\t\"float %\" [%]\n" key (FormatFloat val) to:f
+		format "\t\"float %\" [%]\r\n" key (FormatFloat val) to:f
 	)
 	else
 	(
-		(format "warning: writing value key:% val:%\n" key val to:listener)
+		(format "warning: writing value key:% val:%\r\n" key val to:listener)
 	)
 )
-function luxWritePoint key val f = (if (val != undefined) then format "\t\"point %\" [% % %]\n" key val.x val.y val.z to:f else (format "warning: writing value key:% val:%\n" key val to:listener))
-function luxWriteColor key val f = (if (val != undefined) then format "\t\"color %\" [% % %]\n" key (val.red / 255) (val.green / 255) (val.blue / 255) to:f else (format "warning: writing value key:% val:%\n" key val to:listener))
+function luxWritePoint key val f = (if (val != undefined) then format "\t\"point %\" [% % %]\r\n" key val.x val.y val.z to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
+function luxWriteColor key val f = (if (val != undefined) then format "\t\"color %\" [% % %]\r\n" key (val.red / 255) (val.green / 255) (val.blue / 255) to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
 
 function GetFrame =
 (

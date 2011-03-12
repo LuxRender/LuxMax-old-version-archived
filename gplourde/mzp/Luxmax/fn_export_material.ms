@@ -1,3 +1,32 @@
+function CheckLuxRenderCompat obj =
+(
+	try
+	(
+		obj.GetLuxRenderString()
+		return true
+	)
+	catch
+	(	
+		return false
+	)
+)
+
+function GetTextureMapsProc m &tm =
+(
+	if (CheckLuxRenderCompat m == false) then return false
+
+	append tm m
+	
+	childtm = #()
+	join childtm (m.GetTextureMaps())
+	
+	for _t in childtm do
+	(
+		if (CheckLuxRenderCompat _t == false) then continue
+		GetTextureMapsProc _t &tm
+	)
+)
+
 function export_texturemaps =
 (
 	str = stringstream ""
@@ -7,27 +36,20 @@ function export_texturemaps =
 	for obj in geometry do
 	(
 		if (obj.ishidden) then continue
-	
-		try
+		if (CheckLuxRenderCompat obj.material == false) then continue
+		
+		for _t in (obj.material.GetTextureMaps()) do
 		(
-			_texturemaps = obj.material.GetTextureMaps()
-			if (_texturemaps.count > 0) then
-			(
-				for _t in _texturemaps do
-				(
-					if (_t == undefined) then continue
-						append texturemaps _t
-				)
-			)
+			GetTextureMapsProc _t &texturemaps
 		)
-		catch (print (getCurrentException()))
+
 	)
 	
-	texturemaps = makeUniqueArray  texturemaps
+	texturemaps = makeUniqueArray texturemaps
 	
-	for _t in texturemaps do
+	for i = texturemaps.count to 1 by -1 do
 	(
-		format "%\n" (_t.GetLuxRenderString()) to:str
+		format "%\r\n" (texturemaps[i].GetLuxRenderString()) to:str
 	)
 	return str as string
 )
@@ -46,13 +68,16 @@ function export_volumes =
 			_absorption[2] = (-log(amax #(obj.absorption.g / 255, 1e-30) )/(obj.absdepth * obj.absscale) * 1)
 			_absorption[3] = (-log(amax #(obj.absorption.b / 255, 1e-30) )/(obj.absdepth * obj.absscale) * 1)
 			
-			format "MakeNamedVolume \"%\" \"clear\"\n" obj.name to:str
+			format "MakeNamedVolume \"%\" \"clear\"\r\n" obj.name to:str
 			luxWriteFloat "fresnel" obj.ior str
-			format "\t\"color absorption\" [% % %]\n" _absorption[1] _absorption[2] _absorption[3] to:str
-			format "\n" to:str
+			format "\t\"color absorption\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
+			format "\r\n" to:str
 		)
 	)
 	
+	--mabsorption * -log(ceil i (1e-30) )/(mdepth * mscale) * 1
+	--depthed = (-math.log(max([(float(i)),1e-30]))/(self.depth*self.absorption_scale)) * ((float(i))==1.0 and -1 or 1)
+
 	return str as string
 )
 
@@ -76,10 +101,10 @@ function export_lxm lxm =
 	
 	for _m in materials do
 	(
-		try (format "%\n" (_m.GetLuxRenderString()) to:str) catch (print (getCurrentException()))
+		try (format "%\r\n" (_m.GetLuxRenderString()) to:str) catch (print (getCurrentException()))
 	)
 	
-	f = openfile lxm mode:"w"
-	format "%\n" (str as string) to:f
-	close f
+	f = dotNetObject "System.IO.StreamWriter" lxm
+	f.Write (str as string)
+	f.Close()
 )

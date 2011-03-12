@@ -6,6 +6,13 @@ Plugin material LuxrenderMix name:"LR Mix" classID:#(0x1dd40858, 0x1b266b58) ext
 	function GetTextureMaps =
 	(
 		texturemaps = #(mmixvalueTexture)
+		
+		if (CheckLuxRenderCompat this.material1 == true and CheckLuxRenderCompat this.material2 == true) then
+		(
+			join texturemaps (this.material1.GetTextureMaps())
+			join texturemaps (this.material2.GetTextureMaps())
+		)
+		
 		return texturemaps
 	)
 	
