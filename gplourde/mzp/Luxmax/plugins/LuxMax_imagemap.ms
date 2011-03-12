@@ -28,6 +28,8 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 (
 	include "luxmax\\fn_common.ms"
 	
+	function GetTextureMaps = (return #())
+	
 	function GetLuxRenderString =
 	(
 		str = stringstream ""
