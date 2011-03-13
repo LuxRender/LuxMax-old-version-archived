@@ -6,7 +6,26 @@ plugin material LuxMatteTrans name:"LR MatteTranslucent" classID:#(0x40755a6a, 0
 	
 	function GetTextureMaps =
 	(
-		texturemaps = #(this.krTexture, thisktTexture, this.sigmaTexture, this.bumpmapTexture, this.emissionTexture)
+		texturemaps = #(this.krTexture, thisktTexture, this.emissionTexture)
+		
+		if (this.bumpmapTexture != undefined and this.useBumpmap == true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.bumpmapTexture.name + "_scale")
+			floatScale.floattex1 = this.bumpmap
+			floatScale.maptex2 = this.bumpmapTexture
+			append texturemaps floatScale
+		)
+		
+		if (this.sigmaTexture != undefined) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.sigmaTexture.name + "_scale")
+			floatScale.floattex1 = this.sigma
+			floatScale.maptex2 = this.sigmaTexture
+			append texturemaps floatScale
+		)
+		
 		return texturemaps
 	)
 	
@@ -27,17 +46,12 @@ plugin material LuxMatteTrans name:"LR MatteTranslucent" classID:#(0x40755a6a, 0
 			luxWriteColor "Kt"  this.ktColor str
 
 		if this.sigmaTexture != undefined then
-			format "\t\"texture sigma\" [\"%\"]\n" this.sigmaTexture.name to:str
+			format "\t\"texture sigma\" [\"%\"]\r\n" (this.sigmaTexture.name + "_scale") to:str
 		else
 			luxWriteFloat "sigma"  this.sigma str
 		
-		if this.usebumpmap == true then
-		(	
-		if this.bumpmapTexture != undefined then
-			format "\t\"texture bumpmap\" [\"%\"]\n" this.bumpmapTexture.name to:str
-		else
-			luxWriteFloat "bumpmap"  this.bumpmap str
-		)
+		if (this.bumpmapTexture != undefined and this.useBumpmap == true)then
+			format "\t\"texture bumpmap\" [\"%\"]\r\n" (this.bumpmapTexture.name + "_scale") to:str
 		
 		luxWriteString "type" "mattetranslucent" str
 		

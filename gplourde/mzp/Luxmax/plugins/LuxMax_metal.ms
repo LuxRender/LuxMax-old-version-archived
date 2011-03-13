@@ -5,7 +5,44 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 	
 	function GetTextureMaps =
 	(
-		texturemaps = #(this.roughnessTexture, this.uroughnessTexture, this.vroughnessTexture, this.bumpmapTexture, this.emissionTexture)
+		texturemaps = #(this.emissionTexture)
+		
+		if (this.bumpmapTexture != undefined and this.useBumpmap == true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.bumpmapTexture.name + "_scale")
+			floatScale.floattex1 = this.bumpmap
+			floatScale.maptex2 = this.bumpmapTexture
+			append texturemaps floatScale
+		)
+				
+		if (this.roughnessTexture != undefined and this.useanisotropy != true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.roughnessTexture.name + "_scale")
+			floatScale.floattex1 = this.roughness
+			floatScale.maptex2 = this.roughnessTexture
+			append texturemaps floatScale
+		)
+		
+		if (this.uroughnessTexture != undefined and this.useanisotropy == true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.uroughnessTexture.name + "_scale")
+			floatScale.floattex1 = this.uroughness
+			floatScale.maptex2 = this.uroughnessTexture
+			append texturemaps floatScale
+		)
+		
+		if (this.vroughnessTexture != undefined and this.useanisotropy == true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.vroughnessTexture.name + "_scale")
+			floatScale.floattex1 = this.vroughness
+			floatScale.maptex2 = this.vroughnessTexture
+			append texturemaps floatScale
+		)
+		
 		return texturemaps
 	)
 	
@@ -18,12 +55,12 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		if this.useanisotropy == true then
 		(
 			if this.uroughnessTexture != undefined then
-			format "\t\"texture uroughness\" [\"%\"]\n" this.uroughnessTexture.name to:str
+			format "\t\"texture uroughness\" [\"%\"]\n" (this.uroughnessTexture.name + "_scale") to:str
 			else
 			luxWriteFloat "uroughness"  this.uroughness str
 		
 			if this.vroughnessTexture != undefined then
-			format "\t\"texture vroughness\" [\"%\"]\n" this.vroughnessTexture.name to:str
+			format "\t\"texture vroughness\" [\"%\"]\n" (this.vroughnessTexture.name + "_scale") to:str
 			else
 			luxWriteFloat "vroughness"  this.vroughness str
 			
@@ -31,16 +68,19 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		else
 		(
 			if this.roughnessTexture != undefined then
-			(format "\t\"texture uroughness\" [\"%\"]\n" this.roughnessTexture.name to:str)
+			(format "\t\"texture uroughness\" [\"%\"]\n" (this.roughnessTexture.name + "_scale") to:str)
 			else
 			(luxWriteFloat "uroughness"  this.roughness str)
 		
 			if this.roughnessTexture != undefined then
-			(format "\t\"texture vroughness\" [\"%\"]\n" this.roughnessTexture.name to:str)
+			(format "\t\"texture vroughness\" [\"%\"]\n" (this.roughnessTexture.name + "_scale") to:str)
 			else
 			(luxWriteFloat "vroughness"  this.roughness str)
 			
 		)
+		
+		if (this.bumpmapTexture != undefined and this.useBumpmap == true)then
+			format "\t\"texture bumpmap\" [\"%\"]\r\n" (this.bumpmapTexture.name + "_scale") to:str
 		
 		luxWriteString "type" "metal" str
 

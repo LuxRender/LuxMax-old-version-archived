@@ -21,6 +21,15 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 			append texturemaps floatScale
 		)
 		
+		if (this.sigmaTexture != undefined) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.sigmaTexture.name + "_scale")
+			floatScale.floattex1 = this.sigma
+			floatScale.maptex2 = this.sigmaTexture
+			append texturemaps floatScale
+		)
+		
 		return texturemaps
 	)
 	
@@ -36,7 +45,7 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 			luxWriteColor "Kd"  this.kdColor str
 
 		if this.sigmaTexture != undefined then
-			format "\t\"texture sigma\" [\"%\"]\r\n" this.sigmaTexture.name to:str
+			format "\t\"texture sigma\" [\"%\"]\r\n" (this.sigmaTexture.name + "_scale") to:str
 		else
 			luxWriteFloat "sigma"  this.sigma str
 

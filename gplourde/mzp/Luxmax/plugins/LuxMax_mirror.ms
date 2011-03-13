@@ -6,7 +6,35 @@ plugin material LuxRenderMirror name:"LR Mirror" classID:#(0x20cc696b, 0x4e990f2
 	
 	function GetTextureMaps =
 	(
-		texturemaps = #(this.krTexture, thisksTexture, this.filmTexture, this.filmindexTexture, this.bumpmapTexture, this.emissionTexture)
+		texturemaps = #(this.krTexture, this.emissionTexture)
+		
+		if (this.bumpmapTexture != undefined and this.useBumpmap == true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.bumpmapTexture.name + "_scale")
+			floatScale.floattex1 = this.bumpmap
+			floatScale.maptex2 = this.bumpmapTexture
+			append texturemaps floatScale
+		)
+		
+		if (this.filmTexture != undefined and this.usefilm == true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.filmTexture.name + "_scale")
+			floatScale.floattex1 = this.film
+			floatScale.maptex2 = this.filmTexture
+			append texturemaps floatScale
+		)
+		
+		if (this.filmindexTexture != undefined and this.usefilm == true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.filmindexTexture.name + "_scale")
+			floatScale.floattex1 = this.filmindex
+			floatScale.maptex2 = this.filmindexTexture
+			append texturemaps floatScale
+		)
+		
 		return texturemaps
 	)
 	
@@ -25,25 +53,21 @@ plugin material LuxRenderMirror name:"LR Mirror" classID:#(0x20cc696b, 0x4e990f2
 		(	
 			(	
 			if this.filmTexture != undefined then
-				format "\t\"texture film\" [\"%\"]\n" this.filmTexture.name to:str
+				format "\t\"texture film\" [\"%\"]\n" (this.filmTexture.name + "_scale") to:str
 			else
 				luxWriteFloat "film"  this.film str
 			)
 			(	
 			if this.filmindexTexture != undefined then
-				format "\t\"texture filmindex\" [\"%\"]\n" this.filmindexTexture.name to:str
+				format "\t\"texture filmindex\" [\"%\"]\n" (this.filmindexTexture.name + "_scale") to:str
 			else
 				luxWriteFloat "filmindex"  this.filmindex str
 			)
 		)
 		
-		if this.usebumpmap == true then
-		(	
-		if this.bumpmapTexture != undefined then
-			format "\t\"texture bumpmap\" [\"%\"]\n" this.bumpmapTexture.name to:str
-		else
-			luxWriteFloat "bumpmap"  this.bumpmap str
-		)
+		if (this.bumpmapTexture != undefined and this.useBumpmap == true)then
+			format "\t\"texture bumpmap\" [\"%\"]\r\n" (this.bumpmapTexture.name + "_scale") to:str
+	
 		
 		luxWriteString "type" "mirror" str
 		
