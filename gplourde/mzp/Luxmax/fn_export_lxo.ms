@@ -100,7 +100,10 @@ function export_lxo lxo =
 				)
 			)
 			
-			format "\tObjectInstance \"%\"\r\n" obj.name to:str
+			if ((GetLuxValue "ddl_renderer") > 1) then
+				format "\tShape \"plymesh\" \"string filename\" [\"%\"]\r\n" n to:str
+			else
+				format "\tObjectInstance \"%\"\r\n" obj.name to:str
 			format "AttributeEnd # \"\"\r\n\r\n" to:str
 		)
 	)
