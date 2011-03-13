@@ -49,7 +49,7 @@
 			
 			( --// Write Light sources
 				--// Use environment map if available
-				if (environmentMap != undefined and environmentMap.bitmap != undefined) then
+				if (environmentMap != undefined and environmentMap.fileName != undefined) then
 				(
 					format "# Enviromentmap\r\n" to:str
 					format "AttributeBegin\r\n" to:str
@@ -58,7 +58,7 @@
 					format "LightGroup \"environment\"\r\n" to:str 
 					format "LightSource \"infinite\"\r\n" to:str
 					format "\"string mapping\" [\"angular\"]\r\n" to:str 
-					format "\"string mapname\" [\"%\"]\r\n" (fixWindowsPath environmentmap.bitmap.filename) to:str
+					format "\"string mapname\" [\"%\"]\r\n" (fixWindowsPath environmentmap.filename) to:str
 					format "\"float gamma\" [1.0]\r\n" to:str
 					format "\"float envgain\" [1.0]\r\n" to:str
 					format "AttributeEnd\r\n\r\n" to:str

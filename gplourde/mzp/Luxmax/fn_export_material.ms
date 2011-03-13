@@ -1,16 +1,3 @@
-function CheckLuxRenderCompat obj =
-(
-	try
-	(
-		obj.GetLuxRenderString()
-		return true
-	)
-	catch
-	(	
-		return false
-	)
-)
-
 function GetTextureMapsProc m &tm =
 (
 	if (CheckLuxRenderCompat m == false) then return false
