@@ -21,7 +21,7 @@
 			checkbox chk_advanced "Enable"
 			spinner distancethreshold "Distance threshold:" range:[-9999, 9999, 0.75] type:#float fieldwidth:50
 			edittext photonmapsfile "Photonmaps file:"
-			dropdownlist lightstrategy "Light Strategy:" items:#("logpowerimp","allpowerimp","powerimp","importance","all","one","auto")
+			dropdownlist lightstrategy "Light Strategy:" items:#("auto", "logpowerimp","allpowerimp","powerimp","importance","all","one")
 			checkbox dbg_enabledirect "dbg_enabledirect"
 			checkbox dbg_enableradiancemap "dbg_enableradiancemap"
 			checkbox dbg_enableindircaustic "dbg_enableindircaustic"
@@ -67,7 +67,7 @@
 	)
 	rollout lux_SurfaceIntegrator_Path "path"
 	(
-		dropdownlist lightstrategy "Light Strategy:" items:#("logpowerimp","allpowerimp","powerimp","importance","all","one","auto")
+		dropdownlist lightstrategy "Light Strategy:" items:#("auto", "logpowerimp","allpowerimp","powerimp","importance","all","one")
 		spinner maxdepth "Max. depth" type:#integer range:[-9999, 9999, 8] fieldwidth:50
 		dropdownlist rrstrategy "RR strategy" items:#("efficiency", "probability", "none")
 		spinner rrcontinueprob "RR continue probability:" range:[-9999, 9999, 0.65] type:#float fieldwidth:50
@@ -108,11 +108,15 @@
 	)
 	rollout lux_SurfaceIntegrator_sppm "sppm"
 	(
+		dropdownlist lightstrategy "Light Strategy:" items:#("auto", "logpowerimp","allpowerimp","powerimp","importance","all","one")
+		dropdownlist lookupaccel "Look up accel:" items:#("hybridhashgrid","kdtree","hashgrid")
+		
 		spinner photonperpass "photonperpass:" type:#integer range:[0, 99999999, 1000000] fieldwidth:60
-		spinner maxeyedepth "maxeyedepth:" type:#integer range:[0, 2048, 32] fieldwidth:60
-		spinner maxphotondepth "maxphotondepth:" type:#integer range:[0, 2048, 32] fieldwidth:60
-		spinner malpha "alpha:" type:#float scale:0.05 range:[-9999, 9999, 1] fieldwidth:60
-		spinner startradius "startradius:" type:#float scale:0.05 range:[-9999, 9999, 1] fieldwidth:60
+		spinner maxeyedepth "maxeyedepth:" type:#integer range:[0, 2048, 16] fieldwidth:60
+		spinner maxphotondepth "maxphotondepth:" type:#integer range:[0, 2048, 16] fieldwidth:60
+		spinner malpha "alpha:" type:#float scale:0.05 range:[-9999, 9999, 0.7] fieldwidth:60
+		spinner startradius "startradius:" type:#float scale:0.05 range:[-9999, 9999, 2] fieldwidth:60
+		checkbox includeenvironment "include environment"
 		
 		function GetLuxRenderString =
 		(
@@ -123,6 +127,9 @@
 			luxWriteInteger "maxphotondepth" (getLuxValue "maxphotondepth") str
 			luxWriteFloat "alpha" (getLuxValue "malpha") str
 			luxWriteFloat "startradius" (getLuxValue "startradius") str
+			luxWriteString "lightstrategy" (GetLuxString "lightstrategy") str
+			luxWriteString "lookupaccel" (GetLuxString "lookupaccel") str
+			luxWriteBool "includeenvironment" (getLuxValue "includeenvironment") str
 			return (str as string)
 		)
 		
