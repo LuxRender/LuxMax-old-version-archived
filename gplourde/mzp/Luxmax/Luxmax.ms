@@ -171,7 +171,7 @@ global lux_main = "LuxMax Starting..."
 		)
 		rollout lux_Renderer "Renderer" rolledup:true
 		(
-			dropdownlist ddl_renderer "Renderer" items:#("sampler", "hybridsampler", "hybridsppm")
+			dropdownlist ddl_renderer "Renderer" items:#("sampler", "hybridsampler", "hybridsppm", "sppm")
 			
 			function GetLuxRenderString =
 			(
@@ -222,7 +222,7 @@ global lux_main = "LuxMax Starting..."
 		(
 			dropdownlist ddl_surface "Surface Integrator"
 			
-			subrollout lx0 "" width:280 height:300
+			subrollout lx0 "" width:280 height:200
 			
 			function GetLuxRenderString =
 			(

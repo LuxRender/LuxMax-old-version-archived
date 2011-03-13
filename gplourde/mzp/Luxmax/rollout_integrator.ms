@@ -67,20 +67,67 @@
 	)
 	rollout lux_SurfaceIntegrator_Path "path"
 	(
+		dropdownlist lightstrategy "Light Strategy:" items:#("logpowerimp","allpowerimp","powerimp","importance","all","one","auto")
 		spinner maxdepth "Max. depth" type:#integer range:[-9999, 9999, 8] fieldwidth:50
-
+		dropdownlist rrstrategy "RR strategy" items:#("efficiency", "probability", "none")
+		spinner rrcontinueprob "RR continue probability:" range:[-9999, 9999, 0.65] type:#float fieldwidth:50
+		checkbox includeenvironment "include environment"
+		
 		function GetLuxRenderString =
 		(
 			str = stringstream ""
 			format "\nSurfaceIntegrator \"path\"\n" to:str
-			format "\"integer maxdepth\" [10] \n" to:str
-			format "\"bool includeenvironment\" [\"true\"] \n" to:str
-			format "\"string lightstrategy\" [\"one\"] \n" to:str
-			format "\"string rrstrategy\" [\"efficiency\"]\n" to:str
+			luxWriteInteger "maxdepth" (getLuxValue "maxdepth") str
+			luxWriteBool "includeenvironment" (getLuxValue "includeenvironment") str
+			luxWriteString "lightstrategy" (GetLuxString "lightstrategy") str
+			luxWriteString "rrstrategy" (GetLuxString "rrstrategy") str
 			return (str as string)
 		)
 		
 		on lux_SurfaceIntegrator_Path open do (GetControlParams(lux_SurfaceIntegrator_Path))
-	)			
-	SurfaceIntegratorsRollouts = #(lux_SurfaceIntegrator_Path, lux_SurfaceIntegrator_ExPhotonMap)
+	)
+	rollout lux_SurfaceIntegrator_bidirectional "bidirectional"
+	(
+		spinner eyedepth "Eye depth:" type:#integer range:[0, 2048, 16] fieldwidth:60
+		spinner lightdepth "Light depth:" type:#integer range:[0, 2048, 16] fieldwidth:60
+		spinner eyerrthreshold "Eye RR Threshold:" type:#float scale:0.05 range:[-9999, 9999, 0] fieldwidth:60
+		spinner lightrrthreshold "Light RR Threshold:" type:#float scale:0.05 range:[-9999, 9999, 0] fieldwidth:60
+		
+		function GetLuxRenderString =
+		(
+			str = stringstream ""
+			format "\nSurfaceIntegrator \"bidirectional\"\n" to:str
+			luxWriteInteger "eyedepth" (getLuxValue "eyedepth") str
+			luxWriteInteger "lightdepth" (getLuxValue "lightdepth") str
+			luxWriteFloat "eyerrthreshold" (getLuxValue "eyerrthreshold") str
+			luxWriteFloat "lightrrthreshold" (getLuxValue "lightrrthreshold") str
+			return (str as string)
+		)
+		
+		on lux_SurfaceIntegrator_bidirectional open do (GetControlParams(lux_SurfaceIntegrator_bidirectional))
+	)
+	rollout lux_SurfaceIntegrator_sppm "sppm"
+	(
+		spinner photonperpass "photonperpass:" type:#integer range:[0, 99999999, 1000000] fieldwidth:60
+		spinner maxeyedepth "maxeyedepth:" type:#integer range:[0, 2048, 32] fieldwidth:60
+		spinner maxphotondepth "maxphotondepth:" type:#integer range:[0, 2048, 32] fieldwidth:60
+		spinner malpha "alpha:" type:#float scale:0.05 range:[-9999, 9999, 1] fieldwidth:60
+		spinner startradius "startradius:" type:#float scale:0.05 range:[-9999, 9999, 1] fieldwidth:60
+		
+		function GetLuxRenderString =
+		(
+			str = stringstream ""
+			format "\nSurfaceIntegrator \"sppm\"\n" to:str
+			luxWriteInteger "photonperpass" (getLuxValue "photonperpass") str
+			luxWriteInteger "maxeyedepth" (getLuxValue "maxeyedepth") str
+			luxWriteInteger "maxphotondepth" (getLuxValue "maxphotondepth") str
+			luxWriteFloat "alpha" (getLuxValue "malpha") str
+			luxWriteFloat "startradius" (getLuxValue "startradius") str
+			return (str as string)
+		)
+		
+		on lux_SurfaceIntegrator_sppm open do (GetControlParams(lux_SurfaceIntegrator_sppm))
+	)
+	
+	SurfaceIntegratorsRollouts = #(lux_SurfaceIntegrator_Path, lux_SurfaceIntegrator_ExPhotonMap, lux_SurfaceIntegrator_bidirectional, lux_SurfaceIntegrator_sppm)
 )
