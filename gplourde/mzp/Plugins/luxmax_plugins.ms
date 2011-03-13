@@ -18,6 +18,9 @@ include "luxmax\\plugins\\LuxMax_metal.ms"
 include "luxmax\\plugins\\LuxMax_shinymetal.ms"
 include "luxmax\\plugins\\LuxMax_mirror.ms"
 include "luxmax\\plugins\\LuxMax_velvet.ms"
+include "luxmax\\plugins\\LuxMax_roughglass.ms"
+include "luxmax\\plugins\\LuxMax_scatter.ms"
 
 --// Helper
 include "luxmax\\plugins\\LuxMax_volume.ms"
+
