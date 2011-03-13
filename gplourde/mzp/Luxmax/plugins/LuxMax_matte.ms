@@ -9,7 +9,7 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 	
 	function GetTextureMaps =
 	(
-		texturemaps = #(this.kdTexture, this.sigmaTexture, this.emissionTexture)
+		texturemaps = #(this.kdTexture, this.emissionTexture)
 		
 		--// Bumpmap support
 		if (this.bumpmapTexture != undefined and this.useBumpmap == true) then
