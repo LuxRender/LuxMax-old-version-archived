@@ -44,11 +44,15 @@ function export_lxo lxo =
 		--// Relative path to the ply
 		n = (getSceneName() + "/" + GetFrame() + "/" + obj.name + ".ply")
 		
+		format "ObjectBegin  \"%\"\r\n" obj.name to:str
+		format "\tShape \"plymesh\" \"string filename\" [\"%\"]\r\n" n to:str
+		format "ObjectEnd # \"%\"\r\n" obj.name to:str
+		
 		for iobj in instances do
 		(
-			format "\r\n#Begin %\r\n" iobj.name to:str
-			format "AttributeBegin\r\n" to:str
+			if (iobj.ishidden) then continue
 			
+			format "\r\nAttributeBegin # \"%\"\r\n" iobj.name to:str
 			r1 = iobj.transform.row1
 			r2 = iobj.transform.row2
 			r3 = iobj.transform.row3
@@ -59,10 +63,10 @@ function export_lxo lxo =
 			--// Write default material if none on the object
 			if (iobj.material == undefined) then
 			(
-				format "MakeNamedMaterial \"Wirecolor\"\r\n" to:str
+				format "\tMakeNamedMaterial \"Wirecolor\"\r\n" to:str
 				luxWriteString "type" "matte" str
 				luxWriteColor "Kd" iobj.wirecolor str
-				format "NamedMaterial \"Wirecolor\"\r\n" to:str
+				format "\tNamedMaterial \"Wirecolor\"\r\n" to:str
 			)
 			--// Write material name
 			else
@@ -96,15 +100,8 @@ function export_lxo lxo =
 				)
 			)
 			
-			format "\r\n" to:str
-			
-			if (classof iobj.material == LuxrenderPortal2 or classof iobj.material == LuxrenderPortal) then
-				format "Shape \"plymesh\" \"string filename\" [\"%\"]" n to:str
-			else
-				format "Shape \"plymesh\" \"string filename\" [\"%\"]" n to:str
-			
-			format "\r\nAttributeEnd\r\n" to:str
-			format "#End %\r\n" iobj.name to:str
+			format "\tObjectInstance \"%\"\r\n" obj.name to:str
+			format "AttributeEnd # \"\"\r\n\r\n" to:str
 		)
 	)
 	
