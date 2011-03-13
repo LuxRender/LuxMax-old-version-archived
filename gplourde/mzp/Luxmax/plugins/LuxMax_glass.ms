@@ -6,7 +6,44 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 	
 	function GetTextureMaps =
 	(
-		texturemaps = #(this.krTexture, thisktTexture, this.indexTexture, this.filmTexture, this.filmindexTexture, this.bumpmapTexture, this.emissionTexture)
+		texturemaps = #(this.krTexture, thisktTexture, this.emissionTexture)
+		
+		if (this.bumpmapTexture != undefined and this.useBumpmap == true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.bumpmapTexture.name + "_scale")
+			floatScale.floattex1 = this.bumpmap
+			floatScale.maptex2 = this.bumpmapTexture
+			append texturemaps floatScale
+		)
+		
+		if (this.indexTexture != undefined) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.indexTexture.name + "_scale")
+			floatScale.floattex1 = this.index
+			floatScale.maptex2 = this.indexTexture
+			append texturemaps floatScale
+		)
+		
+		if (this.filmTexture != undefined and this.usefilm == true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.filmTexture.name + "_scale")
+			floatScale.floattex1 = this.film
+			floatScale.maptex2 = this.filmTexture
+			append texturemaps floatScale
+		)
+		
+		if (this.filmindexTexture != undefined and this.usefilm == true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.filmindexTexture.name + "_scale")
+			floatScale.floattex1 = this.filmindex
+			floatScale.maptex2 = this.filmindexTexture
+			append texturemaps floatScale
+		)
+		
 		return texturemaps
 	)
 	
@@ -27,7 +64,7 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 			luxWriteColor "Kt"  this.ktColor str
 		
 		if this.indexTexture != undefined then
-			format "\t\"texture index\" [\"%\"]\n" this.indexTexture.name to:str
+			format "\t\"texture index\" [\"%\"]\n" (this.indexTexture.name + "_scale") to:str
 		else
 			luxWriteFloat "index"  this.index str
 		
@@ -35,13 +72,13 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 		(	
 			(	
 			if this.filmTexture != undefined then
-				format "\t\"texture film\" [\"%\"]\n" this.filmTexture.name to:str
+				format "\t\"texture film\" [\"%\"]\n" (this.filmTexture.name + "_scale") to:str
 			else
 				luxWriteFloat "film"  this.film str
 			)
 			(	
 			if this.filmindexTexture != undefined then
-				format "\t\"texture filmindex\" [\"%\"]\n" this.filmindexTexture.name to:str
+				format "\t\"texture filmindex\" [\"%\"]\n" (this.filmindexTexture.name + "_scale") to:str
 			else
 				luxWriteFloat "filmindex"  this.filmindex str
 			)
@@ -53,13 +90,8 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
  		)
 		
 		
-		if this.usebumpmap == true then
-		(	
-		if this.bumpmapTexture != undefined then
-			format "\t\"texture bumpmap\" [\"%\"]\n" this.bumpmapTexture.name to:str
-		else
-			luxWriteFloat "bumpmap"  this.bumpmap str
-		)
+		if (this.bumpmapTexture != undefined and this.useBumpmap == true)then
+			format "\t\"texture bumpmap\" [\"%\"]\r\n" (this.bumpmapTexture.name + "_scale") to:str
 		
 		luxWriteBool "architectural" this.isarchitectural str
 		luxWriteString "type" "glass" str

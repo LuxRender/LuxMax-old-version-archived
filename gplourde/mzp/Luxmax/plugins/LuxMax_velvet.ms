@@ -7,6 +7,52 @@ plugin material LuxRenderVelvet name:"LR Velvet" classID:#(0x117d5192, 0x3fb8364
 	function GetTextureMaps =
 	(
 		texturemaps = #(this.kdTexture, thisp1Texture, this.p2Texture, this.p3Texture, this.thicknessTexture, this.bumpmapTexture, this.emissionTexture)
+		
+		if (this.bumpmapTexture != undefined and this.useBumpmap == true) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.bumpmapTexture.name + "_scale")
+			floatScale.floattex1 = this.bumpmap
+			floatScale.maptex2 = this.bumpmapTexture
+			append texturemaps floatScale
+		)
+		
+		if (this.p1Texture != undefined) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.p1Texture.name + "_scale")
+			floatScale.floattex1 = this.p1
+			floatScale.maptex2 = this.p1Texture
+			append texturemaps floatScale
+		)
+		
+		if (this.p2Texture != undefined) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.p2Texture.name + "_scale")
+			floatScale.floattex1 = this.p2
+			floatScale.maptex2 = this.p2Texture
+			append texturemaps floatScale
+		)
+		
+		if (this.p3Texture != undefined) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.p3Texture.name + "_scale")
+			floatScale.floattex1 = this.p3
+			floatScale.maptex2 = this.p3Texture
+			append texturemaps floatScale
+		)
+		
+		if (this.thicknessTexture != undefined) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.thicknessTexture.name + "_scale")
+			floatScale.floattex1 = this.thickness
+			floatScale.maptex2 = this.thicknessTexture
+			append texturemaps floatScale
+		)
+		
 		return texturemaps
 	)
 	
@@ -25,7 +71,7 @@ plugin material LuxRenderVelvet name:"LR Velvet" classID:#(0x117d5192, 0x3fb8364
 		(	
 		if this.p1Texture != undefined then
 			(	
-			format "\t\"texture p1\" [\"%\"]\n" this.p1Texture.name to:str
+			format "\t\"texture p1\" [\"%\"]\n" (this.p1Texture.name + "_scale") to:str
 			)	
 		    else
 			(	
@@ -33,7 +79,7 @@ plugin material LuxRenderVelvet name:"LR Velvet" classID:#(0x117d5192, 0x3fb8364
 			)
 		if this.p2Texture != undefined then
 			(	
-			format "\t\"texture p2\" [\"%\"]\n" this.p2Texture.name to:str
+			format "\t\"texture p2\" [\"%\"]\n" (this.p2Texture.name + "_scale") to:str
 			)	
 		    else
 			(	
@@ -41,7 +87,7 @@ plugin material LuxRenderVelvet name:"LR Velvet" classID:#(0x117d5192, 0x3fb8364
 			)
 		if this.p3Texture != undefined then
 			(	
-			format "\t\"texture p3\" [\"%\"]\n" this.p3Texture.name to:str
+			format "\t\"texture p3\" [\"%\"]\n" (this.p3Texture.name + "_scale") to:str
 			)	
 		    else
 			(	
@@ -49,7 +95,7 @@ plugin material LuxRenderVelvet name:"LR Velvet" classID:#(0x117d5192, 0x3fb8364
 			)
 		if this.thicknessTexture != undefined then
 			(	
-			format "\t\"texture thickness\" [\"%\"]\n" this.thicknessTexture.name to:str
+			format "\t\"texture thickness\" [\"%\"]\n" (this.thicknessTexture.name + "_scale") to:str
 			)	
 		    else
 			(	
@@ -58,13 +104,8 @@ plugin material LuxRenderVelvet name:"LR Velvet" classID:#(0x117d5192, 0x3fb8364
 			
 		)
 		
-		if this.usebumpmap == true then
-		(	
-		if this.bumpmapTexture != undefined then
-			format "\t\"texture bumpmap\" [\"%\"]\n" this.bumpmapTexture.name to:str
-		else
-			luxWriteFloat "bumpmap"  this.bumpmap str
-		)
+		if (this.bumpmapTexture != undefined and this.useBumpmap == true)then
+			format "\t\"texture bumpmap\" [\"%\"]\r\n" (this.bumpmapTexture.name + "_scale") to:str
 		
 		luxWriteString "type" "velvet" str
 		
