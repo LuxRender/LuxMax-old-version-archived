@@ -20,6 +20,8 @@ try (include "luxmax\\plugins\\LuxMax_mirror.ms") catch (print "LuxMax Error: Fa
 try (include "luxmax\\plugins\\LuxMax_velvet.ms") catch (print "LuxMax Error: Failed to load LuxMax_velvet")
 try (include "luxmax\\plugins\\LuxMax_roughglass.ms") catch (print "LuxMax Error: Failed to load LuxMax_roughglass")
 try (include "luxmax\\plugins\\LuxMax_scatter.ms") catch (print "LuxMax Error: Failed to load LuxMax_scatter")
+try (include "luxmax\\plugins\\LuxMax_carpaint.ms") catch (print "LuxMax Error: Failed to load LuxMax_carpaint")
+try (include "luxmax\\plugins\\LuxMax_null.ms") catch (print "LuxMax Error: Failed to load LuxMax_null")
 
 --// Helper
 try (include "luxmax\\plugins\\LuxMax_volume.ms") catch (print "LuxMax Error: Failed to load LuxMax_volume")
