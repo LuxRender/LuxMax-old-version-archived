@@ -53,27 +53,38 @@ function writeCamera p_camera strout =
 	)
 	else
 		m3_camera = p_camera.transform
-	
-	--// Generate camera look at
-	pos = m3_camera.row4
-	up = normalize m3_camera.row2
-	look = (m3_camera.row4 + -(normalize m3_camera.row3))
-	format "LookAt % % % % % % % % %\n" (pos.x / 100.0) (pos.y / 100.0) (pos.z / 100.0) (look.x / 100.0) (look.y / 100.0) (look.z / 100.0) up.x up.y up.z to:strout
-		
+			
 	--// Try max standard camera
 	if (classof p_camera == Freecamera or classof p_camera == Targetcamera) then
 	(
+		--// Generate camera look at
+		luxWriteLookAt m3_camera strout
+		
 		format "Camera \"perspective\"\n" to:strout
 		format "\t\"float fov\" [%]\n" (GetCameraFov (p_camera.fov)) to:strout
 	)
 	--// Try LuxRender Compatible camera
 	else if ((CheckLuxRenderCompat p_camera) == true) then
 	(
+		at time (slidertime.frame + 1)
+		(
+			luxWriteName "TransformBegin #" "" strout
+			luxWriteLookAt p_camera.transform strout
+			luxWriteName "CoordinateSystem" "CameraEndTransform" strout
+			luxWriteName "TransformEnd #" "" strout
+		)
+		
+		--// Generate camera look at
+		luxWriteLookAt m3_camera strout
+		
 		format "%" (p_camera.GetLuxRenderString()) to:strout
 	)
 	--// No camera defined. use viewport if possible
 	else
 	(
+		--// Generate camera look at
+		luxWriteLookAt m3_camera strout
+		
 		format "Camera \"perspective\"\n" to:strout
 		format "\t\"float fov\" [%]" (GetCameraFov (getViewFOV())) to:strout
 	)

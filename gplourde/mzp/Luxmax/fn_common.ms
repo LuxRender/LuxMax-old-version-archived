@@ -30,6 +30,20 @@ function luxWriteFloat key val f =
 function luxWritePoint key val f = (if (val != undefined) then format "\t\"point %\" [% % %]\r\n" key val.x val.y val.z to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
 function luxWriteColor key val f = (if (val != undefined) then format "\t\"color %\" [% % %]\r\n" key (val.red / 255) (val.green / 255) (val.blue / 255) to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
 
+function luxWriteName key val strout =
+(
+	format "% \"%\"\r\n" key val to:strout
+)
+
+function luxWriteLookAt tm strout =
+(
+	--// Generate camera look at
+	pos = tm.row4
+	up = normalize tm.row2
+	look = (tm.row4 + -(normalize tm.row3))
+	format "LookAt % % % % % % % % %\n" (pos.x / 100.0) (pos.y / 100.0) (pos.z / 100.0) (look.x / 100.0) (look.y / 100.0) (look.z / 100.0) up.x up.y up.z to:strout
+)
+	
 function GetFrame =
 (
 	str = "000000"

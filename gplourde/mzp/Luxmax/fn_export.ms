@@ -14,7 +14,13 @@
 		makeDir (getFilenamePath lxo)
 		
 		if (GetLuxValue "chk_lxm") then (export_lxm lxm)
-		if (GetLuxValue "chk_lxo") then (export_lxo lxo)
+		
+		doMotionblur = false
+		
+		if (CheckLuxRenderCompat p_camera == true and p_camera.usemotionblur == true and p_camera.objectmotionblur == true) then
+			doMotionblur = true
+		
+		if (GetLuxValue "chk_lxo") then (export_lxo doMotionblur lxo)
 
 		str = stringstream ""
 		

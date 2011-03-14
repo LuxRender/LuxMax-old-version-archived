@@ -23,6 +23,12 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		useclip type:#boolean default:false ui:m_clip
 		hither type:#float default:0.1 ui:m_nearclip
 		yon type:#float default:100 ui:m_farclip
+		
+		usemotionblur type:#boolean default:false ui:musemotionblur
+		distribution type:#integer ui:mdistribution default:1
+		cameramotionblur type:#boolean default:false ui:mcameramotionblur
+		objectmotionblur type:#boolean default:false ui:mobjectmotionblur
+			
 	)
 	rollout params "Parameters"
 	(
@@ -56,7 +62,13 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 			spinner m_openangle "Open:" type:#integer fieldwidth:50  range:[-99999999,99999999,0]--0
 			spinner m_closeangle "Close:" type:#integer fieldwidth:50  range:[-99999999,99999999,0]-- 360
 		)
-		
+		group "Motion Blur"
+		(
+			checkbox musemotionblur "Enable"
+			dropdownlist mdistribution "Distribution:" items:#("gaussian", "uniform")
+			checkbox mcameramotionblur "Camera"
+			checkbox mobjectmotionblur "Objects"
+		)
 		group "Shift"
 		(
 			spinner m_shiftx "Shift X:" fieldwidth:50 range:[-99999999,99999999,0]
@@ -177,6 +189,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 	function GetLuxRenderString =
 	(
 		local types = #("perspective", "orthographic", "environment")
+		local shutterdistributiontypes = #("gaussian", "uniform")
 		
 		str = stringstream ""
 		format "\nCamera \"%\"\n" (types[cameratype]) to:str
@@ -219,6 +232,13 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 			format "\t\"float shutteropen\" [%]\n" ((openangle/ (framerate  as float * 360.0)) as string) to:str
 			format "\t\"float shutterclose\" [%]\n" ((closeangle/ (framerate as float * 360.0)) as string) to:str
 		)
+		
+		if (usemotionblur == true) do
+			format "\t\"string shutterdistribution\" [\"%\"]\n" (shutterdistributiontypes[distribution]) to:str
+		
+		if (usemotionblur == true and cameramotionblur == true) do
+			format "\t\"string endtransform\" [\"CameraEndTransform\"]" to:str
+		
 		return str as string
 	)
 )
