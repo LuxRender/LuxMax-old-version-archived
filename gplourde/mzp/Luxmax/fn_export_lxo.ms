@@ -1,4 +1,4 @@
-function export_lxo lxo =
+function export_lxo doMotionblur lxo =
 (
 	files = getFiles ((getFilenamePath lxo)  + "\\*.ply")
 	for f in files do
@@ -50,6 +50,8 @@ function export_lxo lxo =
 		
 		for iobj in instances do
 		(
+			emissive = false
+			
 			if (iobj.ishidden) then continue
 			
 			format "\r\nAttributeBegin # \"%\"\r\n" iobj.name to:str
@@ -83,6 +85,7 @@ function export_lxo lxo =
 				
 				if (CheckLuxRenderCompat _m == true and _m.useEmission == true) then
 				(	
+					emissive = true
 					numlightsource += 1
 							
 					format "\tLightGroup \"%\"\r\n" _m.arealightgroup to:str
@@ -100,10 +103,37 @@ function export_lxo lxo =
 				)
 			)
 			
-			if ((GetLuxValue "ddl_renderer") > 1) then
-				format "\tShape \"plymesh\" \"string filename\" [\"%\"]\r\n" n to:str
+			if (doMotionblur == true and iobj.isAnimated == true and emissive == false) then
+			(
+				currentFrame = (slidertime.frame) as integer
+				nextFrame = (slidertime.frame + 1)  as integer 
+				duration = (nextFrame - currentFrame) / framerate as float
+				
+				
+				format "\tTransformBegin #\r\n" to:str
+				format "\tIdentity #\r\n" to:str
+				
+				at time nextFrame
+				(
+					r1 = iobj.transform.row1
+					r2 = iobj.transform.row2
+					r3 = iobj.transform.row3
+					r4 = iobj.transform.row4
+				)
+				
+				format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\r\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / 100.0) (r4.y / 100.0) (r4.z / 100.0)to:str
+				format "\tCoordinateSystem \"%\"\r\n" (obj.name + "_motion_" + currentFrame as string) to:str
+				format "\tTransformEnd #\r\n" to:str
+				format "\tMotionInstance \"%\" % % \"%\" \r\n" obj.name 0.0 duration (obj.name + "_motion_" + currentFrame as string) to:str
+			)
 			else
-				format "\tObjectInstance \"%\"\r\n" obj.name to:str
+			(
+				if ((GetLuxValue "ddl_renderer") > 1 or emissive == true) then
+					format "\tShape \"plymesh\" \"string filename\" [\"%\"]\r\n" n to:str
+				else
+					format "\tObjectInstance \"%\"\r\n" obj.name to:str
+			)
+		
 			format "AttributeEnd # \"\"\r\n\r\n" to:str
 		)
 	)
