@@ -59,12 +59,12 @@ plugin material LuxrenderGlossyTranslucent name:"LR GlossyTranslucent" classID:#
 			luxWriteColor "Kd"  this.kdColor str
 
 		if this.ksTexture != undefined then
-			format "\t\"texture ks\" [\"%\"]\n" this.ksTexture.name to:str
+			format "\t\"texture Ks\" [\"%\"]\n" this.ksTexture.name to:str
 		else
 			luxWriteColor "Ks"  this.ksColor str
 		
 		if this.ktTexture != undefined then
-			format "\t\"texture kt\" [\"%\"]\n" this.ktTexture.name to:str
+			format "\t\"texture Kt\" [\"%\"]\n" this.ktTexture.name to:str
 		else
 			luxWriteColor "Kt"  this.ktColor str
 		
@@ -100,7 +100,7 @@ plugin material LuxrenderGlossyTranslucent name:"LR GlossyTranslucent" classID:#
 		(	
 		if this.kaTexture != undefined then
 		(
-			format "\t\"texture ka\" [\"%\"]\n" this.kaTexture.name to:str
+			format "\t\"texture Ka\" [\"%\"]\n" this.kaTexture.name to:str
 		)
 			else
 		(
