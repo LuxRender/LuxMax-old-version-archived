@@ -93,7 +93,7 @@ plugin material LuxrenderGlossyLossy name:"LR GlossyLossy" classID:#(0x2df9511d,
 		(	
 		if this.kaTexture != undefined then
 		(
-			format "\t\"texture ka\" [\"%\"]\n" this.kaTexture.name to:str
+			format "\t\"texture Ka\" [\"%\"]\n" this.kaTexture.name to:str
 		)
 			else
 		(

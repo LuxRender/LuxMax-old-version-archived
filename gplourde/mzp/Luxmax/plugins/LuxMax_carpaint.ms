@@ -138,7 +138,7 @@ plugin material LuxrenderCarpaint name:"LR Carpaint" classID:#(0x164f1487, 0x3d0
 		(	
 		if this.kaTexture != undefined then
 		(
-			format "\t\"texture ka\" [\"%\"]\n" this.kaTexture.name to:str
+			format "\t\"texture Ka\" [\"%\"]\n" this.kaTexture.name to:str
 		)
 			else
 		(
