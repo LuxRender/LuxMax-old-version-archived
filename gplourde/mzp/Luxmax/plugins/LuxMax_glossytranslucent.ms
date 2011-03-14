@@ -2,6 +2,7 @@ plugin material LuxrenderGlossyTranslucent name:"LR GlossyTranslucent" classID:#
 
 (
 	include "luxmax\\fn_common.ms"
+	include "luxmax\\mtl_logo.ms"
 	
 	function GetTextureMaps =
 	(

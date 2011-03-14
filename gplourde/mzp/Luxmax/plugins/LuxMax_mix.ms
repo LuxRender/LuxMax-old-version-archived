@@ -5,7 +5,16 @@ Plugin material LuxrenderMix name:"LR Mix" classID:#(0x1dd40858, 0x1b266b58) ext
 	
 	function GetTextureMaps =
 	(
-		texturemaps = #(mmixvalueTexture)
+		texturemaps = #()
+		
+		if (this.mixvalueTexture != undefined) then
+		(
+			floatScale = LuxrenderFloatScale()
+			floatScale.name = (this.mixvalueTexture.name + "_scale")
+			floatScale.floattex1 = this.mixvalue
+			floatScale.maptex2 = this.mixvalueTexture
+			append texturemaps floatScale
+		)
 		
 		if (CheckLuxRenderCompat this.material1 == true and CheckLuxRenderCompat this.material2 == true) then
 		(
@@ -29,7 +38,7 @@ Plugin material LuxrenderMix name:"LR Mix" classID:#(0x1dd40858, 0x1b266b58) ext
 			luxWriteString "namedmaterial2" this.material2.name str
 				
 			if this.mixvalueTexture != undefined then
-				format "\t\"texture amount\" [\"%\"]\n" this.mixvalueTexture.name to:str
+				format "\t\"texture amount\" [\"%\"]\n" (this.mixvalueTexture.name + "_scale") to:str
 			else
 				luxWriteFloat "amount"  this.mixvalue str
 			
