@@ -112,7 +112,7 @@ plugin material LuxrenderGlossyTranslucent name:"LR GlossyTranslucent" classID:#
 		if (this.bumpmapTexture != undefined and this.useBumpmap == true)then
 			format "\t\"texture bumpmap\" [\"%\"]\r\n" (this.bumpmapTexture.name + "_scale") to:str
 	
-	
+		luxWriteBool "multibounce" this.usemultibounce str
 		luxWriteString "type" "glossytranslucent" str
 		
 		return str as string
@@ -132,6 +132,7 @@ plugin material LuxrenderGlossyTranslucent name:"LR GlossyTranslucent" classID:#
 		uroughnessTexture type:#textureMap ui:muroughnessTexture
 		vroughness type:#float ui:mvroughness
 		vroughnessTexture type:#textureMap ui:mvroughnessTexture
+		usemultibounce type:#boolean ui:musemultibounce
 		useanisotropy type:#boolean ui:museanisotropy
 		useabsorption type:#boolean ui:museabsorption
 		kaColor type:#color default:[90,90,90] ui:mkaColor 
@@ -166,6 +167,8 @@ plugin material LuxrenderGlossyTranslucent name:"LR GlossyTranslucent" classID:#
 		label lbv "v-roughness . . . . . . . " across:3 align:#left
 		spinner mvroughness " " scale:0.001 range:[0.000001,1,0.1] width:50 align:#left fieldwidth:65
 		mapbutton mvroughnessTexture "None" width:110 height:16 align:#right
+		
+		checkbox musemultibounce "Surface Asperity, use multibounce" across:1 align:#left
 		
 		checkbox museabsorption "Use Absorption" across:1 align:#left
 		label lbabsorptioncolor "Absorption Color . . . . . . . ." across:3 align:#left

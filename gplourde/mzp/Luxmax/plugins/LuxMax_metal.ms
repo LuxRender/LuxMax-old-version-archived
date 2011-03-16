@@ -84,7 +84,8 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		
 		luxWriteString "type" "metal" str
 
-		
+		if (this.usenkdata != true) then
+		(
 		if (this.metalname == 1)do
 				(
 					luxWriteString "name" "aluminium" str
@@ -101,10 +102,13 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 				(
 					luxWriteString "name" "copper" str
 				)
-				if (this.metalname == 5)do
-				(
-					luxWriteString "string filename" "[\"%\"]\n" this.nkdatapath str
-				)
+		)
+
+		if (this.usenkdata == true) then
+		(
+		format "\t\"string filename\" [\"%\"]\r\n" (this.nkdatapath) to:str
+		)
+		
 	
 		return str as string
 	)
@@ -119,12 +123,18 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		uroughnessTexture type:#textureMap ui:muroughnessTexture
 		vroughness type:#float ui:mvroughness default:0.0001
 		vroughnessTexture type:#textureMap ui:mvroughnessTexture
+		nkdatapath type:#string 
+		usenkdata type:#boolean ui:musenkdata		
 	)
 	
 	rollout params "Metal Parameters"
 	(
 		label lbmetalselect "Select metal. . . . . . . . . . . ." across:2 align:#left 
-		dropdownList mname "" items:#("Aluminium", "Amorphous carbon", "Gold", "Copper", "NK Data") align:#left
+		dropdownList mname "" items:#("Aluminium", "Amorphous carbon", "Gold", "Copper") align:#left
+		
+		checkbox musenkdata "Use nk data file . . . . . ." across:2 align:#left 
+		button btnkdata "Browse" align:#left
+		
 		
 		label lbroughness "Roughness. . . . . . ." across:3 align:#left
 		spinner mroughness " " range:[0.0001,1,0.1] width:50 align:#left fieldwidth:65 enabled:true scale:0.0001
@@ -149,50 +159,30 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 			mvroughnessTexture.enabled = s
 		)	
 		
-		on mname selected i do
+		on musenkdata changed s do 
 		(
-			usenkdata = 0
-			
-			format "You selected '%'!\n" mname.items[i]
-			if (mname.items[i] == "NK Data")then
-			(
-				--print "NkData selection works!!!!!!"
-				
-				f = getOpenFileName types:"NkData(*.nk)|*.nk" caption:"Open A NK Data File:" --\ 
-				--filename:"c:/test/test.nk"
-				if (f != undefined)then
-				(
-					
-					
-					nkdatapath = f
-					lbl7.text =f as string
-					print f
-					usenkdata = 1
-					print usenkdata as string					
-					
-					temppath = (f)
-					print temppath
-					temppathfixed = replaceChar (temppath as string) "\\" "\\\\"
-					print temppathfixed
-					print "end found nk data"
-					nkdatapath = temppathfixed
-					print nkdatapathm
-				)
-				else
-				(
-					usenkdata = 1
-					nkdatapath = "No Nk file selected"
-					lbl7.text =nkdatapath as string
-				)
-			)
-			print usenkdata as string
-			
+			btnkdata.enabled = s
 		)
-				
 		
+		on btnkdata pressed do
+		
+		(
+			
+			f = getOpenFileName types:"NkData(*.nk)|*.nk" caption:"Open A NK Data File:"
+			if (f != undefined)then
+				(
+					r = fixWindowsPath f
+				
+				    btnkdata.text = r
+				    nkdatapath = r
+					btnkdata.text = nkdatapath
+				)
+		)
+
 		on params open do
 		(
 			mental_ray_Preferences.mrExtensionsActive = false
+			btnkdata.enabled = musenkdata.state
 			lbu.enabled = museanisotropy.state
 			lbv.enabled = museanisotropy.state
 			muroughness.enabled = museanisotropy.state
