@@ -171,8 +171,8 @@ global lux_main = "LuxMax Starting..."
 		)
 		rollout lux_Renderer "Renderer" rolledup:true
 		(
-			dropdownlist ddl_renderer "Renderer" items:#("sampler", "hybridsampler", "hybridsppm", "sppm")
-			
+			dropdownlist ddl_renderer "Renderer" items:#("sampler", "hybrid", "sppm")
+
 			function GetLuxRenderString =
 			(
 				str = stringstream ""
@@ -432,7 +432,7 @@ global lux_main = "LuxMax Starting..."
 			subrollout lx0 "" width:320 height:570 pos:[0,0]
 			dropdownlist ddl_camera "Camera"
 			button btn_image "Image" width:130 align:#center across:2
-			button btn_Animation "Animation" width:120 align:#center enabled:false
+			button btn_Animation "Animation" width:120 align:#center enabled:true
 			
 			on lux_main open do
 			(
@@ -472,9 +472,49 @@ global lux_main = "LuxMax Starting..."
 					)
 				)
 			)
+			
 			on btn_Animation pressed do
 			(
-
+				-- Save setting
+				SaveSettings()
+				success = false
+				
+				if (ddl_camera.selected == undefined) then
+				(
+					for t = animationrange.start to animationrange.end do
+					(
+						slidertime = t
+						success = luxWriteLxs undefined
+						lxsFilename = stringStream ""
+						format "\"%/%_%.lxs\"" (getLuxValue "btn_outputpath") (getSceneName())  (GetFrame()) to:lxsFilename
+							
+						if (getLuxValue "ddl_exttype" == 1) then
+						(
+							
+							if (((getLuxValue "chk_run")) == true and success == true) then
+								doscommand ((getLuxValue "btn_path") + "\\luxconsole.exe " + lxsFilename as string)
+						)
+					)
+				)
+				else
+				(
+					for t = animationrange.start to animationrange.end do
+					(
+						slidertime = t
+						success = luxWriteLxs (GetNodeByName ddl_camera.selected)
+						
+						lxsFilename = stringStream ""
+						format "\"%/%_%.lxs\"" (getLuxValue "btn_outputpath") (getSceneName())  (GetFrame()) to:lxsFilename
+							
+						if (getLuxValue "ddl_exttype" == 1) then
+						(
+							
+							if (((getLuxValue "chk_run")) == true and success == true) then
+								doscommand ((getLuxValue "btn_path") + "\\luxconsole.exe " + lxsFilename as string)
+						)
+				
+					)
+				)
 			)
 		)
 	)

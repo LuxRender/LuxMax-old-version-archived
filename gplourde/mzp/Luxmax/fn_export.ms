@@ -26,7 +26,8 @@
 		
 		(
 			format "# Main Scene File\r\n" to:str
-
+			luxWriteEmptyLine str
+			
 			-- Camera
 			writeCamera p_camera str
 			

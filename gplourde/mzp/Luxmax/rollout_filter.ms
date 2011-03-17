@@ -133,5 +133,5 @@
 		on lux_Filter_box open do (GetControlParams(lux_Filter_box))
 	)
 	
-	FilltersRollouts = #(lux_Filter_triangle, lux_Filter_sinc, lux_Filter_mitchell, lux_Filter_gaussian, lux_Filter_box)
+	FilltersRollouts = #(lux_Filter_mitchell, lux_Filter_triangle, lux_Filter_sinc, lux_Filter_gaussian, lux_Filter_box)
 )

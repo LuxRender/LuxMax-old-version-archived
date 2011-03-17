@@ -108,14 +108,12 @@
 	)
 	rollout lux_SurfaceIntegrator_sppm "sppm"
 	(
-		dropdownlist lightstrategy "Light Strategy:" items:#("auto", "logpowerimp","allpowerimp","powerimp","importance","all","one")
-		dropdownlist lookupaccel "Look up accel:" items:#("hybridhashgrid","kdtree","hashgrid")
-		
-		spinner photonperpass "photonperpass:" type:#integer range:[0, 99999999, 1000000] fieldwidth:60
-		spinner maxeyedepth "maxeyedepth:" type:#integer range:[0, 2048, 16] fieldwidth:60
 		spinner maxphotondepth "maxphotondepth:" type:#integer range:[0, 2048, 16] fieldwidth:60
-		spinner malpha "alpha:" type:#float scale:0.05 range:[-9999, 9999, 0.7] fieldwidth:60
+		spinner maxeyedepth "maxeyedepth:" type:#integer range:[0, 2048, 16] fieldwidth:60
+		spinner photonperpass "photonperpass:" type:#integer range:[0, 99999999, 1000000] fieldwidth:60
 		spinner startradius "startradius:" type:#float scale:0.05 range:[-9999, 9999, 2] fieldwidth:60
+		spinner malpha "alpha:" type:#float scale:0.05 range:[-9999, 9999, 0.7] fieldwidth:60
+		dropdownlist lookupaccel "Look up accelerator:" items:#("hybridhashgrid","kdtree","hashgrid")
 		checkbox includeenvironment "include environment"
 		
 		function GetLuxRenderString =
@@ -127,7 +125,6 @@
 			luxWriteInteger "maxphotondepth" (getLuxValue "maxphotondepth") str
 			luxWriteFloat "alpha" (getLuxValue "malpha") str
 			luxWriteFloat "startradius" (getLuxValue "startradius") str
-			luxWriteString "lightstrategy" (GetLuxString "lightstrategy") str
 			luxWriteString "lookupaccel" (GetLuxString "lookupaccel") str
 			luxWriteBool "includeenvironment" (getLuxValue "includeenvironment") str
 			return (str as string)
@@ -136,5 +133,5 @@
 		on lux_SurfaceIntegrator_sppm open do (GetControlParams(lux_SurfaceIntegrator_sppm))
 	)
 	
-	SurfaceIntegratorsRollouts = #(lux_SurfaceIntegrator_Path, lux_SurfaceIntegrator_ExPhotonMap, lux_SurfaceIntegrator_bidirectional, lux_SurfaceIntegrator_sppm)
+	SurfaceIntegratorsRollouts = #(lux_SurfaceIntegrator_bidirectional, lux_SurfaceIntegrator_Path, lux_SurfaceIntegrator_ExPhotonMap, lux_SurfaceIntegrator_sppm)
 )

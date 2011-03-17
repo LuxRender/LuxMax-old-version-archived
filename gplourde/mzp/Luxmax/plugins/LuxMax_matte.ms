@@ -14,19 +14,13 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 		--// Bumpmap support
 		if (this.bumpmapTexture != undefined and this.useBumpmap == true) then
 		(
-			floatScale = LuxrenderFloatScale()
-			floatScale.name = (this.bumpmapTexture.name + "_scale")
-			floatScale.floattex1 = this.bumpmap
-			floatScale.maptex2 = this.bumpmapTexture
+			floatScale = (luxCreateScaleFloatMap this.bumpmapTexture this.bummap)
 			append texturemaps floatScale
 		)
 		
 		if (this.sigmaTexture != undefined) then
 		(
-			floatScale = LuxrenderFloatScale()
-			floatScale.name = (this.sigmaTexture.name + "_scale")
-			floatScale.floattex1 = this.sigma
-			floatScale.maptex2 = this.sigmaTexture
+			floatScale = (luxCreateScaleFloatMap this.sigmaTexture this.sigma)
 			append texturemaps floatScale
 		)
 		

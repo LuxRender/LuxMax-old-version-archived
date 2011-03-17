@@ -60,20 +60,24 @@ function writeCamera p_camera strout =
 		--// Generate camera look at
 		luxWriteLookAt m3_camera strout
 		
-		format "Camera \"perspective\"\n" to:strout
-		format "\t\"float fov\" [%]\n" (GetCameraFov (p_camera.fov)) to:strout
+		luxWriteName "Camera" "perspective" strout
+		luxWriteFloat "fov" (GetCameraFov (p_camera.fov)) strout
 	)
 	--// Try LuxRender Compatible camera
 	else if ((CheckLuxRenderCompat p_camera) == true) then
 	(
-		at time (slidertime.frame + 1)
+		if (p_camera.isanimated) then
 		(
-			luxWriteName "TransformBegin #" "" strout
-			luxWriteLookAt p_camera.transform strout
-			luxWriteName "CoordinateSystem" "CameraEndTransform" strout
-			luxWriteName "TransformEnd #" "" strout
+			at time (slidertime.frame + 1)
+			(
+				luxWriteName "TransformBegin #" "" strout
+				luxWriteName "Identity #" "" strout
+				luxWriteLookAt p_camera.transform strout
+				luxWriteName "CoordinateSystem" "CameraEndTransform" strout
+				luxWriteName "TransformEnd #" "" strout
+				luxWriteEmptyLine strout
+			)
 		)
-		
 		--// Generate camera look at
 		luxWriteLookAt m3_camera strout
 		
@@ -85,7 +89,7 @@ function writeCamera p_camera strout =
 		--// Generate camera look at
 		luxWriteLookAt m3_camera strout
 		
-		format "Camera \"perspective\"\n" to:strout
-		format "\t\"float fov\" [%]" (GetCameraFov (getViewFOV())) to:strout
+		luxWriteName "Camera" "perspective" strout
+		luxWriteFloat "fov" (GetCameraFov (getViewFOV())) strout
 	)
 )
