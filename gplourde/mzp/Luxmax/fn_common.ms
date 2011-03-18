@@ -208,14 +208,14 @@ function luxCreateScaleFloatMap inTexMap val =
 	return floatScale
 )
 --// write lux transform (matrix, time, stringstream)
-function luxWriteTransform tm t strout =
+function luxWriteTransform &tm t strout =
 (
-	at time t
+	at time (t as integer)
 	(
 		row1 = tm.row1
 		row2 = tm.row2
 		row3 = tm.row3
 		row4 = tm.row4
+		format "Transform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\r\n" row1.x row1.y row1.z row2.x row2.y row2.z row3.x row3.y row3.z (row4.x / 100.0) (row4.y / 100.0) (row4.z / 100.0)to:strout
 	)
-	format "Transform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\r\n" row1.x row1.y row1.z row2.x row2.y row2.z row3.x row3.y row3.z (row4.x / 100.0) (row4.y / 100.0) (row4.z / 100.0)to:strout
 )
