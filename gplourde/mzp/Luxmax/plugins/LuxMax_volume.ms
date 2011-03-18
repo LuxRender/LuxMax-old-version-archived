@@ -9,7 +9,7 @@ extends:dummy
 
 	parameters pblock rollout:params
 	(
-		ior type:#float ui:mior default:0
+		ior type:#float ui:mior default:1.00293
 		absorption type:#color ui:mabsorption default:white
 		absdepth type:#float ui:mdepth  default:1
 		absscale type:#float ui:mscale default:1
@@ -17,7 +17,7 @@ extends:dummy
 	rollout params "Volume Parameters"
 	(
 		dropdownlist mtype "Type:" items:#("clear")
-		spinner mior "ior:" range:[0.0, 25, 0] fieldwidth:65 align:#right
+		spinner mior "ior:" range:[0.0, 25, 0] scale:0.01 fieldwidth:65 align:#right
 		colorpicker mabsorption "Absoption:" color:white height:16 width:130 align:#right
 		spinner mdepth "Abs. at depth:" range:[0.00001, 9999999, 1] align:#right fieldwidth:65 
 		spinner mscale "Abs. scale:" range:[0.00001, 9999999, 1] align:#right fieldwidth:65 
