@@ -113,7 +113,7 @@ function export_lxo doMotionblur lxo =
 			--// Write material properties
 			else
 			(		
-				format "NamedMaterial \"%\"\n"iobj.material.name to:str
+				format "NamedMaterial \"%\"\n" iobj.material.name to:str
 				
 				_m = iobj.material
 				
@@ -139,9 +139,9 @@ function export_lxo doMotionblur lxo =
 				
 				luxWriteName "TransformBegin #" "" str
 				luxWriteName "Identity #" "" str
-				luxWriteTransform iobj.transform nextFrame str
+				luxWriteTransform &iobj.transform nextFrame str
 				luxWriteName "CoordinateSystem" (obj.name + "_motion_" + currentFrame as string) str
-				luxWriteName "TransformEnd #" str
+				luxWriteName "TransformEnd #" "" str
 				format "MotionInstance \"%\" % % \"%\" \n" obj.name 0.0 duration (obj.name + "_motion_" + currentFrame as string) to:str
 			)
 			else
