@@ -39,7 +39,7 @@ function luxWriteEmission objmaterial strout =
 	else
 		LuxWriteColor "L" objmaterial.emissionColor strout
 	
-	luxWriteFloat "power" objmaterial.power strout
+	luxWriteFloat "power" objmaterial.power strout 
 	luxWriteFloat "efficacy" objmaterial.efficacy strout
 	luxWriteFloat "gain" objmaterial.gain strout
 )

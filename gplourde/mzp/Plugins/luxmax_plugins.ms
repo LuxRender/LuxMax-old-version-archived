@@ -4,6 +4,7 @@
 try (fileIn "luxmax\\plugins\\LuxMax_imagemap.ms") catch (print "LuxMax Error: Failed to load LuxMax_imagemap")
 try (fileIn "luxmax\\plugins\\LuxMax_colorscale.ms") catch (print "LuxMax Error: Failed to load LuxMax_colorscale")
 try (fileIn "luxmax\\plugins\\LuxMax_floatscale.ms") catch (print "LuxMax Error: Failed to load LuxMax_floatscale")
+try (fileIn "luxmax\\plugins\\LuxMax_blackbody.ms") catch (print "LuxMax Error: Failed to load LuxMax_blackbody")
 
 --// fileIn Materials
 try (fileIn "luxmax\\plugins\\LuxMax_matte.ms") catch (print "LuxMax Error: Failed to load LuxMax_matte")

@@ -6,7 +6,6 @@ parameters common_parameters rollout:common
 	useEmission type:#boolean ui:museEmission
 	emissionTexture type:#textureMap ui:memissionTexture
 	emissionColor type:#color ui:memissionColor default:white
-	temperature type:#float default:6500 ui:mTemp
 	power type:#float default:100 ui:mPower
 	efficacy type:#float default:17 ui:mEfficacy
 	gain type:#float default:1 ui:mGain
@@ -57,10 +56,7 @@ rollout common "Common Parameters"
 		label lb_emissionColor "Color . . . . . . . . . ." align:#left across:3
 		colorpicker memissionColor width:85 align:#left height:16
 		mapbutton memissionTexture "T" width:100 height:16 align:#left
-		
-		label lblmTemp  "Temp. (Kelvin) . . . . . . . . . . . . . . . . . . . . ." across:2 align:#left
-		spinner mTemp " " range:[1000,10000,6500] fieldwidth:65 align:#right
-		
+
 		label lblmPower  "Power (W) . . . . . . . . . . . . . . . . . . . . . . ." across:2 align:#left
 		spinner mPower " " range:[0,10000,100] fieldwidth:65 align:#right
 		
