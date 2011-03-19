@@ -14,7 +14,7 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 		--// Bumpmap support
 		if (this.bumpmapTexture != undefined and this.useBumpmap == true) then
 		(
-			floatScale = (luxCreateScaleFloatMap this.bumpmapTexture this.bummap)
+			floatScale = (luxCreateScaleFloatMap this.bumpmapTexture this.bumpmap)
 			append texturemaps floatScale
 		)
 		
