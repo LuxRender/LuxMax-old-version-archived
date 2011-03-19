@@ -2,20 +2,20 @@
 function luxExportPlyProc triobj strname =
 (
 	if (GetLuxValue "chk_scriptply") then
-	(
+	( 
 		 --// Force exort with script exporter
-		ply_export_script triobj strname 100
+		ply_export_script triobj strname (luxScaleUnit())
 	)
 	else
 	(
 		--// If the c++ expoter is present, use it
 		if (ply_export != undefined) then
 		(
-			try (ply_export triobj strname false 100)
-			catch (ply_export_script triobj strname 100) --// Some mesh with weird normals do not export for some reason so fall back to the script export for those
+			try (ply_export triobj strname false (luxScaleUnit()))
+			catch (ply_export_script triobj strname (luxScaleUnit())) --// Some mesh with weird normals do not export for some reason so fall back to the script export for those
 		)
 		--// No c++ exporter so use the script
-		else (ply_export_script triobj strname 100)
+		else (ply_export_script triobj strname (luxScaleUnit()))
 	)
 )
 
@@ -113,7 +113,7 @@ function export_lxo doMotionblur lxo =
 			--// Write material properties
 			else
 			(		
-				format "NamedMaterial \"%\"\n" iobj.material.name to:str
+				format "NamedMaterial \"%\"\n"iobj.material.name to:str
 				
 				_m = iobj.material
 				
