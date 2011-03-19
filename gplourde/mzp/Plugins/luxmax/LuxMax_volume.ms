@@ -17,9 +17,9 @@ extends:dummy
 	rollout params "Volume Parameters"
 	(
 		dropdownlist mtype "Type:" items:#("clear")
-		spinner mior "ior:" range:[0.0, 25, 0] scale:0.01 fieldwidth:65 align:#right
+		spinner mior "ior:" range:[0.0, 25, 1.00293] scale:0.01 fieldwidth:65 align:#right
 		colorpicker mabsorption "Absoption:" color:white height:16 width:130 align:#right
-		spinner mdepth "Abs. at depth:" range:[0.00001, 9999999, 1] align:#right fieldwidth:65 
+		spinner mdepth "Abs. at depth:" type:#worldunits range:[0.00001, 9999999, 1] align:#right fieldwidth:65 
 		spinner mscale "Abs. scale:" range:[0.00001, 9999999, 1] align:#right fieldwidth:65 
 		
 	)

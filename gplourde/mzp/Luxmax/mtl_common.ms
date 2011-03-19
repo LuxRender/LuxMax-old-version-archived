@@ -18,7 +18,6 @@ rollout common "Common Parameters"
 (
 	fn volumeFilter obj = (
 	(
-		print obj
 		classof obj) as string == "LuxRenderVolume"
 	)
 		

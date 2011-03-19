@@ -16,7 +16,7 @@ fn lux_export_mrSkyPortal obj =
 	r3 = obj.transform.row3
 	r4 = obj.transform.row4
 			
-	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / 100.0) (r4.y / 100.0) (r4.z / 100.0)to:str
+	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / luxScaleUnit()) (r4.y / luxScaleUnit()) (r4.z / luxScaleUnit())to:str
 	/*
 	format "\tLightGroup \"default\"\n" to:str
 	format "\tTexture \"area:light\" \"color\" \"blackbody\" \"float temperature\" [6500.0]\n" to:str
@@ -31,7 +31,7 @@ fn lux_export_mrSkyPortal obj =
 	format "\t\"point P\" [" to:str
 	for p in points do
 	(
-		format "% % % " (p.x / 100.0) (p.y / 100.0) (p.z / 100.0) to:str
+		format "% % % " (p.x / luxScaleUnit()) (p.y / luxScaleUnit()) (p.z / luxScaleUnit()) to:str
 	)
 	format "]\n" to:str
 	--format "AttributeEnd\n" to:str
@@ -54,7 +54,7 @@ fn lux_export_spot obj =
 	
 	format "AttributeBegin # %\n" obj.name to:str
 	
-	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / 100.0) (r4.y / 100.0) (r4.z / 100.0)to:str
+	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / luxScaleUnit()) (r4.y / luxScaleUnit()) (r4.z / luxScaleUnit())to:str
 	
 	format "LightGroup \"%\"\n" obj.name to:str
 	format "LightSource \"spot\"\n" to:str
@@ -82,7 +82,7 @@ fn lux_export_direct obj =
 	
 	format "AttributeBegin # %\n" obj.name to:str
 	
-	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / 100.0) (r4.y / 100.0) (r4.z / 100.0)to:str
+	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / luxScaleUnit()) (r4.y / luxScaleUnit()) (r4.z / luxScaleUnit())to:str
 	
 	format "LightGroup \"%\"\n" obj.name to:str
 	format "LightSource \"distant\"\n" to:str
@@ -107,7 +107,7 @@ fn lux_export_omni obj =
 	
 	format "AttributeBegin # %\n" obj.name to:str
 	
-	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / 100.0) (r4.y / 100.0) (r4.z / 100.0)to:str
+	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x / luxScaleUnit()) (r4.y / luxScaleUnit()) (r4.z / luxScaleUnit())to:str
 	
 	format "LightGroup \"%\"\n" obj.name to:str
 	format "LightSource \"point\"\n" to:str
