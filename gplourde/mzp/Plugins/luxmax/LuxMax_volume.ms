@@ -9,19 +9,67 @@ extends:dummy
 
 	parameters pblock rollout:params
 	(
+		type type:#integer default:1 ui:mtype
 		ior type:#float ui:mior default:1.00293
 		absorption type:#color ui:mabsorption default:white
 		absdepth type:#float ui:mdepth  default:1
 		absscale type:#float ui:mscale default:1
+		
+		scattering type:#color ui:mscattering default:black
+		scatteringscale type:#float ui:mscatteringscale default:1.0
+		sasymmetryR type:#float ui:masymmetryR default:0
+		sasymmetryG type:#float ui:masymmetryG default:0
+		sasymmetryB type:#float ui:masymmetryB default:0
+
 	)
+		
 	rollout params "Volume Parameters"
 	(
-		dropdownlist mtype "Type:" items:#("clear")
-		spinner mior "ior:" range:[0.0, 25, 1.00293] scale:0.01 fieldwidth:65 align:#right
-		colorpicker mabsorption "Absoption:" color:white height:16 width:130 align:#right
-		spinner mdepth "Abs. at depth:" type:#worldunits range:[0.00001, 9999999, 1] align:#right fieldwidth:65 
-		spinner mscale "Abs. scale:" range:[0.00001, 9999999, 1] align:#right fieldwidth:65 
+		dropdownlist mtype "Type:" items:#("clear", "homogeneous")
+		spinner mior "ior:" range:[0.0, 25, 1.00293] scale:0.01 fieldwidth:50 align:#right
+		colorpicker mabsorption "Absoption:" color:white height:16 width:115 align:#right
+		spinner mdepth "Abs. at depth:" type:#worldunits range:[0.00001, 9999999, 1] align:#right fieldwidth:50 
+		spinner mscale "Abs. scale:" range:[0.00001, 9999999, 1] align:#right fieldwidth:50
 		
+		colorpicker mscattering "Scattering:" color:black height:16 width:115 align:#right
+		spinner mscatteringscale "Scattering scale:" range:[0.00000, 9999999, 1] align:#right fieldwidth:50
+		
+		spinner masymmetryR "Asymmetry R:" range:[-1, 1, 0] align:#right fieldwidth:50
+		spinner masymmetryG "Asymmetry G:" range:[-1, 1, 0] align:#right fieldwidth:50
+		spinner masymmetryB "Asymmetry B:" range:[-1, 1, 0] align:#right fieldwidth:50
+		
+		function EnableScatter val =
+		(
+			mscattering.visible = val
+			mscatteringscale.visible = val
+			masymmetryR.visible = val
+			masymmetryG.visible = val
+			masymmetryB.visible = val
+		)
+		
+		on params open do
+		(
+			if (type == 1) then
+			(
+				EnableScatter false
+			)
+			else
+			(
+				EnableScatter true
+			)
+		)
+		
+		on mtype selected val do
+		(
+			if (val == 1) then
+			(
+				EnableScatter false
+			)
+			else
+			(
+				EnableScatter true
+			)
+		)
 	)
 	
 	on getDisplayMesh do

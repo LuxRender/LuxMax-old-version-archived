@@ -49,15 +49,28 @@ function export_volumes =
 	(
 		if (classof obj == LuxRenderVolume) then
 		(
+			types = #("clear", "homogeneous")
+			
 			_absorption = #(0, 0, 0)
 			
 			_absorption[1] = (-log(amax #(obj.absorption.r / 255, 1e-30) )/((obj.absdepth / luxScaleUnit()) * obj.absscale) * 1)
 			_absorption[2] = (-log(amax #(obj.absorption.g / 255, 1e-30) )/((obj.absdepth / luxScaleUnit()) * obj.absscale) * 1)
 			_absorption[3] = (-log(amax #(obj.absorption.b / 255, 1e-30) )/((obj.absdepth / luxScaleUnit()) * obj.absscale) * 1)
 			
-			format "MakeNamedVolume \"%\" \"clear\"\r\n" obj.name to:str
+			format "MakeNamedVolume \"%\" \"%\"\r\n" obj.name types[obj.type] to:str
 			luxWriteFloat "fresnel" obj.ior str
-			format "\t\"color absorption\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
+			
+			if (obj.type == 1) then
+			(
+				format "\t\"color absorption\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
+			)
+			else
+			(				
+				format "\t\"color g\" [% % %]\r\n" obj.sasymmetryR obj.sasymmetryG obj.sasymmetryB to:str
+				format "\t\"color sigma_a\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
+				luxWriteColor "sigma_s" (obj.scattering * obj.scatteringscale) str
+			)
+			
 			format "\r\n" to:str
 		)
 	)
@@ -88,7 +101,7 @@ function export_lxm lxm =
 	
 	for _m in materials do
 	(
-		try (format "%\r\n" (_m.GetLuxRenderString()) to:str) catch (print (getCurrentException()))
+		try (format "%\r\n" (_m.GetLuxRenderString()) to:str) catch ()
 	)
 	
 	f = dotNetObject "System.IO.StreamWriter" lxm
