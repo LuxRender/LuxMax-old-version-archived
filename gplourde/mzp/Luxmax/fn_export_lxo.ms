@@ -35,7 +35,7 @@ function luxWriteEmission objmaterial strout =
 	luxWriteName "AreaLightSource" "area" strout
 	
 	if (objmaterial.emissionTexture != undefined) then
-		format "\t\t\"texture L\" [\"%\"]\n" objmaterial.emissionTexture.name to:strout
+		format "\t\"texture L\" [\"%\"]\n" objmaterial.emissionTexture.name to:strout
 	else
 		LuxWriteColor "L" objmaterial.emissionColor strout
 	
@@ -47,6 +47,9 @@ function luxWriteEmission objmaterial strout =
 --// Main object export function
 function export_lxo doMotionblur lxo =
 (
+	
+	subdivscheme = #("none", "microdisplacement", "loop")
+	
 	--// Only export tObjectInstance with defaul sampler, sppm and hybrid do not support it yet
 	supportInstances = true
 	
@@ -90,6 +93,21 @@ function export_lxo doMotionblur lxo =
 		(
 			format "ObjectBegin  \"%\"\n" obj.name to:str
 			format "Shape \"plymesh\" \"string filename\" [\"%\"]\n" n to:str
+			
+			for _mod in obj.modifiers do
+			(				
+				if (classof _mod == luxRenderSubdivision) then
+				(
+					if (_mod.subdivscheme == 1) then continue
+					
+					luxWriteString "subdivscheme" (subdivscheme[_mod.subdivscheme]) str
+					luxWriteInteger "nsubdivlevels" _mod.nsubdivlevels str
+					luxWriteBool "dmnormalsmooth" _mod.dmnormalsmooth str
+					luxWriteBool "dmsharpboundary" _mod.dmnormalsmooth str
+					exit
+				)
+			)
+			
 			format "ObjectEnd # \"%\"\n" obj.name to:str
 			luxWriteEmptyLine str
 		)
