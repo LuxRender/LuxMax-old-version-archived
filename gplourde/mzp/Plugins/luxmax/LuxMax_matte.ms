@@ -18,6 +18,12 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 			append texturemaps floatScale
 		)
 		
+		if (this.displacementTexture != undefined and this.useDisplacement == true) then
+		(
+			floatScale = (luxCreateScaleFloatMap this.displacementTexture this.displacement)
+			append texturemaps floatScale
+		)
+		
 		if (this.sigmaTexture != undefined) then
 		(
 			floatScale = (luxCreateScaleFloatMap this.sigmaTexture this.sigma)
@@ -45,6 +51,9 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 
 		if (this.bumpmapTexture != undefined and this.useBumpmap == true)then
 			format "\t\"texture bumpmap\" [\"%\"]\r\n" (this.bumpmapTexture.name + "_scale") to:str
+
+		if (this.displacementTexture != undefined and this.useDisplacement == true)then
+			format "\t\"texture dispmap\" [\"%\"]\r\n" (this.displacementTexture.name + "_scale") to:str
 		
 		luxWriteString "type" "matte" str
 		

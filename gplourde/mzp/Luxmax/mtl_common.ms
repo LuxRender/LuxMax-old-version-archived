@@ -3,6 +3,11 @@ parameters common_parameters rollout:common
 	useBumpmap type:#boolean ui:museBumpmap
 	bumpmap type:#float ui:mbumpmap
 	bumpmapTexture type:#textureMap ui:mbumpmapTexture
+	
+	useDisplacement type:#boolean ui:museDisplacement
+	displacement type:#float ui:mdisplacement
+	displacementTexture type:#textureMap ui:mdisplacementTexture
+	
 	useEmission type:#boolean ui:museEmission
 	emissionTexture type:#textureMap ui:memissionTexture
 	emissionColor type:#color ui:memissionColor default:white
@@ -37,12 +42,24 @@ rollout common "Common Parameters"
 		mapbutton mbumpmapTexture "T" width:110 height:16 align:#right
 	)
 	
+	group "Displacement"
+	(
+		checkbox museDisplacement "Displacement . . . " across:3
+		spinner mdisplacement " " scale:0.01 range:[0,1,0] width:50 align:#left fieldwidth:65
+		mapbutton mdisplacementTexture "T" width:110 height:16 align:#right
+	)
+	
 	on museBumpmap changed s do
 	(
 		mbumpmap.enabled = s
 		mbumpmapTexture.enabled = s
 	)
-
+	on museDisplacement changed s do
+	(
+		mdisplacement.enabled = s
+		mdisplacementTexture.enabled = s
+	)
+	
 	group "Emission"
 	(
 		-- Emission paramters
@@ -75,6 +92,10 @@ rollout common "Common Parameters"
 	(
 		mbumpmap.enabled = museBumpmap.state
 		mbumpmapTexture.enabled = museBumpmap.state
+		
+		mdisplacement.enabled = museDisplacement.state
+		mdisplacementTexture.enabled = museDisplacement.state
+		
 		memissionTexture.enabled = museEmission.state
 	)
 )
