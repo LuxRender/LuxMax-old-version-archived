@@ -6,6 +6,10 @@ parameters common_parameters rollout:common
 	
 	subdivscheme type:#integer ui:msubdivscheme default:1
 	nsubdivlevels type:#integer ui:mnsubdivlevels default:1
+	
+	dmscale type:#float ui:mdmscale default:1
+	dmoffset type:#float ui:mdmoffset default:0
+	
 	dmnormalsmooth type:#boolean ui:mdmnormalsmooth default:false
 	dmsharpboundary type:#boolean ui:mdmsharpboundary default:false
 	
@@ -55,6 +59,10 @@ rollout common "Common Parameters"
 		
 		dropdownlist msubdivscheme "Subdivision Scheme" items:#("none", "microdisplacement", "loop")
 		spinner mnsubdivlevels "Level:" type:#integer range:[0,1000,1] fieldwidth:65
+		
+		spinner mdmscale "Scale:" type:#float range:[-1000,1000,0] fieldwidth:65
+		spinner mdmoffset "Offset:" type:#float range:[-1000,1000,0] fieldwidth:65
+		
 		checkbox mdmnormalsmooth "Normal Smoothing"
 		checkbox mdmsharpboundary "Sharpen Bounds"
 	)
