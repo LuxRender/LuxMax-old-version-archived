@@ -257,7 +257,7 @@ global lux_main = "LuxMax Starting..."
 		)
 		rollout lux_VolumeIntegrator "Volume Integrator" rolledup:true
 		(
-			dropdownlist ddl_volume "Volume Integrator" items:#("single", "emission")
+			dropdownlist ddl_volume "Volume Integrator" items:#("multi", "single", "emission")
 			spinner stepsize "Step Size:" range:[0, 100, 1] type:#float fieldwidth:50
 			
 			function GetLuxRenderString =
