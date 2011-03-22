@@ -4,6 +4,11 @@ parameters common_parameters rollout:common
 	bumpmap type:#float ui:mbumpmap
 	bumpmapTexture type:#textureMap ui:mbumpmapTexture
 	
+	subdivscheme type:#integer ui:msubdivscheme default:1
+	nsubdivlevels type:#integer ui:mnsubdivlevels default:1
+	dmnormalsmooth type:#boolean ui:mdmnormalsmooth default:false
+	dmsharpboundary type:#boolean ui:mdmsharpboundary default:false
+	
 	useDisplacement type:#boolean ui:museDisplacement
 	displacement type:#float ui:mdisplacement
 	displacementTexture type:#textureMap ui:mdisplacementTexture
@@ -44,9 +49,14 @@ rollout common "Common Parameters"
 	
 	group "Displacement"
 	(
-		checkbox museDisplacement "Displacement . . . " across:3
+		checkbox museDisplacement "Displacement . . " across:3
 		spinner mdisplacement " " scale:0.01 range:[0,1,0] width:50 align:#left fieldwidth:65
 		mapbutton mdisplacementTexture "T" width:110 height:16 align:#right
+		
+		dropdownlist msubdivscheme "Subdivision Scheme" items:#("none", "microdisplacement", "loop")
+		spinner mnsubdivlevels "Level:" type:#integer range:[0,1000,1] fieldwidth:65
+		checkbox mdmnormalsmooth "Normal Smoothing"
+		checkbox mdmsharpboundary "Sharpen Bounds"
 	)
 	
 	on museBumpmap changed s do
