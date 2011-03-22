@@ -58,6 +58,10 @@ function luxWriteSubdivision objmaterial strout =
 		(			
 			luxWriteString "subdivscheme" (subdivscheme[objmaterial.subdivscheme]) strout
 			luxWriteInteger "nsubdivlevels" objmaterial.nsubdivlevels strout
+			
+			luxWriteFloat "dmscale" objmaterial.dmscale strout
+			luxWriteFloat "dmoffset" objmaterial.dmoffset strout
+			
 			luxWriteBool "dmnormalsmooth" objmaterial.dmnormalsmooth strout
 			luxWriteBool "dmsharpboundary" objmaterial.dmnormalsmooth strout
 		)
