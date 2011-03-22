@@ -44,12 +44,29 @@ function luxWriteEmission objmaterial strout =
 	luxWriteFloat "gain" objmaterial.gain strout
 )
 
+--// Write emission properties of given material
+function luxWriteSubdivision objmaterial strout =
+(
+	subdivscheme = #("none", "microdisplacement", "loop")
+	
+	try
+	(
+		if (objmaterial.displacementTexture != undefined and objmaterial.useDisplacement == true)then
+			format "\t\"string displacementmap\" [\"%\"]\r\n" (objmaterial.displacementTexture.name + "_scale") to:strout
+		
+		if (objmaterial.subdivscheme > 1) then
+		(			
+			luxWriteString "subdivscheme" (subdivscheme[objmaterial.subdivscheme]) strout
+			luxWriteInteger "nsubdivlevels" objmaterial.nsubdivlevels strout
+			luxWriteBool "dmnormalsmooth" objmaterial.dmnormalsmooth strout
+			luxWriteBool "dmsharpboundary" objmaterial.dmnormalsmooth strout
+		)
+	) catch ()
+)
+
 --// Main object export function
 function export_lxo doMotionblur lxo =
 (
-	
-	subdivscheme = #("none", "microdisplacement", "loop")
-	
 	--// Only export tObjectInstance with defaul sampler, sppm and hybrid do not support it yet
 	supportInstances = true
 	
@@ -93,21 +110,7 @@ function export_lxo doMotionblur lxo =
 		(
 			format "ObjectBegin  \"%\"\n" obj.name to:str
 			format "Shape \"plymesh\" \"string filename\" [\"%\"]\n" n to:str
-			
-			for _mod in obj.modifiers do
-			(				
-				if (classof _mod == luxRenderSubdivision) then
-				(
-					if (_mod.subdivscheme == 1) then continue
-					
-					luxWriteString "subdivscheme" (subdivscheme[_mod.subdivscheme]) str
-					luxWriteInteger "nsubdivlevels" _mod.nsubdivlevels str
-					luxWriteBool "dmnormalsmooth" _mod.dmnormalsmooth str
-					luxWriteBool "dmsharpboundary" _mod.dmnormalsmooth str
-					exit
-				)
-			)
-			
+			luxWriteSubdivision obj.material str
 			format "ObjectEnd # \"%\"\n" obj.name to:str
 			luxWriteEmptyLine str
 		)
@@ -164,9 +167,12 @@ function export_lxo doMotionblur lxo =
 			)
 			else
 			(
-				--// Only sempler renderer support ObjectInstance, use Shapes for hybrid and sppm
+				--// Only sampler renderer support ObjectInstance, use Shapes for hybrid and sppm
 				if ((GetLuxValue "ddl_renderer") > 1 or emissive == true) then
+				(
 					format "Shape \"plymesh\" \"string filename\" [\"%\"]\n" n to:str
+					--luxWriteSubdivision obj.material str
+				)
 				else
 					luxWriteName "ObjectInstance" obj.name str
 			)
