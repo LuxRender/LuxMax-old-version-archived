@@ -68,7 +68,7 @@
 	rollout lux_SurfaceIntegrator_Path "path"
 	(
 		dropdownlist lightstrategy "Light Strategy:" items:#("auto", "logpowerimp","allpowerimp","powerimp","importance","all","one")
-		spinner maxdepth "Max. depth" type:#integer range:[-9999, 9999, 8] fieldwidth:50
+		spinner maxdepth "Max. depth" type:#integer range:[-9999, 9999, 16] fieldwidth:50
 		dropdownlist rrstrategy "RR strategy" items:#("efficiency", "probability", "none")
 		spinner rrcontinueprob "RR continue probability:" range:[-9999, 9999, 0.65] type:#float fieldwidth:50
 		checkbox includeenvironment "include environment"
