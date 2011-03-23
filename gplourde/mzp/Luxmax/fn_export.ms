@@ -56,7 +56,8 @@
 			
 			( --// Write Light sources
 				--// Use environment map if available
-				if (environmentMap != undefined and environmentMap.fileName != undefined) then
+				
+				if (useEnvironmentMap == true and environmentMap != undefined and classof environmentMap == Bitmaptexture and environmentMap.fileName != undefined) then
 				(
 					format "# Enviromentmap\r\n" to:str
 					format "AttributeBegin\r\n" to:str
@@ -64,10 +65,9 @@
 					format "Scale 1 1 1\r\n" to:str
 					format "LightGroup \"environment\"\r\n" to:str 
 					format "LightSource \"infinite\"\r\n" to:str
-					format "\"string mapping\" [\"angular\"]\r\n" to:str 
-					format "\"string mapname\" [\"%\"]\r\n" (fixWindowsPath environmentmap.filename) to:str
-					format "\"float gamma\" [1.0]\r\n" to:str
-					format "\"float envgain\" [1.0]\r\n" to:str
+					format "\t\"string mapping\" [\"latlong\"]\r\n" to:str 
+					format "\t\"string mapname\" [\"%\"]\r\n" (fixWindowsPath environmentmap.filename) to:str
+					luxWriteFloat "importance" 1.0 str
 					format "AttributeEnd\r\n\r\n" to:str
 					numlightsource += 1
 				)
