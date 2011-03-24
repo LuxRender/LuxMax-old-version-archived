@@ -54,6 +54,9 @@
 			
 			format "\r\nWorldBegin\r\n\r\n" to:str
 			
+			format "Include \"%\"\r\n" (getSceneName() + "/" + GetFrame() + "/" + "LuxRender-Materials.lxm") to:str
+			format "Include \"%\"\r\n\r\n" (getSceneName() + "/" + GetFrame() + "/" + "LuxRender-Geometry.lxo") to:str
+				
 			( --// Write Light sources
 				--// Use environment map if available
 				
@@ -86,6 +89,8 @@
 						miAreaLight:				(format "%\r\n" (lux_export_spot lt) to:str)
 						LuxSky:						(format "%\r\n" (lux_export_luxsky lt) to:str)
 						LuxSun:						(format "%\r\n" (lux_export_luxsun lt) to:str)
+						LuxDistant:					(format "%\r\n" (lux_export_luxdistant lt) to:str)
+						LuxInfinite:					(format "%\r\n" (lux_export_luxinfinite lt) to:str)
 					)
 				)
 				
@@ -99,10 +104,7 @@
 					format "AttributeEnd # default\r\n\r\n" to:str
 				)
 			)
-			
-			format "Include \"%\"\r\n" (getSceneName() + "/" + GetFrame() + "/" + "LuxRender-Materials.lxm") to:str
-			format "Include \"%\"\r\n" (getSceneName() + "/" + GetFrame() + "/" + "LuxRender-Geometry.lxo") to:str
-			
+						
 			format "\r\nWorldEnd" to:str
 			
 			if (GetLuxValue "chk_lxs") then
