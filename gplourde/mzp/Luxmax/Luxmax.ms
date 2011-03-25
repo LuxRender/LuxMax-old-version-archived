@@ -427,12 +427,16 @@ global lux_main = "LuxMax Starting..."
 				if ((GetLuxValue "btn_outputpath") != undefined) do btn_outputpath.Text = (GetLuxValue "btn_outputpath")
 			)
 		)
-		rollout lux_main "LuxRender Parameters"
+		
+		
+		rollout lux_main "LuxRender Parameters" width:224 height:672
 		(
-			subrollout lx0 "" width:320 height:570 pos:[0,0]
-			dropdownlist ddl_camera "Camera"
-			button btn_image "Image" width:130 align:#center across:2
-			button btn_Animation "Animation" width:120 align:#center enabled:true
+			subRollout lx0 "" pos:[0,0] width:320 height:570
+			dropdownList ddl_camera "Camera" pos:[13,575] width:136 height:40
+			button btn_image "Image" pos:[8,616] width:88 height:21 across:2
+			button btn_Animation "Animation" pos:[104,616] width:88 height:21 enabled:true
+			button btn_cam_refresh "Refresh" pos:[152,592] width:64 height:24
+			
 			
 			on lux_main open do
 			(
@@ -472,7 +476,6 @@ global lux_main = "LuxMax Starting..."
 					)
 				)
 			)
-			
 			on btn_Animation pressed do
 			(
 				-- Save setting
@@ -510,11 +513,19 @@ global lux_main = "LuxMax Starting..."
 						(
 							
 							if (((getLuxValue "chk_run")) == true and success == true) then
-								doscommand ((getLuxValue "btn_path") + "\\luxconsole.exe " + lxsFilename as string)
+							doscommand ((getLuxValue "btn_path") + "\\luxconsole.exe " + lxsFilename as string)
 						)
-				
 					)
 				)
+			)
+			on btn_cam_refresh pressed do
+			(
+				items = #()
+				for obj in cameras do
+				(
+					if (classof obj != Targetobject) then (append items obj.name)
+				)
+				ddl_camera.items = items
 			)
 		)
 	)
