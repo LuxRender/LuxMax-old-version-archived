@@ -73,7 +73,7 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		label lb_filename "Bitmap:" pos:[13,7] width:35 height:13
 		button m_filename "" pos:[13,25] width:211 height:21
 		
-		dropdownList mtype "Filter type:" pos:[13,51] width:140 height:40 items:#("float", "color") across:2
+		dropdownList mtype "Filter type:" pos:[13,51] width:70 height:40 items:#("float", "color") across:2
 		dropdownList m_wrap "Wrap:" pos:[81,51] width:140 height:40 items:#("Repeat", "Black", "white", "Clamp")
 		dropdownList mfiltertype "Filter type:" pos:[13,96] width:140 height:40 items:#("bilinear", "nearest", "mipmap_ewa", "mipmap_trilinear")
 		
@@ -85,8 +85,6 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		spinner mgamma "" pos:[72,183] width:77 height:16 range:[0,6,2.2] type:#float fieldwidth:65
 		label lbmaxanisotropy "Max. Anisotropy . . . . . . . . . . . . . . . . . . . . " pos:[13,204] width:198 height:13 across:2
 		spinner mmaxanisotropy "" pos:[72,204] width:77 height:16 range:[-999999,999999,8] type:#float fieldwidth:65
-		
-		
 		button btn2 "Show bitmap" pos:[232,24] width:80 height:16
 		
 		on params open do
