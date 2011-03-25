@@ -4,6 +4,13 @@ function fixWindowsPath str =
 	for i = 1 to str.count do (if (str[i] == "\\") then str[i] = "/")
 	return str
 )
+
+function fixWindowsPathReverse str =
+(
+	for i = 1 to str.count do (if (str[i] == "/") then str[i] = "\\")
+	return str
+)
+
 --// change , for .
 function FormatFloat n =
 (

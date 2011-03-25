@@ -68,24 +68,35 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		gamma type:#float ui:mgamma default:2.2
 		maxanisotropy type:#float ui:mmaxanisotropy default:8
 	)
-	rollout params "ImageMap Parameters"
+	rollout params "ImageMap Parameters" width:328 height:280
 	(
-		label lb_filename "Bitmap:" align:#left
-		button m_filename "" width:300 align:#left
+		label lb_filename "Bitmap:" pos:[13,7] width:35 height:13
+		button m_filename "" pos:[13,25] width:211 height:21
 		
-		dropdownlist mtype "Filter type:" items:#("float", "color") width:140 align:#left across:2
-		dropdownlist m_wrap "Wrap:" items:#("Repeat", "Black", "white", "Clamp") width:140 align:#left
-		dropdownlist mfiltertype "Filter type:" items:#("bilinear", "nearest", "mipmap_ewa", "mipmap_trilinear") width:140 align:#left
+		dropdownList mtype "Filter type:" pos:[13,51] width:140 height:40 items:#("float", "color") across:2
+		dropdownList m_wrap "Wrap:" pos:[81,51] width:140 height:40 items:#("Repeat", "Black", "white", "Clamp")
+		dropdownList mfiltertype "Filter type:" pos:[13,96] width:140 height:40 items:#("bilinear", "nearest", "mipmap_ewa", "mipmap_trilinear")
 		
-		label lbdiscardmipmaps "Discard mipmaps bellow . . . . . . . . . . . . . . ." across:2 align:#left
-		spinner mdiscardmipmaps "" type:#integer range:[0,999999,0] fieldwidth:65
-		label lbGain "Gain . . . . . . . . . . . . . . . . . . . . . . . . . . . ." across:2 align:#left
-		spinner mgain "" type:#float range:[0,10,1] fieldwidth:65
-		label lbgamma "Gamma . . . . . . . . . . . . . . . . . . . . . . . . . ." across:2 align:#left
-		spinner mgamma "" type:#float range:[0,6,2.2] fieldwidth:65
-		label lbmaxanisotropy "Max. Anisotropy . . . . . . . . . . . . . . . . . . . . " across:2 align:#left
-		spinner mmaxanisotropy "" type:#float range:[-999999,999999,8] fieldwidth:65
+		label lbdiscardmipmaps "Discard mipmaps bellow . . . . . . . . . . . . . . ." pos:[13,141] width:203 height:13 across:2
+		spinner mdiscardmipmaps "" pos:[72,141] width:77 height:16 range:[0,999999,0] type:#integer fieldwidth:65
+		label lbGain "Gain . . . . . . . . . . . . . . . . . . . . . . . . . . . ." pos:[13,162] width:190 height:13 across:2
+		spinner mgain "" pos:[72,162] width:77 height:16 range:[0,10,1] type:#float fieldwidth:65
+		label lbgamma "Gamma . . . . . . . . . . . . . . . . . . . . . . . . . ." pos:[13,183] width:192 height:13 across:2
+		spinner mgamma "" pos:[72,183] width:77 height:16 range:[0,6,2.2] type:#float fieldwidth:65
+		label lbmaxanisotropy "Max. Anisotropy . . . . . . . . . . . . . . . . . . . . " pos:[13,204] width:198 height:13 across:2
+		spinner mmaxanisotropy "" pos:[72,204] width:77 height:16 range:[-999999,999999,8] type:#float fieldwidth:65
 		
+		
+		button btn2 "Show bitmap" pos:[232,24] width:80 height:16
+		
+		on params open do
+		(
+			m_filename.text = filename
+		)
+		on params create do
+		(
+			m_filename.text = filename
+		)
 		on m_filename pressed do
 		(
 			f = getOpenFileName types:"Image(*.*)|*.*"
@@ -95,19 +106,19 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 				
 				m_filename.text = r
 				filename = r
-				
-				delegate.bitmap = openBitMap filename
 			)
 		)
-		
-		on params open do
+		on btn2 pressed  do
 		(
-			m_filename.text = filename
-		)
-		
-		on params create do
-		(
-			m_filename.text = filename
+		--show bitmap in explorer
+		--filename
+			try
+			(
+				tempfilename = fixWindowsPathReverse filename
+				cmd = ( "explorer.exe /select, " + "\"" + tempfilename + "\"" )
+				HiddenDOSCommand cmd
+			)
+			catch()
 		)
 	)
 	parameters main rollout:paramsCoordinates
