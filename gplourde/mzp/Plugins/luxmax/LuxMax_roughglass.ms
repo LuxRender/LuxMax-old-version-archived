@@ -154,6 +154,7 @@ plugin material LuxrenderRoughGlass name:"LR RoughGlass" classID:#(0x680627ab, 0
 		label lbindex "IOR. . . . . . . . . . . ." align:#left across:3
 		spinner mindex ""scale:0.001 range:[1,6,1.5] width:50 align:#left fieldwidth:65
 		mapbutton mindexTexture "" width:110 height:16 align:#right
+		dropdownlist ddl_ior "ior presets:" width:200 height:16 align:#right across:1
 		
 		checkbox mdispersion "Use Dispersion" align:#left across:2
 		spinner mcauchyb "cauchy b"scale:0.001 range:[0,1,0.2] width:50 align:#right fieldwidth:65
@@ -171,6 +172,12 @@ plugin material LuxrenderRoughGlass name:"LR RoughGlass" classID:#(0x680627ab, 0
 		spinner mvroughness " " scale:0.0001 range:[0.0001,1,0.1] width:50 align:#left fieldwidth:65
 		mapbutton mvroughnessTexture "None" width:110 height:16 align:#right
 		
+		on ddl_ior selected val do
+		(
+			ior_presets = luxGetIORPresets()
+			if ior_presets[val].value == undefined do return false
+			mindex.value = ior_presets[val].value
+		)
 		
 		on mdispersion changed s do
 		(
@@ -190,6 +197,13 @@ plugin material LuxrenderRoughGlass name:"LR RoughGlass" classID:#(0x680627ab, 0
 		
 		on params open do
 		(
+			items = #()
+			
+			for o in (luxGetIORPresets()) do
+			(
+				append items o.name
+			)
+			ddl_ior.items = items
 			mental_ray_Preferences.mrExtensionsActive = false
 			lbu.enabled = museanisotropy.state
 			lbv.enabled = museanisotropy.state

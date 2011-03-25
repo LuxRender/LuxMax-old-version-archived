@@ -2,7 +2,6 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 
 (
 	include "luxmax\\fn_common.ms"
-	include "luxmax\\mtl_logo.ms"
 	
 	function GetTextureMaps =
 	(
@@ -115,27 +114,27 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 		filmtexture type:#textureMap ui:mfilmtexture
 		filmindex type:#float ui:mfilmindex
 		filmindextexture type:#textureMap ui:mfilmindextexture
-		
-		
-		
 	)
 	
 	rollout params "Glass Parameters"
 	(
-		label lbreflection"Reflection . . . . . . . . ."  align:#left across:3
+		label lbreflection"Reflection . . . . . . ."  align:#left across:3
 		colorpicker mkrColor "" align:#left width:80 height:16
 		mapbutton mkrTexture"None" width:110 height:16 align:#right
 
-		label lbtransmission "Transmission . . . . . . . . ."  align:#left across:3
+		label lbtransmission "Transmission . . . . ."  align:#left across:3
 		colorpicker mktColor "" align:#left width:80 height:16
 		mapbutton mktTexture"None" width:110 height:16 align:#right
 		
+		
+		
 		label lbindex "IOR. . . . . . . . . . . ." align:#left across:3
-		spinner mindex ""scale:0.001 range:[1,6,1.5] width:50 align:#left fieldwidth:65
+		spinner mindex " "scale:0.001 range:[1,6,1.5] width:50 align:#left fieldwidth:65
 		mapbutton mindexTexture "" width:110 height:16 align:#right
 		
-		
-		checkbox marchitectural "Use Architectural" align:#left across:1
+		dropdownlist ddl_ior "ior presets:" width:200 height:16 align:#right across:1
+
+		checkbox marchitectural "Use Architectural" align:#right across:1
 		
 		checkbox mdispersion "Use Dispersion" align:#left across:2
 		spinner mcauchyb "cauchy b"scale:0.001 range:[0,1,0.2] width:50 align:#right fieldwidth:65
@@ -143,11 +142,28 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 		checkbox musefilm "Use Thin Film Coating" align:#left across:1
 		label lbfillm "Film Thickness in nm" align:#left across:3
 		spinner mfilm ""scale:0.01 range:[1,1500,200] width:50 align:#left fieldwidth:65
-		mapbutton mfilmTexture "" width:110 height:16 align:#right
-		label lbfillmindex "Film IOR" align:#left across:3
-		spinner mfilmindex ""scale:0.001 range:[1,6,1.5] width:50 align:#left fieldwidth:65
-		mapbutton mfilmindexTexture "" width:110 height:16 align:#right
+		mapbutton mfilmTexture " " width:110 height:16 align:#right
 		
+		
+		
+		label lbfillmindex "Film IOR . . . . . . ." align:#left across:3
+		spinner mfilmindex ""scale:0.001 range:[1,6,1.5] width:50 align:#left fieldwidth:65
+		mapbutton mfilmindexTexture " " width:110 height:16 align:#right
+		
+		dropdownlist ddl_filmior "ior presets:" width:200 height:16 align:#right across:1
+		
+		on ddl_ior selected val do
+		(
+			ior_presets = luxGetIORPresets()
+			if ior_presets[val].value == undefined do return false
+			mindex.value = ior_presets[val].value
+		)
+		on ddl_filmior selected val do
+		(
+			ior_presets = luxGetIORPresets()
+			if ior_presets[val].value == undefined do return false
+			mfilmindex.value = ior_presets[val].value
+		)
 		
 		on mdispersion changed s do
 		(
@@ -156,23 +172,35 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 		
 		on musefilm changed s do
 		(
-		mfilm.enabled = s
-		mfilmtexture.enabled = s
-		mfilmindex.enabled = s
-		mfilmindextexture.enabled = s
+			mfilm.enabled = s
+			mfilmtexture.enabled = s
+			mfilmindex.enabled = s
+			mfilmindextexture.enabled = s
+			ddl_filmior.enabled = s
 		)
-		
 		
 		on params open do
 		(
+			items = #()
+			
+			for o in (luxGetIORPresets()) do
+			(
+				append items o.name
+			)
+			ddl_ior.items = items
+			ddl_filmior.items = items
+			
 			mental_ray_Preferences.mrExtensionsActive = false
 			mfilm.enabled = musefilm.state
 			mfilmtexture.enabled = musefilm.state
 			mfilmindex.enabled = musefilm.state
 			mfilmindextexture.enabled = musefilm.state
 			mcauchyb.enabled = mdispersion.state
+			ddl_filmior.enabled =  musefilm.state
 		)
 	)
 	
 	include "luxmax\\mtl_common.ms"
+	include "luxmax\\mtl_logo.ms"
+	
 )
