@@ -82,6 +82,8 @@ fn lux_export_luxdistant obj =
 
 fn lux_export_luxinfinite obj =
 (
+	types = #("latlong", "angular", "vcross")
+	
 	numlightsource += 1
 	str = stringstream ""
 	
@@ -90,11 +92,21 @@ fn lux_export_luxinfinite obj =
 	if (obj.exterior != undefined) do
 		luxWriteName "Exterior" obj.exterior.name str
 	
+	--multiply type:#boolean ui:m_multiply default:false
+	
 	format "LightGroup \"%\"\n" obj.lightgroup to:str
 	format "LightSource \"infinite\"\n" to:str
 	luxWriteFloat "gain" obj.gain str
 	luxWriteFloat "importance" obj.importance str
-	luxWriteColor "L" obj.color str
+	
+	if (doesFileExist obj.mapname) == false or obj.multiply == true then
+		luxWriteColor "L" obj.color str
+	
+	if (doesFileExist obj.mapname) == true then
+	(
+		format "\t\"string mapping\" [\"%\"]\r\n" types[obj.maptype] to:str 
+		format "\t\"string mapname\" [\"%\"]\r\n" (fixWindowsPath obj.mapname) to:str
+	)
 	
 	for lt in lights do
 	(
