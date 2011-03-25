@@ -324,8 +324,8 @@ global lux_main = "LuxMax Starting..."
 		)
 		rollout lux_Film "Film" rolledup:true
 		(
-			spinner writeinterval "Save interval:" fieldwidth:50 range:[-999999, 999999, 10] type:#integer
-			spinner displayinterval "GUI refresh intervals:" fieldwidth:50 range:[-999999, 999999, 10] type:#integer
+			spinner writeinterval "Save interval:" fieldwidth:50 range:[0, 999999, 10] type:#integer
+			spinner displayinterval "GUI refresh intervals:" fieldwidth:50 range:[0, 999999, 10] type:#integer
 			
 			group "Output Formats"
 			(
