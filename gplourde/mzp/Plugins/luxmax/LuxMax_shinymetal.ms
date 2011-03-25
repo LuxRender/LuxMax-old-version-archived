@@ -186,7 +186,14 @@ plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 
 		label lbfillmindex "Film IOR" align:#left across:3
 		spinner mfilmindex ""scale:0.001 range:[1,6,1.5] width:50 align:#left fieldwidth:65
 		mapbutton mfilmindexTexture "" width:110 height:16 align:#right
+		dropdownlist ddl_filmior "ior presets:" width:200 height:16 align:#right across:1
 		
+		on ddl_filmior selected val do
+		(
+			ior_presets = luxGetIORPresets()
+			if ior_presets[val].value == undefined do return false
+			mfilmindex.value = ior_presets[val].value
+		)
 		
 		on museanisotropy changed s do
 		(	
@@ -204,11 +211,20 @@ plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 
 		mfilmtexture.enabled = s
 		mfilmindex.enabled = s
 		mfilmindextexture.enabled = s
+		ddl_filmior.enabled = s
 		)
 		
 		
 		on params open do
 		(
+			items = #()
+			
+			for o in (luxGetIORPresets()) do
+			(
+				append items o.name
+			)
+			ddl_filmior.items = items
+			ddl_filmior.enabled =  musefilm.state
 			mental_ray_Preferences.mrExtensionsActive = false
 			lbu.enabled = museanisotropy.state
 			lbv.enabled = museanisotropy.state
