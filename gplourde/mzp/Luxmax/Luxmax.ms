@@ -334,7 +334,7 @@ global lux_main = "LuxMax Starting..."
 				checkbox tga "TGA"
 				checkbox flm "FLM"
 				checkbox rgba "Enable alpha Channels"
-				spinner outlierrejection_k "Firefly rejection:" fieldwidth:50 range:[0, 5, 0] type:#integer
+				spinner outlierrejection_k "Firefly rejection:" fieldwidth:50 range:[0, 20, 5] type:#integer
 			)
 			
 			group "Color Space"
