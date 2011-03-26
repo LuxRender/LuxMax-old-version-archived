@@ -89,6 +89,8 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		
 		on m_display pressed do
 		(
+			if (delegate.bitmap == undefined) then return false
+			
 			display delegate.bitmap
 		)
 		
