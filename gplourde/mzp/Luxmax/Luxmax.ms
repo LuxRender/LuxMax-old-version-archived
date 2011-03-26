@@ -431,12 +431,15 @@ global lux_main = "LuxMax Starting..."
 		
 		rollout lux_main "LuxRender Parameters" width:224 height:672
 		(
-			subRollout lx0 "" pos:[0,0] width:320 height:570
-			dropdownList ddl_camera "Camera" pos:[13,575] width:136 height:40
-			button btn_image "Image" pos:[8,616] width:88 height:21 across:2
-			button btn_Animation "Animation" pos:[104,616] width:88 height:21 enabled:true
-			button btn_cam_refresh "Refresh" pos:[152,592] width:64 height:24
+			subRollout lx0 "" width:320 height:570
 			
+			label lb_camera "Camera:" align:#left
+			dropdownList ddl_camera "" width:200 across:2
+			button btn_cam_refresh "Refresh" width:90 align:#right
+			
+			label lb_render "Render:" align:#right across:3
+			button btn_image "Image" width:90 align:#right
+			button btn_Animation "Animation" width:90 align:#right enabled:false
 			
 			on lux_main open do
 			(
@@ -482,10 +485,14 @@ global lux_main = "LuxMax Starting..."
 				SaveSettings()
 				success = false
 				
+				progressStart "Rendering..." 
+				
 				if (ddl_camera.selected == undefined) then
 				(
 					for t = animationrange.start to animationrange.end do
 					(
+						if (getProgressCancel() == true) then exit
+							
 						slidertime = t
 						success = luxWriteLxs undefined
 						lxsFilename = stringStream ""
@@ -503,6 +510,8 @@ global lux_main = "LuxMax Starting..."
 				(
 					for t = animationrange.start to animationrange.end do
 					(
+						if (getProgressCancel() == true) then exit
+							
 						slidertime = t
 						success = luxWriteLxs (GetNodeByName ddl_camera.selected)
 						
@@ -513,10 +522,12 @@ global lux_main = "LuxMax Starting..."
 						(
 							
 							if (((getLuxValue "chk_run")) == true and success == true) then
-							doscommand ((getLuxValue "btn_path") + "\\luxconsole.exe " + lxsFilename as string)
+								doscommand ((getLuxValue "btn_path") + "\\luxconsole.exe " + lxsFilename as string)
 						)
 					)
 				)
+				
+				progressEnd()
 			)
 			on btn_cam_refresh pressed do
 			(
