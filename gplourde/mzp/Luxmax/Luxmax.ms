@@ -429,9 +429,9 @@ global lux_main = "LuxMax Starting..."
 		)
 		
 		
-		rollout lux_main "LuxRender Parameters" width:224 height:672
+		rollout lux_main "LuxRender Parameters"
 		(
-			subRollout lx0 "" width:320 height:570
+			subRollout lx0 "" width:320 height:570 pos:[0,0]
 			
 			label lb_camera "Camera:" align:#left
 			dropdownList ddl_camera "" width:200 across:2
