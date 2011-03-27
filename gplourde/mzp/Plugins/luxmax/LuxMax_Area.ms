@@ -1,21 +1,18 @@
-plugin light LuxInfinite name:"LR Infinite" classID:#(0x343993e2, 0x54ccb040) extends:SkyLight replaceUI:true version:1 category:"LuxRender"
+plugin light luxAreaLight name:"LR Area" classID:#(0x4a005589, 0x189a7b50)extends:mr_Sky_Portal replaceUI:true version:1 category:"LuxRender"
 (
-	include "luxmax\\fn_common.ms"
-	
 	parameters pblock0 rollout:params0
 	(
-		gain type:#float ui:spn_gain default:1 animatable:false
+		gain type:#float ui:spn_gain default:1 animatable:true
+		nsamples type:#integer default:1 ui:spn_nsamples animatable:true
 		importance type:#float ui:spn_importance default:1
 		exterior type:#node ui:mExterior
 		lightgroup type:#string ui:edt_group default:"default"
 	)
+	
 	parameters pblock1 rollout:params1
 	(
-		mapname type:#textureMap ui:m_texturemap
-		maptype type:#integer ui:m_mapping default:1
 		color type:#color ui:mcolor default:white
-		multiply type:#boolean ui:m_multiply default:false
-	)	
+	)
 	rollout params0 "LuxRender Lamps"
 	(
 		fn volumeFilter obj = ((classof obj) as string == "LuxRenderVolume")
@@ -39,26 +36,22 @@ plugin light LuxInfinite name:"LR Infinite" classID:#(0x343993e2, 0x54ccb040) ex
 		)
 	)
 	
-	rollout params1 "LuxRender Infinite"
+	rollout params1 "LuxRender Area Lamp"
 	(
-		colorpicker mcolor "Color:" height:18 width:98 align:#right
+		colorpicker mcolor "Color:" height:16 width:98 align:#right
+		spinner mpower "Power:" fieldwidth:55 align:#right
+		spinner mefficacy "Efficacy:" fieldwidth:55 align:#right
 		
-		group "HDRI Map"
-		(
-			mapbutton m_texturemap "none" height:20 width:135 align:#right
-			dropdownlist m_mapping "Map Type:" items:#("Lat Long", "Angular", "Vert Cross")
-			checkbox m_multiply "Multiply by color"
-		)
-
-		on m_texturemap rightclick do
-		(
-			m_texturemap.text = "none"
-			mapname = undefined
-		)
+		spinner mwidth "Width:" type:#worldunits range:[0,99999999,100] fieldwidth:55 align:#right
+		spinner mlength "Length:" type:#worldunits range:[0,99999999,100] fieldwidth:55 align:#right
 		
-		on params create do
+		on mwidth changed val do delegate.light_width = val
+		on mlength changed val do delegate.light_length = val
+			
+		on params0 open do
 		(
-			m_filename.text = mapname
+			mwidth.value = delegate.light_width
+			mlength.value = delegate.light_length
 		)
 	)
 )
