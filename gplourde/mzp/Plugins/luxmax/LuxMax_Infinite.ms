@@ -1,19 +1,18 @@
-dxshadermanager.SetVisible false
-mental_ray_Preferences.mrExtensionsActive =  false
-
-plugin light LuxInfinite name:"LR Infinite" classID:#(0x343993e2, 0x54ccb040) extends:SkyLight replaceUI:true version:1 category:"Luxrender"
+plugin light LuxInfinite name:"LR Infinite" classID:#(0x343993e2, 0x54ccb040) extends:SkyLight replaceUI:true version:1 category:"LuxRender"
 (
 	include "luxmax\\fn_common.ms"
 	
 	parameters pblock rollout:params 
 	(
-		mapname type:#string default:"" ui:m_filename
+		mapname type:#textureMap ui:m_texturemap
 		maptype type:#integer ui:m_mapping default:1
+		
 		gain type:#float ui:spn_gain default:1 animatable:false
 		importance type:#float ui:spn_importance default:1
-		color type:#color ui:mcolor default:white
 		exterior type:#node ui:mExterior
 		lightgroup type:#string ui:edt_group default:"default"
+		
+		color type:#color ui:mcolor default:white
 		multiply type:#boolean ui:m_multiply default:false
 	)
 	
@@ -30,7 +29,7 @@ plugin light LuxInfinite name:"LR Infinite" classID:#(0x343993e2, 0x54ccb040) ex
 		
 		group "HDRI Map"
 		(
-			button m_filename "none" width:132 height:20 align:#left
+			mapbutton m_texturemap "none" height:20 width:135 align:#right
 			dropdownlist m_mapping "Map Type:" items:#("Lat Long", "Angular", "Vert Cross")
 			checkbox m_multiply "Multiply by color"
 		)
@@ -48,43 +47,36 @@ plugin light LuxInfinite name:"LR Infinite" classID:#(0x343993e2, 0x54ccb040) ex
 			mExterior.text = "none"
 			exterior = undefined
 		)
-		
-		on m_filename rightclick do
+
+		on m_texturemap rightclick do
 		(
-			m_filename.text = "none"
-			mapname = "undefined"
-		)
-		
-		on m_filename pressed do
-		(
-			f = getOpenFileName types:"Image(*.*)|*.*"
-			
-			if (f != undefined) do
-			(
-				r = fixWindowsPath f
-				
-				m_filename.text = r
-				mapname = r
-			)
+			m_texturemap.text = "none"
+			mapname = undefined
 		)
 		
 		on params create do
 		(
 			m_filename.text = mapname
 		)
-		
-		on params open do
+	)
+	
+	local meshObj
+	
+	on getDisplayMesh do
+	(
+		if (meshObj == undefined) do
 		(
-			mental_ray_Preferences.mrExtensionsActive = false
-			m_filename.text = mapname
+			meshObj = createInstance sphere mapCoords:false wirecolor:yellow segs:12 radius:20
 		)
+
+		return meshObj.mesh
 	)
 	
 	tool create
-	( 
-		on mousePoint click do 
+	(
+		on mousePoint click do
 		(
-			nodeTM.translation = gridPoint;#stop 
+			nodeTM.translation = gridPoint;#stop
 		)
-	) 	
+	)
 )

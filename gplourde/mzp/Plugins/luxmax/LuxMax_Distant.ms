@@ -1,4 +1,4 @@
-plugin light LuxDistant name:"LR Distant" classID:#(0x20b4375f, 0x53248ad9) extends:SkyLight replaceUI:true version:1 category:"Luxrender"
+plugin light LuxDistant name:"LR Distant" classID:#(0x20b4375f, 0x53248ad9) extends:SkyLight replaceUI:true version:1 category:"LuxRender"
 (
 	parameters pblock rollout:params 
 	(
@@ -34,11 +34,23 @@ plugin light LuxDistant name:"LR Distant" classID:#(0x20b4375f, 0x53248ad9) exte
 		)
 	)
 	
-	tool create
-	( 
-		on mousePoint click do 
+	local meshObj
+	
+	on getDisplayMesh do
+	(
+		if (meshObj == undefined) do
 		(
-			nodeTM.translation = gridPoint;#stop 
+			meshObj = createInstance sphere mapCoords:false wirecolor:yellow segs:12 radius:20
 		)
-	) 	
+
+		return meshObj.mesh
+	)
+	
+	tool create
+	(
+		on mousePoint click do
+		(
+			nodeTM.translation = gridPoint;#stop
+		)
+	)
 )

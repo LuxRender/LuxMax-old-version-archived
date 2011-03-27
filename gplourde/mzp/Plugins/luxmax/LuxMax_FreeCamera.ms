@@ -1,4 +1,4 @@
-plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) extends:Freecamera replaceUI:true version:1 category:"LuxRender"
+plugin camera LuxrenderCamera name:"LR Camera" classID:#(0x3465725b, 0x7a7b54a6) extends:Freecamera replaceUI:true version:1 category:"LuxRender"
 (
 	parameters main rollout:params
 	(
@@ -49,14 +49,16 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 			button m_l135mm "135mm" width:41 align:#center
 			button m_l200mm "200mm" width:41 align:#right
 		)
-		group "Common"
+		
+		button btn_createTarget "Create Target" width:144
+		
+		group "Lens params"
 		(		
 			checkbox m_autofocus "Auto focus" enabled:true
 			spinner m_fstop "f/Stop:" fieldwidth:50 range:[-99999999,99999999,0]
 		
 			checkbox m_dof "Depth of field"
-			spinner m_distance "Distance:" fieldwidth:50 range:[-99999999,99999999,0]
-			pickbutton m_target "Pick target" width:140
+			spinner m_distance "Distance:" type:#worldunits fieldwidth:50 range:[-99999999,99999999,0]
 			
 			dropdownlist m_exposuretiming "Exposure timing:" items:#("normalized", "degrees", "absolute")
 			spinner m_openangle "Open:" type:#integer fieldwidth:50  range:[-99999999,99999999,0]--0
@@ -78,14 +80,27 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		group "Clipping"
 		(
 			checkbox m_clip "Enable"
-			spinner m_nearclip "Start:" fieldwidth:50 range:[-99999999,99999999,0]
-			spinner m_farclip "End:" fieldwidth:50 range:[-99999999,99999999,0]
+			spinner m_nearclip "Start:" type:#worldunits fieldwidth:50 range:[-99999999,99999999,0]
+			spinner m_farclip "End:" type:#worldunits fieldwidth:50 range:[-99999999,99999999,0]
+		)
+		on btn_createTarget pressed do
+		(
+			if ($.target == undefined) then
+				$.target = targetobject pos:([0,0,-m_distance.value] * $.transform) wirecolor:($.wirecolor)
+			
+			btn_createTarget.enabled = false
+		)
+		on m_distance changed val do
+		(
+			delegate.targetDistance = val
 		)
 		
-		on m_target picked o do
+		on params open do
 		(
-			m_target.text = o.name
-			m_distance.value = (distance $.position o.position)
+			try (
+				if ($.target  != undefined) then btn_createTarget.enabled = false
+				m_distance.value = delegate.targetDistance
+			) catch ()
 		)
 		
 		on m_type selected i do
@@ -205,7 +220,7 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		(
 			lensradius = (lens as float / 1000.0) / ( 2.0 * fstop as float)
 			format "\t\"float lensradius\" [%]\n" lensradius to:str
-			format "\t\"float focaldistance\" [%]\n" (targetdistance / 100.0) to:str
+			format "\t\"float focaldistance\" [%]\n" (targetdistance / luxScaleUnit()) to:str
 		)
 		
 		if (cameratype == 1) do
@@ -213,8 +228,8 @@ plugin camera LuxrenderCamera name:"LR Free" classID:#(0x3465725b, 0x7a7b54a6) e
 		
 		if (useclip == true) do
 		(
-			format "\t\"float hither\" [%]\n" (hither / 100.0) to:str
-			format "\t\"float yon\" [%]\n" (yon / 100.0) to:str
+			format "\t\"float hither\" [%]\n" (hither / luxScaleUnit()) to:str
+			format "\t\"float yon\" [%]\n" (yon / luxScaleUnit()) to:str
 		)
 		
 		if exposuretiming == 1 then
