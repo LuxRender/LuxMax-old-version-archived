@@ -79,7 +79,15 @@ plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 
 		if this.ksTexture != undefined then
 			format "\t\"texture Ks\" [\"%\"]\n" this.ksTexture.name to:str
 		else
+		(
+			if this.usespecularior == true then
+			(
+			luxWriteFloat "index"	this.floatindex str
+			format "\t\"color Ks\"  [1.0 1.0 1.0]\n" to:str
+			)
+			else
 			luxWriteColor "Ks"  this.ksColor str
+		)
 		
 		if this.useanisotropy == true then
 		(
@@ -139,6 +147,8 @@ plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 
 		krTexture type:#textureMap ui:mkrTexture
 		ksColor type:#color ui:mksColor default:[30,30,30]
 		ksTexture type:#textureMap ui:mksTexture
+		usespecularior type:#boolean ui:musespecularior
+		floatindex type:#float  ui:mfloatindex default:1.000
 		roughness type:#float ui:mroughness default:0.0001
 		roughnessTexture type:#textureMap ui:mroughnessTexture
 		uroughness type:#float ui:muroughness default:0.0001
@@ -166,6 +176,10 @@ plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 
 		colorpicker mksColor "" align:#left width:80 height:16
 		mapbutton mksTexture "None" width:110 height:16 align:#right
 		
+		checkbox musespecularior "Use Ior Specular" across:2 align:#left
+		spinner mfloatindex "" scale:0.001 range:[1,6,1.5] width:50 fieldwidth:65 align:#left
+		dropdownlist ddl_specularior "Ior presets:" width:200 height:16 across:1 align:#right 
+		
 		label lbroughness "Roughness. . . . . . ." across:3 align:#left
 		spinner mroughness " " scale:0.0001 range:[0.0001,1,0.1] width:50 align:#left fieldwidth:65
 		mapbutton mroughnessTexture "None" width:110 height:16 align:#right
@@ -187,6 +201,19 @@ plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 
 		spinner mfilmindex ""scale:0.001 range:[1,6,1.5] width:50 align:#left fieldwidth:65
 		mapbutton mfilmindexTexture "" width:110 height:16 align:#right
 		dropdownlist ddl_filmior "ior presets:" width:200 height:16 align:#right across:1
+		
+		on musespecularior changed s do
+		(
+			ddl_specularior.enabled = s
+			mfloatindex.enabled = s
+		)
+	
+		on ddl_specularior selected val do
+		(
+			ior_presets = luxGetIORPresets()
+			if ior_presets[val].value == undefined do return false
+			mfloatindex.value = ior_presets[val].value
+		)
 		
 		on ddl_filmior selected val do
 		(
@@ -225,6 +252,9 @@ plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 
 			)
 			ddl_filmior.items = items
 			ddl_filmior.enabled =  musefilm.state
+			ddl_specularior.items = items
+			ddl_specularior.enabled = musespecularior.state
+			mfloatindex.enabled = musespecularior.state
 			mental_ray_Preferences.mrExtensionsActive = false
 			lbu.enabled = museanisotropy.state
 			lbv.enabled = museanisotropy.state
