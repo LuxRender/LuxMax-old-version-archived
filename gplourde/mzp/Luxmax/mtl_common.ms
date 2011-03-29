@@ -26,6 +26,9 @@ parameters common_parameters rollout:common
 	arealightgroup type:#string ui:mGroup default:"arealight"
 	interior type:#node ui:mInterior
 	exterior type:#node ui:mExterior
+	iespath type:#string 
+	useies type:#boolean ui:museies	
+	useflipz type:#boolean ui:museflipz
 )
 
 rollout common "Common Parameters" rolledup:true
@@ -99,15 +102,46 @@ rollout common "Common Parameters" rolledup:true
 		
 		label lblmGain  "Gain . . . . . . . . . . . . . . . . . . . . . . . . . . . ." across:2 align:#left
 		spinner mGain " " range:[0,100,1] align:#right fieldwidth:65
+		
+		checkbox museies "Use IES data file" across:2 align:#left 
+		button bties "Browse" align:#left
+		
+		checkbox museflipz "Flip Light z axis" across:1 align:#left 
+		
+		
 	)
+	
+	on museies changed s do 
+		(
+			bties.enabled = s
+		)
+		
+	on bties pressed do
+		
+		(
+			
+			f = getOpenFileName types:"IES(*.ies)|*.ies" caption:"Open an IES File:"
+			if (f != undefined)then
+				(
+					r = fixWindowsPath f
+				
+				    bties.text = r
+				    iespath = r
+					bties.text = iespath
+					print iespath
+				)
+		)
 	
 	on museEmission changed s do
 	(
 		memissionTexture.enabled = s
+		museies.enabled = s
 	)
 
 	on common open do
 	(
+		bties.enabled = museies.state
+		museies.enabled = museEmission.state
 		mbumpmap.enabled = museBumpmap.state
 		mbumpmapTexture.enabled = museBumpmap.state
 		
@@ -197,7 +231,7 @@ function luxWriteEmission objmaterial strout =
 (
 	luxWriteName "LightGroup" objmaterial.arealightgroup strout
 	luxWriteName "AreaLightSource" "area" strout
-	
+
 	if (objmaterial.emissionTexture != undefined) then
 		format "\t\"texture L\" [\"%\"]\n" objmaterial.emissionTexture.name to:strout
 	else
@@ -206,6 +240,16 @@ function luxWriteEmission objmaterial strout =
 	luxWriteFloat "power" objmaterial.power strout 
 	luxWriteFloat "efficacy" objmaterial.efficacy strout
 	luxWriteFloat "gain" objmaterial.gain strout
+	
+	if (objmaterial.useies == true) then
+	(
+	luxwriteString "iesname" objmaterial.iespath strout
+	)
+	if (objmaterial.useflipz == true) then
+	(
+	format "\t\"bool flipz\" [\"true\"]\n" to:strout
+	)
+
 )
 
 function luxMaterialPreview mat =

@@ -42,7 +42,17 @@ function luxWriteEmission objmaterial strout =
 	luxWriteFloat "power" objmaterial.power strout 
 	luxWriteFloat "efficacy" objmaterial.efficacy strout
 	luxWriteFloat "gain" objmaterial.gain strout
+	
+	if (objmaterial.useies == true) then
+	(
+	luxwriteString "iesname" objmaterial.iespath strout
+	)
+	if (objmaterial.useflipz == true) then
+	(
+	format "\t\"bool flipz\" [\"true\"]\n" to:strout
+	)
 )
+
 
 --// Write emission properties of given material
 function luxWriteSubdivision objmaterial strout =
