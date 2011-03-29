@@ -334,6 +334,7 @@ global lux_main = "LuxMax Starting..."
 				checkbox tga "TGA"
 				checkbox flm "FLM"
 				checkbox rgba "Enable alpha Channels"
+				checkbox effr "Enable Firefly rejection"
 				spinner outlierrejection_k "Firefly rejection:" fieldwidth:50 range:[0, 20, 5] type:#integer
 			)
 			
@@ -400,7 +401,10 @@ global lux_main = "LuxMax Starting..."
 				luxWriteFloat "reinhard_burn" reinhard_burn.value str
 				
 				LuxWriteString "filename" (getSceneName() + "_" + getFrame()) str
-				luxWriteInteger "outlierrejection_k" outlierrejection_k.value str
+					if (effr.state == true) then
+					(
+						luxWriteInteger "outlierrejection_k" outlierrejection_k.value str
+					)
 				
 				return str as string
 			)
