@@ -16,9 +16,9 @@
 		
 		v = v * (inverse tm)
 		
-		WriteFloat stream (v[1] / ws)
-		WriteFloat stream (v[2] / ws)
-		WriteFloat stream (v[3] / ws)
+		WriteFloat stream (v[1] * ws)
+		WriteFloat stream (v[2] * ws)
+		WriteFloat stream (v[3] * ws)
 	)
 	function ply_WriteFaceVertexNormal stream n tm =
 	(

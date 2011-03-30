@@ -91,6 +91,7 @@
 						LuxSun:						(format "%\r\n" (lux_export_luxsun lt) to:str)
 						LuxDistant:					(format "%\r\n" (lux_export_luxdistant lt) to:str)
 						LuxInfinite:					(format "%\r\n" (lux_export_luxinfinite lt) to:str)
+						luxAreaLight:				(format "%\r\n" (lux_export_luxAreaLight lt) to:str)
 					)
 				)
 				
