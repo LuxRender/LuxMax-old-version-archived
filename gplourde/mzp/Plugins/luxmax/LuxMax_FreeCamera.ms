@@ -220,7 +220,7 @@ plugin camera LuxrenderCamera name:"LR Camera" classID:#(0x3465725b, 0x7a7b54a6)
 		(
 			lensradius = (lens as float / 1000.0) / ( 2.0 * fstop as float)
 			format "\t\"float lensradius\" [%]\n" lensradius to:str
-			format "\t\"float focaldistance\" [%]\n" (targetdistance / luxScaleUnit()) to:str
+			format "\t\"float focaldistance\" [%]\n" (targetdistance * luxScaleUnit()) to:str
 		)
 		
 		if (cameratype == 1) do
@@ -228,8 +228,8 @@ plugin camera LuxrenderCamera name:"LR Camera" classID:#(0x3465725b, 0x7a7b54a6)
 		
 		if (useclip == true) do
 		(
-			format "\t\"float hither\" [%]\n" (hither / luxScaleUnit()) to:str
-			format "\t\"float yon\" [%]\n" (yon / luxScaleUnit()) to:str
+			format "\t\"float hither\" [%]\n" (hither * luxScaleUnit()) to:str
+			format "\t\"float yon\" [%]\n" (yon * luxScaleUnit()) to:str
 		)
 		
 		if exposuretiming == 1 then

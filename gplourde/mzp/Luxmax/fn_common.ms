@@ -26,7 +26,7 @@ function luxScaleUnit =
 	_feet = 0.3048 * units.SystemScale
 	_miles =  1609.344 * units.SystemScale
 	_millimeters =  0.001 * units.SystemScale
-	_centimeters =  100 * units.SystemScale
+	_centimeters =  0.01 * units.SystemScale
 	_kilometers =  1000 * units.SystemScale
 	
 	_u = units.SystemType
@@ -68,7 +68,7 @@ function luxWriteLookAt tm strout =
 	pos = tm.row4
 	up = normalize tm.row2
 	look = (tm.row4 + -(normalize tm.row3))
-	format "LookAt % % % % % % % % %\n" (pos.x/ luxScaleUnit()) (pos.y/ luxScaleUnit()) (pos.z / luxScaleUnit()) (look.x / luxScaleUnit()) (look.y / luxScaleUnit()) (look.z / luxScaleUnit()) up.x up.y up.z to:strout
+	format "LookAt % % % % % % % % %\n" (pos.x * luxScaleUnit()) (pos.y * luxScaleUnit()) (pos.z * luxScaleUnit()) (look.x * luxScaleUnit()) (look.y * luxScaleUnit()) (look.z * luxScaleUnit()) up.x up.y up.z to:strout
 )
 	
 function GetFrame =
@@ -247,7 +247,7 @@ function luxWriteTransform &tm t strout =
 		row2 = tm.row2
 		row3 = tm.row3
 		row4 = tm.row4
-		format "Transform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\r\n" row1.x row1.y row1.z row2.x row2.y row2.z row3.x row3.y row3.z (row4.x / luxScaleUnit()) (row4.y / luxScaleUnit()) (row4.z / luxScaleUnit())to:strout
+		format "Transform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\r\n" row1.x row1.y row1.z row2.x row2.y row2.z row3.x row3.y row3.z (row4.x * luxScaleUnit()) (row4.y * luxScaleUnit()) (row4.z * luxScaleUnit())to:strout
 	)
 )
 

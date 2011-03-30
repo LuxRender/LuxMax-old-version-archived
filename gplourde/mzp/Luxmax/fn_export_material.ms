@@ -53,9 +53,9 @@ function export_volumes =
 			
 			_absorption = #(0, 0, 0)
 			
-			_absorption[1] = (-log(amax #(obj.absorption.r / 255, 1e-30) )/((obj.absdepth / luxScaleUnit()) * obj.absscale) * 1)
-			_absorption[2] = (-log(amax #(obj.absorption.g / 255, 1e-30) )/((obj.absdepth / luxScaleUnit()) * obj.absscale) * 1)
-			_absorption[3] = (-log(amax #(obj.absorption.b / 255, 1e-30) )/((obj.absdepth / luxScaleUnit()) * obj.absscale) * 1)
+			_absorption[1] = (-log(amax #(obj.absorption.r / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
+			_absorption[2] = (-log(amax #(obj.absorption.g / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
+			_absorption[3] = (-log(amax #(obj.absorption.b / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
 			
 			format "MakeNamedVolume \"%\" \"%\"\r\n" obj.name types[obj.type] to:str
 			luxWriteFloat "fresnel" obj.ior str
