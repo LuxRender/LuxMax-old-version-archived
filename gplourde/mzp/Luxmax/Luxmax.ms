@@ -123,10 +123,80 @@ global lux_main = "LuxMax Starting..."
 			)
 			on DimmensionsPresets_ui selected idx do (applyPreset (idx - 1))
 		)
+
+	/*
 		rollout lux_LuxRenderEnginePresets "LuxRender Engine Presets" rolledup:true
 		(
-			dropdownlist ddl_presets "Engine Presets"
+			dropdownlist luxrenderpresets "Render Presets:" items:#("Direct Lighting Preview, No GI", "Global Illumination Preview", "Metropolis Light Transport (unbiased recommented)", "OpenCL Path Tracing", "Photon Mapping (caustics off)", "Photon Mapping (caustics on)")
+			
+			on luxrenderpresets selected i do
+			(
+			--direct lighting
+			if luxrenderpresets.items[i] == "Direct Lighting Preview, No GI" then
+			(				
+			fileIn "luxmax\\Presets\\Direct_Lighting_NoGI.ms"
+			GetControlParams(lux_Renderer)
+			GetControlParams(lux_Sampler)
+			GetControlParams(lux_SurfaceIntegrator)
+			GetControlParams(lux_VolumeIntegrator)
+			GetControlParams(lux_Filter)
+			GetControlParams(lux_Accelerator)
+			)	
+			if luxrenderpresets.items[i] == "Global Illumination Preview" then
+			(				
+			fileIn "luxmax\\Presets\\GI_preview.ms"
+			GetControlParams(lux_Renderer)
+			GetControlParams(lux_Sampler)
+			GetControlParams(lux_SurfaceIntegrator)
+			GetControlParams(lux_VolumeIntegrator)
+			GetControlParams(lux_Filter)
+			GetControlParams(lux_Accelerator)
+			)	
+			if luxrenderpresets.items[i] == "Metropolis Light Transport (unbiased recommented)" then
+			(				
+			fileIn "luxmax\\Presets\\Metropolis_unbiased_recommended.ms"
+			GetControlParams(lux_Renderer)
+			GetControlParams(lux_Sampler)
+			GetControlParams(lux_SurfaceIntegrator)
+			GetControlParams(lux_VolumeIntegrator)
+			GetControlParams(lux_Filter)
+			GetControlParams(lux_Accelerator)
+			)	
+			if luxrenderpresets.items[i] == "OpenCL Path Tracing" then
+			(				
+			fileIn "luxmax\\Presets\\OpenCL_path_tracing_unbiased.ms"
+			GetControlParams(lux_Renderer)
+			GetControlParams(lux_Sampler)
+			GetControlParams(lux_SurfaceIntegrator)
+			GetControlParams(lux_VolumeIntegrator)
+			GetControlParams(lux_Filter)
+			GetControlParams(lux_Accelerator)
+			)		
+			if luxrenderpresets.items[i] == "Photon Mapping (caustics off)" then
+			(				
+			fileIn "luxmax\\Presets\\Photon_mapping_final_caustics_off.ms"
+			GetControlParams(lux_Renderer)
+			GetControlParams(lux_Sampler)
+			GetControlParams(lux_SurfaceIntegrator)
+			GetControlParams(lux_VolumeIntegrator)
+			GetControlParams(lux_Filter)
+			GetControlParams(lux_Accelerator)
+			)		
+			if luxrenderpresets.items[i] == "Photon Mapping (caustics on)" then
+			(				
+			fileIn "luxmax\\Presets\\Photon_mapping_final_caustics_on.ms"
+			GetControlParams(lux_Renderer)
+			GetControlParams(lux_Sampler)
+			GetControlParams(lux_SurfaceIntegrator)
+			GetControlParams(lux_VolumeIntegrator)
+			GetControlParams(lux_Filter)
+			GetControlParams(lux_Accelerator)
+			)		
+			)
 		)
+		
+		*/
+		
 		rollout lux_LuxRenderEngineConfiguration "LuxRender Engine" rolledup:true
 		(
 			dropdownlist ddl_mode "Rendering Mode:" items:#("External")
