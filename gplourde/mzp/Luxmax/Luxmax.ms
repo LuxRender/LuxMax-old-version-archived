@@ -118,9 +118,8 @@ global lux_main = "LuxMax Starting..."
 				items = #("Custom")
 				for o in DimmensionsPresets do (append items o[1])
 				DimmensionsPresets_ui.items = items
-				GetControlParams(lux_Dimmensions)
-				renderWidth = xresolution.value
-				renderHeight = yresolution.value	
+				xresolution.value = renderWidth
+				yresolution.value = renderHeight	
 			)
 			on DimmensionsPresets_ui selected idx do (applyPreset (idx - 1))
 		)
