@@ -19,4 +19,25 @@ plugin light luxPortal name:"LR Portal" classID:#(0x2120176, 0x5d21b0d2) extends
 			mlength.value = delegate.light_length
 		)
 	)
+	tool create
+	(
+		on mousePoint click do
+		case click of
+		(
+			1: coordsys grid (nodeTM.translation = gridPoint)
+		)
+		on mouseMove click do
+		(
+			case click of
+			(
+				2: (
+					delegate.width = abs(gridDist.x * 2)
+					delegate.length = abs(gridDist.y * 2)
+					params0.mwidth.value = abs(gridDist.x * 2)
+					params0.mlength.value  = abs(gridDist.y * 2)
+					)
+				3: (#stop)
+			)
+		)
+	)
 )

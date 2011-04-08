@@ -13,6 +13,7 @@ plugin light luxAreaLight name:"LR Area" classID:#(0x4a005589, 0x189a7b50)extend
 	(
 		color type:#color ui:mcolor default:white
 	)
+	
 	rollout params0 "LuxRender Lamps"
 	(
 		fn volumeFilter obj = ((classof obj) as string == "LuxRenderVolume")
@@ -48,10 +49,31 @@ plugin light luxAreaLight name:"LR Area" classID:#(0x4a005589, 0x189a7b50)extend
 		on mwidth changed val do delegate.light_width = val
 		on mlength changed val do delegate.light_length = val
 			
-		on params0 open do
+		on params1 open do
 		(
 			mwidth.value = delegate.light_width
 			mlength.value = delegate.light_length
+		)
+	)
+	tool create
+	(
+		on mousePoint click do
+		case click of
+		(
+			1: coordsys grid (nodeTM.translation = gridPoint)
+		)
+		on mouseMove click do
+		(
+			case click of
+			(
+				2: (
+					delegate.width = abs(gridDist.x * 2)
+					delegate.length = abs(gridDist.y * 2)
+					params1.mwidth.value = abs(gridDist.x * 2)
+					params1.mlength.value  = abs(gridDist.y * 2)
+					)
+				3: (#stop)
+			)
 		)
 	)
 )
