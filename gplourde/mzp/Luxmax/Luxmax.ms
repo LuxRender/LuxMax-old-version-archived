@@ -36,6 +36,38 @@ global lux_main = "LuxMax Starting..."
 	SamplerRollouts = #()
 	FilltersRollouts =#()
 
+	function ResetUI =
+	(
+		removeSubRollout lux_main.lx0 lux_external
+		removeSubRollout lux_main.lx0 lux_LuxRenderEnginePresets
+		removeSubRollout lux_main.lx0 lux_Renderer
+		removeSubRollout lux_main.lx0 lux_Sampler
+		removeSubRollout lux_main.lx0 lux_SurfaceIntegrator
+		removeSubRollout lux_main.lx0 lux_VolumeIntegrator
+		removeSubRollout lux_main.lx0 lux_Filter
+		removeSubRollout lux_main.lx0 lux_Accelerator
+		--removeSubRollout lux_main.lx0 lux_LuxRenderNetwork
+		removeSubRollout lux_main.lx0 lux_Film
+		removeSubRollout lux_main.lx0 lux_Output
+	)
+	function SetUpLuxRenderUI =
+	(
+		AddSubRollout lux_main.lx0 lux_external
+		AddSubRollout lux_main.lx0 lux_LuxRenderEnginePresets
+		AddSubRollout lux_main.lx0 lux_Renderer
+		AddSubRollout lux_main.lx0 lux_Sampler
+		AddSubRollout lux_main.lx0 lux_SurfaceIntegrator
+		AddSubRollout lux_main.lx0 lux_VolumeIntegrator
+		AddSubRollout lux_main.lx0 lux_Filter
+		AddSubRollout lux_main.lx0 lux_Accelerator
+		--AddSubRollout lux_main.lx0 lux_LuxRenderNetwork
+		AddSubRollout lux_main.lx0 lux_Film
+		AddSubRollout lux_main.lx0 lux_Output
+	)
+	function SetUpSLGPUUI =
+	(
+	)
+	
 	( --// Presets
 		-- Add your own presets here
 		
@@ -124,82 +156,104 @@ global lux_main = "LuxMax Starting..."
 			on DimmensionsPresets_ui selected idx do (applyPreset (idx - 1))
 		)
 
-	/*
 		rollout lux_LuxRenderEnginePresets "LuxRender Engine Presets" rolledup:true
 		(
 			dropdownlist luxrenderpresets "Render Presets:" items:#("Direct Lighting Preview, No GI", "Global Illumination Preview", "Metropolis Light Transport (unbiased recommented)", "OpenCL Path Tracing", "Photon Mapping (caustics off)", "Photon Mapping (caustics on)")
 			
 			on luxrenderpresets selected i do
 			(
-			--direct lighting
-			if luxrenderpresets.items[i] == "Direct Lighting Preview, No GI" then
-			(				
-			fileIn "luxmax\\Presets\\Direct_Lighting_NoGI.ms"
-			GetControlParams(lux_Renderer)
-			GetControlParams(lux_Sampler)
-			GetControlParams(lux_SurfaceIntegrator)
-			GetControlParams(lux_VolumeIntegrator)
-			GetControlParams(lux_Filter)
-			GetControlParams(lux_Accelerator)
-			)	
-			if luxrenderpresets.items[i] == "Global Illumination Preview" then
-			(				
-			fileIn "luxmax\\Presets\\GI_preview.ms"
-			GetControlParams(lux_Renderer)
-			GetControlParams(lux_Sampler)
-			GetControlParams(lux_SurfaceIntegrator)
-			GetControlParams(lux_VolumeIntegrator)
-			GetControlParams(lux_Filter)
-			GetControlParams(lux_Accelerator)
-			)	
-			if luxrenderpresets.items[i] == "Metropolis Light Transport (unbiased recommented)" then
-			(				
-			fileIn "luxmax\\Presets\\Metropolis_unbiased_recommended.ms"
-			GetControlParams(lux_Renderer)
-			GetControlParams(lux_Sampler)
-			GetControlParams(lux_SurfaceIntegrator)
-			GetControlParams(lux_VolumeIntegrator)
-			GetControlParams(lux_Filter)
-			GetControlParams(lux_Accelerator)
-			)	
-			if luxrenderpresets.items[i] == "OpenCL Path Tracing" then
-			(				
-			fileIn "luxmax\\Presets\\OpenCL_path_tracing_unbiased.ms"
-			GetControlParams(lux_Renderer)
-			GetControlParams(lux_Sampler)
-			GetControlParams(lux_SurfaceIntegrator)
-			GetControlParams(lux_VolumeIntegrator)
-			GetControlParams(lux_Filter)
-			GetControlParams(lux_Accelerator)
-			)		
-			if luxrenderpresets.items[i] == "Photon Mapping (caustics off)" then
-			(				
-			fileIn "luxmax\\Presets\\Photon_mapping_final_caustics_off.ms"
-			GetControlParams(lux_Renderer)
-			GetControlParams(lux_Sampler)
-			GetControlParams(lux_SurfaceIntegrator)
-			GetControlParams(lux_VolumeIntegrator)
-			GetControlParams(lux_Filter)
-			GetControlParams(lux_Accelerator)
-			)		
-			if luxrenderpresets.items[i] == "Photon Mapping (caustics on)" then
-			(				
-			fileIn "luxmax\\Presets\\Photon_mapping_final_caustics_on.ms"
-			GetControlParams(lux_Renderer)
-			GetControlParams(lux_Sampler)
-			GetControlParams(lux_SurfaceIntegrator)
-			GetControlParams(lux_VolumeIntegrator)
-			GetControlParams(lux_Filter)
-			GetControlParams(lux_Accelerator)
-			)		
+				--direct lighting
+				if luxrenderpresets.items[i] == "Direct Lighting Preview, No GI" then
+				(				
+					fileIn "luxmax\\Presets\\Direct_Lighting_NoGI.ms"
+					GetControlParams(lux_Renderer)
+					GetControlParams(lux_Sampler)
+					GetControlParams(lux_SurfaceIntegrator)
+					GetControlParams(lux_VolumeIntegrator)
+					GetControlParams(lux_Filter)
+					GetControlParams(lux_Accelerator)
+				)	
+				if luxrenderpresets.items[i] == "Global Illumination Preview" then
+				(				
+					fileIn "luxmax\\Presets\\GI_preview.ms"
+					GetControlParams(lux_Renderer)
+					GetControlParams(lux_Sampler)
+					GetControlParams(lux_SurfaceIntegrator)
+					lux_SurfaceIntegrator.updateSubRollout()
+					GetControlParams(lux_VolumeIntegrator)
+					GetControlParams(lux_Filter)
+					GetControlParams(lux_Accelerator)
+				)	
+				if luxrenderpresets.items[i] == "Metropolis Light Transport (unbiased recommented)" then
+				(				
+					fileIn "luxmax\\Presets\\Metropolis_unbiased_recommended.ms"
+					GetControlParams(lux_Renderer)
+					GetControlParams(lux_Sampler)
+					GetControlParams(lux_SurfaceIntegrator)
+					lux_SurfaceIntegrator.updateSubRollout()
+					GetControlParams(lux_VolumeIntegrator)
+					GetControlParams(lux_Filter)
+					GetControlParams(lux_Accelerator)
+				)	
+				if luxrenderpresets.items[i] == "OpenCL Path Tracing" then
+				(				
+					fileIn "luxmax\\Presets\\OpenCL_path_tracing_unbiased.ms"
+					GetControlParams(lux_Renderer)
+					GetControlParams(lux_Sampler)
+					GetControlParams(lux_SurfaceIntegrator)
+					lux_SurfaceIntegrator.updateSubRollout()
+					GetControlParams(lux_VolumeIntegrator)
+					GetControlParams(lux_Filter)
+					GetControlParams(lux_Accelerator)
+				)		
+				if luxrenderpresets.items[i] == "Photon Mapping (caustics off)" then
+				(				
+					fileIn "luxmax\\Presets\\Photon_mapping_final_caustics_off.ms"
+					GetControlParams(lux_Renderer)
+					GetControlParams(lux_Sampler)
+					GetControlParams(lux_SurfaceIntegrator)
+					lux_SurfaceIntegrator.updateSubRollout()
+					GetControlParams(lux_VolumeIntegrator)
+					GetControlParams(lux_Filter)
+					GetControlParams(lux_Accelerator)
+				)		
+				if luxrenderpresets.items[i] == "Photon Mapping (caustics on)" then
+				(				
+					fileIn "luxmax\\Presets\\Photon_mapping_final_caustics_on.ms"
+					GetControlParams(lux_Renderer)
+					GetControlParams(lux_Sampler)
+					GetControlParams(lux_SurfaceIntegrator)
+					lux_SurfaceIntegrator.updateSubRollout()
+					GetControlParams(lux_VolumeIntegrator)
+					GetControlParams(lux_Filter)
+					GetControlParams(lux_Accelerator)
+				)		
 			)
 		)
-		
-		*/
-		
-		rollout lux_LuxRenderEngineConfiguration "LuxRender Engine" rolledup:true
+		rollout lux_LuxRenderEngineConfiguration "LuxRender Engine" rolledup:false
 		(
-			dropdownlist ddl_mode "Rendering Mode:" items:#("External")
+			dropdownlist ddl_mode "Rendering Mode:" items:#("External", "smallluxGPU")
+			
+			on ddl_mode selected val do
+			(
+				ResetUI()
+				
+				if (val == 1) do
+					SetUpLuxRenderUI()
+				if (val == 2) do
+					SetUpSLGPUUI()
+			)
+			on lux_LuxRenderEngineConfiguration open do
+			(
+				GetControlParams(lux_LuxRenderEngineConfiguration)
+				
+				ResetUI()
+				
+				if (ddl_mode.selection == 1) do
+					SetUpLuxRenderUI()
+				if (ddl_mode.selection == 2) do
+					SetUpSLGPUUI()
+			)
 		)
 		rollout lux_external "LuxRender External Engine Configuration" rolledup:false
 		(
@@ -298,13 +352,18 @@ global lux_main = "LuxMax Starting..."
 				return SurfaceIntegratorsRollouts[ddl_surface.selection].GetLuxRenderString()
 			)
 			
-			on ddl_surface selected idx do
+			function updateSubRollout =
 			(
 				for o in SurfaceIntegratorsRollouts do
 				(
 					try (removeSubRollout lx0 o) catch()
 				)
 				AddSubRollout lux_SurfaceIntegrator.lx0 SurfaceIntegratorsRollouts[ddl_surface.selection]
+			)
+			
+			on ddl_surface selected idx do
+			(
+				updateSubRollout()
 			)
 			
 			on lux_SurfaceIntegrator open do
@@ -500,8 +559,6 @@ global lux_main = "LuxMax Starting..."
 				if ((GetLuxValue "btn_outputpath") != undefined) do btn_outputpath.Text = (GetLuxValue "btn_outputpath")
 			)
 		)
-		
-		
 		rollout lux_main "LuxRender Parameters"
 		(
 			subRollout lx0 "" width:320 height:570 pos:[0,0]
@@ -616,16 +673,5 @@ global lux_main = "LuxMax Starting..."
 	
 	createDialog lux_main 320 650 style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu)
 	AddSubRollout lux_main.lx0 lux_Dimmensions
-	--AddSubRollout lux_main.lx0 lux_LuxRenderEnginePresets
 	AddSubRollout lux_main.lx0 lux_LuxRenderEngineConfiguration
-	AddSubRollout lux_main.lx0 lux_external
-	AddSubRollout lux_main.lx0 lux_Renderer
-	AddSubRollout lux_main.lx0 lux_Sampler
-	AddSubRollout lux_main.lx0 lux_SurfaceIntegrator
-	AddSubRollout lux_main.lx0 lux_VolumeIntegrator
-	AddSubRollout lux_main.lx0 lux_Filter
-	AddSubRollout lux_main.lx0 lux_Accelerator
-	--AddSubRollout lux_main.lx0 lux_LuxRenderNetwork
-	AddSubRollout lux_main.lx0 lux_Film
-	AddSubRollout lux_main.lx0 lux_Output
 )

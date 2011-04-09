@@ -198,18 +198,22 @@ function SaveSettings =
 	if (luxMax_Scene != (getFilenameFile maxFileName)) then return false
 	
 	luxMax_Settings = #()
+	CollectSettings(lux_LuxRenderEngineConfiguration)
 	CollectSettings(lux_Dimmensions)
 	CollectSettings(lux_LuxRenderEnginePresets)
 	CollectSettings(lux_LuxRenderEngineConfiguration)
 	CollectSettings(lux_external)
 	CollectSettings(lux_Renderer)
 	CollectSettings(lux_Sampler)
-	CollectSettings(SamplerRollouts[(GetLuxValue "ddl_sampler")])
+	if ((GetLuxValue "ddl_sampler") != undefined) then
+		CollectSettings(SamplerRollouts[(GetLuxValue "ddl_sampler")])
 	CollectSettings(lux_SurfaceIntegrator)
-	CollectSettings(SurfaceIntegratorsRollouts[(GetLuxValue "ddl_surface")])
+	if ((GetLuxValue "ddl_surface") != undefined) then
+		CollectSettings(SurfaceIntegratorsRollouts[(GetLuxValue "ddl_surface")])
 	CollectSettings(lux_VolumeIntegrator)
 	CollectSettings(lux_Filter)
-	CollectSettings(FilltersRollouts[(GetLuxValue "ddl_filter")])
+	if ((GetLuxValue "ddl_filter") != undefined) then
+		CollectSettings(FilltersRollouts[(GetLuxValue "ddl_filter")])
 	CollectSettings(lux_Accelerator)
 	CollectSettings(lux_LuxRenderNetwork)
 	CollectSettings(lux_Output)
