@@ -16,14 +16,15 @@ fn lux_export_luxPortal obj =
 			
 	format "\tTransform [% % % 0.0 % % % 0.0 % % % 0.0 % % % 1.0]\n" r1.x r1.y r1.z r2.x r2.y r2.z r3.x r3.y r3.z (r4.x * luxScaleUnit()) (r4.y * luxScaleUnit()) (r4.z * luxScaleUnit())to:str
 
-	format "\tPortalShape \"trianglemesh\"\n" to:str
-	format "\t\"integer indices\" [2 3 1 0 2 1]\n" to:str
+	format "\tPortalShape \"mesh\"\n" to:str
+	format "\t\"integer triindices\" [2 3 1 0 2 1]\n" to:str
 	format "\t\"point P\" [" to:str
 	for p in points do
 	(
 		format "% % % " (p.x * luxScaleUnit()) (p.y * luxScaleUnit()) (p.z * luxScaleUnit()) to:str
 	)
 	format "]\n" to:str
+	format "\t\"normal N\" [0 0 -1 0 0 -1 0 0 -1 0 0 -1 ]\n" to:str
 	
 	return (str as string)
 )

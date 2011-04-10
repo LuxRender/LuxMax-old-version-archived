@@ -345,7 +345,7 @@ function luxMaterialPreview mat =
 		global lux_ConsoleProcess = DotNetObject "System.Diagnostics.Process"
 	
 	lux_ConsoleProcess.StartInfo.UseShellExecute = false
-	lux_ConsoleProcess.StartInfo.FileName = "e:\\luxrender\\luxconsole.exe"
+	lux_ConsoleProcess.StartInfo.FileName = ((luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") + "\\luxconsole.exe")
 	lux_ConsoleProcess.StartInfo.Arguments = ("\"" + lxsFilename as string + "\"")
 	lux_ConsoleProcess.StartInfo.CreateNoWindow = true
 	lux_ConsoleProcess.EnableRaisingEvents = false
