@@ -155,7 +155,6 @@ global lux_main = "LuxMax Starting..."
 			)
 			on DimmensionsPresets_ui selected idx do (applyPreset (idx - 1))
 		)
-
 		rollout lux_LuxRenderEnginePresets "LuxRender Engine Presets" rolledup:true
 		(
 			dropdownlist luxrenderpresets "Render Presets:" items:#("Direct Lighting Preview, No GI", "Global Illumination Preview", "Metropolis Light Transport (unbiased recommented)", "OpenCL Path Tracing", "Photon Mapping (caustics off)", "Photon Mapping (caustics on)")
@@ -282,6 +281,7 @@ global lux_main = "LuxMax Starting..."
 				
 				if (lx_path != undefined) do
 				(
+					luxmaxcfg.SetLuxMaxSetting "Engine" "LuxRenderPath" lx_path 
 					btn_path.Text = lx_path
 				)
 			)
@@ -289,7 +289,7 @@ global lux_main = "LuxMax Starting..."
 			on lux_external open do
 			(
 				GetControlParams(lux_external)
-				if ((GetLuxValue "btn_path") != undefined) do btn_path.Text = (GetLuxValue "btn_path")
+				 btn_path.Text = (luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") as string
 			)
 		)
 		rollout lux_Renderer "Renderer" rolledup:true
