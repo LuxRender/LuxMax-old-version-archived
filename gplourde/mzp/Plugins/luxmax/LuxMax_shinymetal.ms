@@ -161,6 +161,15 @@ plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 
 		filmtexture type:#textureMap ui:mfilmtexture
 		filmindex type:#float ui:mfilmindex
 		filmindextexture type:#textureMap ui:mfilmindextexture
+		on krColor set val do delegate.diffuse_color = val	
+        on ksColor set val do delegate.Specular_color = val
+		on roughness set val do 
+		(
+			if val < 0.1 then
+			delegate.Specular_Level =  100
+			if val >= 0.1 then
+			delegate.Specular_Level =  10 / val
+		)
 		
 		
 		
@@ -266,6 +275,7 @@ plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 
 			mfilmtexture.enabled = musefilm.state
 			mfilmindex.enabled = musefilm.state
 			mfilmindextexture.enabled = musefilm.state
+			delegate.glossiness =  50
 		)
 	)
 	

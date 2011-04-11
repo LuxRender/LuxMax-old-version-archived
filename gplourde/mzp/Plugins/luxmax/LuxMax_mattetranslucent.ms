@@ -66,6 +66,7 @@ plugin material LuxMatteTrans name:"LR MatteTranslucent" classID:#(0x40755a6a, 0
 		ktTexture type:#textureMap ui:mktTexture
 		sigma type:#float ui:msigma default:0
 		sigmaTexture type:#textureMap ui:msigmaTexture
+		on kdColor set val do delegate.diffuse_color = val
 	)
 	
 	rollout params "Matte Parameters"

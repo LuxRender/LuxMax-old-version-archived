@@ -138,7 +138,19 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0x6eee3747, 0x278b3ac
 		useabsorption type:#boolean ui:museabsorption
 		kaColor type:#color default:[90,90,90] ui:mkaColor 
 		kaTexture type:#textureMap ui:mkaTexture
-		dfloat type:#float ui:mdfloat 
+		dfloat type:#float ui:mdfloat
+        on kdColor set val do delegate.diffuse_color = val	
+        on ksColor set val do delegate.Specular_color = val
+		on roughness set val do 
+		(
+			if val < 0.1 then
+			delegate.Specular_Level =  100
+			if val >= 0.1 then
+			delegate.Specular_Level =  10 / val
+		)
+
+		
+			
 		
 	)
 	

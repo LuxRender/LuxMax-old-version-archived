@@ -61,6 +61,7 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 		kdTexture type:#textureMap ui:mkdTexture
 		sigma type:#float ui:msigma default:0
 		sigmaTexture type:#textureMap ui:msigmaTexture
+		on kdColor set val do delegate.diffuse_color = val
 	)
 	
 	rollout params "Matte Parameters"
@@ -68,6 +69,8 @@ plugin material LuxrenderMatte name:"LR Matte" classID:#(0x61108483, 0x4d218a72)
 		label lb1 "Diffuse . . . . . . . . ."  align:#left across:3
 		colorpicker mkdColor "" align:#left width:80 height:16
 		mapbutton mkdTexture"None" width:110 height:16 align:#right
+		
+		
 		
 		label lbsigma "Sigma . . . . . . . . . ." across:3 align:#left
 		spinner msigma " " range:[0,90,0] width:50 align:#left fieldwidth:65

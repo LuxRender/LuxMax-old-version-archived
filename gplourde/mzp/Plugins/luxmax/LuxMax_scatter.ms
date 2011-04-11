@@ -39,6 +39,7 @@ plugin material LuxrenderScatter name:"LR Scatter" classID:#(0x1c417a6f, 0x4b235
 		kdTexture type:#textureMap ui:mkdTexture
 		g type:#float ui:mg default:0
 		gTexture type:#textureMap ui:mgTexture
+		on kdColor set val do delegate.diffuse_color = val	
 	)
 	
 	rollout params "Scatter Parameters"

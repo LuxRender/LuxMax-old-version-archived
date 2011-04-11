@@ -218,6 +218,8 @@ plugin material LuxrenderCarpaint name:"LR Carpaint" classID:#(0x164f1487, 0x3d0
 		kaColor type:#color default:[90,90,90] ui:mkaColor 
 		kaTexture type:#textureMap ui:mkaTexture
 		dfloat type:#float ui:mdfloat 
+		on kdColor set val do delegate.diffuse_color = val	
+		on ks1Color set val do delegate.Specular_color = val
 		
 	)
 	
@@ -359,6 +361,8 @@ mkdColor.enabled = musecarpaintpreset.state
  lbM3.enabled = musecarpaintpreset.state
  mM3.enabled = musecarpaintpreset.state
  mM3Texture.enabled = musecarpaintpreset.state
+ delegate.Specular_Level =  60
+ delegate.glossiness =  15
 		)
 	)
 	

@@ -32,6 +32,12 @@ Plugin material LuxRenderGlass2 name:"LR Glass2" classID:#(0x1a82153d,0x7175d56)
 	(
 		checkbox marchitectural "Architectural"
 		checkbox mdispersion "Dispersion"
+	
+	
+	on paramsEm open do
+	(
+		delegate.opacity = 50
+	)
 	)
 	include "luxmax\\mtl_common.ms"
 )
