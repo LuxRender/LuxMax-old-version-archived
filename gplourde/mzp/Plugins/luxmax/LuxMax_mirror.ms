@@ -83,6 +83,7 @@ plugin material LuxRenderMirror name:"LR Mirror" classID:#(0x20cc696b, 0x4e990f2
 		filmtexture type:#textureMap ui:mfilmtexture
 		filmindex type:#float ui:mfilmindex
 		filmindextexture type:#textureMap ui:mfilmindextexture
+		on krColor set val do delegate.diffuse_color = val	
 		
 		
 		
@@ -135,6 +136,7 @@ plugin material LuxRenderMirror name:"LR Mirror" classID:#(0x20cc696b, 0x4e990f2
 			mfilmtexture.enabled = musefilm.state
 			mfilmindex.enabled = musefilm.state
 			mfilmindextexture.enabled = musefilm.state
+			delegate.Specular_Level =  120
 		)
 	)
 	

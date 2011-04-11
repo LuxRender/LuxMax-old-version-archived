@@ -136,6 +136,14 @@ plugin material LuxrenderRoughGlass name:"LR RoughGlass" classID:#(0x680627ab, 0
 		vroughness type:#float ui:mvroughness default:0.0001
 		vroughnessTexture type:#textureMap ui:mvroughnessTexture
 		useanisotropy type:#boolean ui:museanisotropy
+		on krColor set val do delegate.diffuse_color = val
+		on roughness set val do 
+		(
+			if val < 0.1 then
+			delegate.Specular_Level =  100
+			if val >= 0.1 then
+			delegate.Specular_Level =  10 / val
+		)
 		
 		
 		
@@ -212,6 +220,7 @@ plugin material LuxrenderRoughGlass name:"LR RoughGlass" classID:#(0x680627ab, 0
 			mvroughness.enabled = museanisotropy.state
 			mvroughnessTexture.enabled = museanisotropy.state
 			mcauchyb.enabled = mdispersion.state
+			delegate.opacity = 80
 		)
 	)
 	

@@ -124,7 +124,14 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 		vroughness type:#float ui:mvroughness default:0.0001
 		vroughnessTexture type:#textureMap ui:mvroughnessTexture
 		nkdatapath type:#string 
-		usenkdata type:#boolean ui:musenkdata		
+		usenkdata type:#boolean ui:musenkdata
+		on roughness set val do 
+		(
+			if val < 0.1 then
+			delegate.Specular_Level =  100
+			if val >= 0.1 then
+			delegate.Specular_Level =  10 / val
+		)		
 	)
 	
 	rollout params "Metal Parameters"
@@ -189,6 +196,7 @@ plugin material LuxrenderMetal name:"LR Metal" classID:#(0x26705ce9, 0x4c088767)
 			muroughnessTexture.enabled = museanisotropy.state
 			mvroughness.enabled = museanisotropy.state
 			mvroughnessTexture.enabled = museanisotropy.state
+			delegate.glossiness =  30
 		)
 	)
 	

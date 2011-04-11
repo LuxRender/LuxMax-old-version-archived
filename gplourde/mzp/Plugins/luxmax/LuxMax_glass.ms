@@ -114,6 +114,9 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 		filmtexture type:#textureMap ui:mfilmtexture
 		filmindex type:#float ui:mfilmindex
 		filmindextexture type:#textureMap ui:mfilmindextexture
+		
+		on krColor set val do delegate.diffuse_color = val
+		
 	)
 	
 	rollout params "Glass Parameters"
@@ -197,6 +200,7 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 			mfilmindextexture.enabled = musefilm.state
 			mcauchyb.enabled = mdispersion.state
 			ddl_filmior.enabled =  musefilm.state
+			delegate.opacity = 50
 		)
 	)
 	

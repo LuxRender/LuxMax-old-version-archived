@@ -125,6 +125,7 @@ plugin material LuxRenderVelvet name:"LR Velvet" classID:#(0x117d5192, 0x3fb8364
 		thickness type:#float ui:mthickness
 		thicknessTexture type:#textureMap ui:mthicknessTexture
 		advance type:#boolean ui:madvance
+		on kdColor set val do delegate.diffuse_color = val
 	)
 	
 	rollout params "Velvet Parameters"
