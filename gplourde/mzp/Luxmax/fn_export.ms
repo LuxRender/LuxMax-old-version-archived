@@ -70,7 +70,8 @@
 					u = tempEnvmap.coordinates.U_Angle as float
 					v = tempEnvmap.coordinates.V_Angle  as float 
 					w = tempEnvmap.coordinates.W_Angle as float
-					format "Rotate % % % 1\r\n" u v w to:str
+					--format "Rotate % % % 1\r\n" u w v to:str
+					format "Rotate 90.0 0.0 0.0 1\r\n" to:str
 					format "Scale 1 1 1\r\n" to:str
 					format "LightGroup \"environment\"\r\n" to:str 
 					format "LightSource \"infinite\"\r\n" to:str
