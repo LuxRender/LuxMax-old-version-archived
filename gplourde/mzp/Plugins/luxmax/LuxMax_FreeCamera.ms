@@ -1,5 +1,7 @@
 plugin camera LuxrenderCamera name:"LR Camera" classID:#(0x3465725b, 0x7a7b54a6) extends:Freecamera replaceUI:true version:1 category:"LuxRender"
 (
+	include "luxmax\\fn_common.ms"
+	
 	parameters main rollout:params
 	(
 		cameratype type:#integer ui:m_type default:1
@@ -214,13 +216,17 @@ plugin camera LuxrenderCamera name:"LR Camera" classID:#(0x3465725b, 0x7a7b54a6)
 		format "\t\"float screenwindow\" [% % % %]\n" sw[1] sw[2] sw[3] sw[4] to:str
 		
 		if (autofocus == true) do
+		(
+			lensradius = (lens as float / 1000.0) / ( 2.0 * fstop as float)
 			format "\t\"bool autofocus\" [\"true\"]\n" to:str
+			format "\t\"float lensradius\" [%]\n" lensradius to:str
+		)
 		
-		if (usedof == true and autofocus == false) then
+		if (usedof == true and autofocus != true) do
 		(
 			lensradius = (lens as float / 1000.0) / ( 2.0 * fstop as float)
 			format "\t\"float lensradius\" [%]\n" lensradius to:str
-			format "\t\"float focaldistance\" [%]\n" (targetdistance * luxScaleUnit()) to:str
+			format "\t\"float focaldistance\" [%]\n" (targetdistance * luxScaleUnit() ) to:str
 		)
 		
 		if (cameratype == 1) do
@@ -232,24 +238,28 @@ plugin camera LuxrenderCamera name:"LR Camera" classID:#(0x3465725b, 0x7a7b54a6)
 			format "\t\"float yon\" [%]\n" (yon * luxScaleUnit()) to:str
 		)
 		
-		if exposuretiming == 1 then
-		(
-			format "\t\"float shutteropen\" [%]\n" ((openangle / framerate as float) as string) to:str
-			format "\t\"float shutterclose\" [%]\n" ((closeangle / framerate as float) as string) to:str
-		)
-		else if exposuretiming == 3 then
-		(
-			format "\t\"float shutteropen\" [%]\n" ((openangle) as string) to:str
-			format "\t\"float shutterclose\" [%]\n" ((closeangle) as string) to:str
-		)
-		else if exposuretiming == 2 then
-		(
-			format "\t\"float shutteropen\" [%]\n" ((openangle/ (framerate  as float * 360.0)) as string) to:str
-			format "\t\"float shutterclose\" [%]\n" ((closeangle/ (framerate as float * 360.0)) as string) to:str
-		)
+		
+		
 		
 		if (usemotionblur == true) do
+		(
 			format "\t\"string shutterdistribution\" [\"%\"]\n" (shutterdistributiontypes[distribution]) to:str
+			if exposuretiming == 1 then
+			(
+			format "\t\"float shutteropen\" [%]\n" ((openangle / framerate as float) as string) to:str
+			format "\t\"float shutterclose\" [%]\n" ((closeangle / framerate as float) as string) to:str
+			)
+			else if exposuretiming == 3 then
+			(
+			format "\t\"float shutteropen\" [%]\n" ((openangle) as string) to:str
+			format "\t\"float shutterclose\" [%]\n" ((closeangle) as string) to:str
+			)
+			else if exposuretiming == 2 then
+			(
+			format "\t\"float shutteropen\" [%]\n" ((openangle/ (framerate  as float * 360.0)) as string) to:str
+			format "\t\"float shutterclose\" [%]\n" ((closeangle/ (framerate as float * 360.0)) as string) to:str
+			)
+		)
 		
 		if (usemotionblur == true and cameramotionblur == true) do
 			format "\t\"string endtransform\" [\"CameraEndTransform\"]" to:str

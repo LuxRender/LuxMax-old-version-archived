@@ -5,7 +5,7 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 	
 	function GetTextureMaps =
 	(
-		texturemaps = #(this.krTexture, thisktTexture, this.emissionTexture)
+		texturemaps = #(this.krTexture, this.ktTexture, this.emissionTexture)
 		
 		if (this.bumpmapTexture != undefined and this.useBumpmap == true) then
 		(
