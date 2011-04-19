@@ -9,7 +9,6 @@ global lux_main = "LuxMax Starting..."
 	if (luxMax_Settings == undefined) then (persistent global luxMax_Settings = #())
 	
 	numlightsource = 0
-		
 	-- Cache rollouts
 	lux_Dimmensions = undefined
 	lux_LuxRenderEnginePresets = undefined
@@ -32,6 +31,8 @@ global lux_main = "LuxMax Starting..."
 	lux_Filter_mitchell = undefined
 	lux_Film = undefined
 	
+	Slg_FilmRollout = undefined
+	
 	SurfaceIntegratorsRollouts = #()
 	SamplerRollouts = #()
 	FilltersRollouts =#()
@@ -49,6 +50,7 @@ global lux_main = "LuxMax Starting..."
 		--removeSubRollout lux_main.lx0 lux_LuxRenderNetwork
 		removeSubRollout lux_main.lx0 lux_Film
 		removeSubRollout lux_main.lx0 lux_Output
+		removeSubRollout lux_main.lx0 Slg_FilmRollout
 	)
 	function SetUpLuxRenderUI =
 	(
@@ -64,8 +66,12 @@ global lux_main = "LuxMax Starting..."
 		AddSubRollout lux_main.lx0 lux_Film
 		AddSubRollout lux_main.lx0 lux_Output
 	)
+	
+
+	
 	function SetUpSLGPUUI =
 	(
+		AddSubRollout lux_main.lx0 Slg_FilmRollout
 	)
 	
 	( --// Presets
@@ -83,6 +89,7 @@ global lux_main = "LuxMax Starting..."
 	include "luxmax\\fn_common.ms"
 	--include "luxmax\\fn_renderview.ms"
 	include "luxmax\\fn_ply.ms"
+	include "luxmax\\fn_ply_slg.ms"
 	include "luxmax\\fn_export_lxo.ms"
 	include "luxmax\\fn_export_camera.ms"
 	include "luxmax\\fn_export_material.ms"
@@ -94,6 +101,187 @@ global lux_main = "LuxMax Starting..."
 	include "luxmax\\rollout_integrator.ms"
 	
 	( --// Main rollouts
+		
+			rollout Slg_FilmRollout "SLG Film" width:353 height:300
+			(
+		
+				dropdownList ddl_filter_type "Filter Type" pos:[8,112] width:144 height:40 items:#("None", "Guassian")
+				dropdownList ddl_tonemapType "Tonemap Type:" pos:[8,152] width:144 height:40 items:#("Linear Scale")
+				spinner spn_Gamma "Gamma" pos:[16,200] width:136 height:16 --range:[0,100,1] --default:2,2
+ --range:[0,100,1] --default:2,2
+				dropdownList ddl6 "renderEngineType" pos:[8,224] width:152 height:40 items:#("PathGPU", "SPPMRenderEngine", "PathRenderEngine", "PathGPURenderEngine")
+				edittext edt_image_name "" pos:[161,72] width:144 height:24
+				label lbl_imagename "Image Name:" pos:[168,56] width:144 height:16
+				edittext edt_flmName "" pos:[8,72] width:144 height:24
+		
+		--film.filter.type 
+		--if (filterType == 0)
+		--film->SetFilterType(FILTER_NONE);
+		--else
+		--film->SetFilterType(FILTER_GAUSSIAN);
+				label lbl_flm_name "Film Name:" pos:[16,56] width:144 height:16
+				button btn_slg_EXE "Browse to SLG.exe" pos:[8,8] width:144 height:16
+				button btn_Export_SLG "Export SLG" pos:[8,32] width:144 height:16
+				button btn_export_path "Export Path" pos:[160,8] width:160 height:16
+		
+				on btn_slg_EXE pressed do
+				(
+					--browse to slg.exe
+					f = getOpenFileName caption:"Open SLG.Exe :" \
+					filename:"c:/slg.exe"
+					if (f != undefined)do
+					(
+						btn_slg_EXE.text = f as string
+					)
+				)
+				
+				on btn_Export_SLG pressed do
+				(
+					objectArray = objects as array
+					scnFilePath = stringStream ""
+					scnFileName = ""
+					str = stringStream ""
+					cfgFilePath = StringStream ""
+					BatchFile = StringStream ""
+					batchfilePath = 	stringstream""
+					
+					--BEGIN EXPORT SCN file
+					--Create a .scn file based on above path
+					
+					--scnFilePath = (btn_export_path.text + "\\" + luxMax_Scene + ".scn")
+					--lxsFilename = stringStream ""
+						format "%%_%.cfg" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:cfgFilePath
+						format "%%_%.scn" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:scnFilePath
+						format "%%_%.bat" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:batchfilePath 
+						
+						scnFileName = ((getSceneName()) + "_" +  (GetFrame()) + ".scn" ) as string
+						FixedPath = fixWindowsPath (scnFilePath as string)
+						print "Exporting scn file to:"
+						print (FixedPath)
+						outputFile = createFile (FixedPath) --scnFilePath
+						cfgFile = createfile (fixWindowsPath (cfgFilePath as string))
+						BatchFile = createfile (fixWindowsPath (batchfilePath as string))
+						--begin put all logic here....
+						
+						--scene.camera.lookat = 7.634103 -4.168197 1.421921 12.037415 4.713311 0.106751
+						tm = Inverse(getViewTM())
+						pos = tm.row4
+						up = normalize tm.row2
+						look = (tm.row4 + -(normalize tm.row3))
+						--format "scene.camera.lookat = % % % % % % % % %\n" (pos.x * luxScaleUnit()) (pos.y * luxScaleUnit()) (pos.z * luxScaleUnit()) (look.x * luxScaleUnit()) (look.y * luxScaleUnit()) (look.z * luxScaleUnit()) up.x up.y up.z to:outputFile
+							format "scene.camera.lookat = % % % % % %\n" (pos.x * luxScaleUnit()) (pos.y * luxScaleUnit()) (pos.z * luxScaleUnit()) (look.x * luxScaleUnit()) (look.y * luxScaleUnit()) (look.z * luxScaleUnit()) up.x up.y up.z to:outputFile
+						
+							--scene.camera.fieldofview = 90
+							format "scene.camera.fieldofview = %\n" (getViewFOV()) to:outputFile
+						
+								--Sort out all the lights so that they get created first.
+								
+								c = 1
+								while c <= objectArray.count do
+								(
+									if(classOf objectArray[c].material == SLGMaterial)do
+									(
+										---------------------------------------------------------------------------------
+										--Light material
+										---------------------------------------------------------------------------------
+										-- scene.materials.light.whitelight
+										if(objectArray[c].material.useLightMat == true)then
+										(
+											test = objectArray[c].material.GetLuxRenderString()
+											format "%" (test as string) to:OutputFile
+											format "scene.objects.whitelight.all = %" (objectArray[c].name + ".ply\n") to:outputFile
+											--Set the current item to undefined so that the next loop skips it.
+											SLG_ply_export_script objectArray[c] (btn_export_path.text + "\\" + objectArray[c].name + ".ply") (luxScaleUnit())
+											objectArray[c] = undefined
+										)
+										else
+										(
+											--Do nothing.
+										)
+									)
+									c +=1
+								)
+								
+								--Sort out all the other shaders \ objects
+								for CurrObj in objectArray do
+								(
+									if (CurrObj != undefined)do
+									(
+									print "Exporting:"
+									print (CurrObj.name as string)
+									--Create an array to store all materials to, so that they get exported first into the file....
+									MatArray = #()
+									if (superclassof CurrObj == geometryclass) do
+									(
+											if(classOf Currobj.material == SLGMaterial)do
+											(
+												---------------------------------------------------------------------------------
+												--Matte material
+												---------------------------------------------------------------------------------
+												if(CurrObj.material.useMattemat == true)do
+												(
+													--Matte material
+													test = CurrObj.material.GetLuxRenderString()
+													format "%" (test as string) to:OutputFile
+												)
+												format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (CurrObj.name + ".ply\n") to:outputFile
+											)
+											
+											if(classOf Currobj.material != SLGMaterial)do
+											(
+												print "not SLG material, creating default"
+												format "scene.materials.matte.% = 0.85 0.85 0.85\n" (CurrObj.material.name) to:OutputFile
+											)
+											
+											--Export geometry..
+										try(
+											SLG_ply_export_script CurrObj (btn_export_path.text + "\\" + CurrObj.name + ".ply") (luxScaleUnit())
+											print "material"
+											print CurrObj.material.GetLuxRenderString
+											)
+										catch()
+									)
+								)
+							)
+							
+							--SETUP CFG FILES!!!!!!!
+							--Takes setting from 3dsmax main GUI
+							format "image.width = %\n" renderwidth to:cfgFile
+							format "image.height = %\n" renderheight to:cfgFile
+							--format "%%_%.cfg" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:cfgFilePath
+							format "image.filename = %_%\n" (getSceneName())  (GetFrame()) to:cfgFile
+							--scene.file = SLG_test_scene_000000.scn
+							format "scene.file = %\n " (scnFileName) to:cfgFile
+								format "opencl.platform.index = 0\n" to:cfgFile
+							--SETUP CFG FILES!!!!!!!
+							
+							format "% %" (btn_slg_EXE.text)(FixedPath) to:BatchFile
+								
+								
+							flush cfgFile
+							close cfgFile
+							flush scnFilePath
+							close scnFilePath
+							flush outputFile
+							close outputFile
+							flush BatchFile
+							close BatchFile
+				)
+				
+				
+				on btn_export_path pressed do
+				(
+					--set export path
+					f = getSavePath caption:"Choose Save dir"
+					if (f != undefined)do
+					(
+						btn_export_path.text = f as string
+					)
+				)
+			)
+		
+		
+		
 		rollout lux_Dimmensions "Dimmensions" rolledup:true
 		(
 			dropdownlist DimmensionsPresets_ui "Render Presets"
@@ -446,9 +634,21 @@ global lux_main = "LuxMax Starting..."
 			
 			on lux_Accelerator open do (GetControlParams(lux_Accelerator))
 		)
-		rollout lux_LuxRenderNetwork "LuxRender Network" rolledup:true
+		rollout lux_LuxRenderNetwork "LuxRender Network" width:269 height:231
 		(
+			edittext edt_addIp "" pos:[8,24] width:176 height:24
+			label lbl_server "IP" pos:[8,8] width:168 height:16
+			listbox lbx_servers "ListBox" pos:[16,48] width:168 height:7
+			button btn_add_server "add" pos:[192,24] width:72 height:24
 			
+			
+			
+			on btn_add_server pressed  do
+			(
+				
+				
+				
+			)
 		)
 		rollout lux_Film "Film" rolledup:true
 		(
@@ -590,6 +790,17 @@ global lux_main = "LuxMax Starting..."
 				SaveSettings()
 				success = false
 				
+-- 				if (getLuxValue "ddl_mode" == 1)then
+-- 				(
+-- 					messagebox "SLG export.."
+-- 					--luxWriteLookAt function str
+-- 					
+-- 					
+-- 					
+-- 					
+-- 				)
+				
+				
 				if (ddl_camera.selected == undefined) then success = luxWriteLxs undefined
 				else success = luxWriteLxs (GetNodeByName ddl_camera.selected)
 				
@@ -608,6 +819,10 @@ global lux_main = "LuxMax Starting..."
 						--lux_OpenRenderBuffer (getSceneName() + " Frame: " + GetFrame()) renderwidth renderheight (getLuxValue "displayinterval") (lxsFilename as string)
 					)
 				)
+				
+
+				
+				
 			)
 			on btn_Animation pressed do
 			(
