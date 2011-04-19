@@ -12,12 +12,15 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 	(
 		str = stringstream ""
 		
-
 		if this.useMattemat == true then
 		(
-		format "scene.materials.matte.% = % % %\n" this.name (this.MatteDifColor.r / 255) (this.MatteDifColor.g / 255) (this.MatteDifColor.b / 255) to:str
+			format "scene.materials.matte.% = % % %\n" this.name (this.MatteDifColor.r / 255) (this.MatteDifColor.g / 255) (this.MatteDifColor.b / 255) to:str
 		)
-
+		if this.useLightMat == true then
+		(
+			--scene.materials.light.whitelight
+			format "scene.materials.light.whitelight = % % %\n"  (this.LightDifColor.r / 255) (this.LightDifColor.g / 255) (this.LightDifColor.b / 255) to:str
+		)
 		
 		return str as string
 	)
@@ -26,6 +29,10 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 	(
 		useMattemat type:#boolean ui:museMatteMat
 		MatteDifColor type:#color default:[90,90,90] ui:mMatteDifColor
+		
+		LightDifColor type:#color default:[254,254,254]ui:mLightColor
+		LightPower type:#float ui:mPower default:0
+		useLightMat type:#boolean ui:museLightMat
 	)
 	
 rollout params "SLG Material Parameters"
