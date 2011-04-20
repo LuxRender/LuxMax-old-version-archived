@@ -109,6 +109,7 @@ global lux_main = "LuxMax Starting..."
 				dropdownList ddl_tonemapType "Tonemap Type:" pos:[8,152] width:144 height:40 items:#("Linear Scale")
 				spinner spn_Gamma "Gamma" pos:[16,200] width:136 height:16 --range:[0,100,1] --default:2,2
  --range:[0,100,1] --default:2,2
+ --range:[0,100,1] --default:2,2
 				dropdownList ddl6 "renderEngineType" pos:[8,224] width:152 height:40 items:#("PathGPU", "SPPMRenderEngine", "PathRenderEngine", "PathGPURenderEngine")
 				edittext edt_image_name "" pos:[161,72] width:144 height:24
 				label lbl_imagename "Image Name:" pos:[168,56] width:144 height:16
@@ -124,6 +125,10 @@ global lux_main = "LuxMax Starting..."
 				button btn_Export_SLG "Export SLG" pos:[8,32] width:144 height:16
 				button btn_export_path "Export Path" pos:[160,8] width:160 height:16
 		
+				
+				checkbox chk_slg_lauch "Lauch after export" pos:[160,32] width:152 height:16
+				
+				
 				on btn_slg_EXE pressed do
 				(
 					--browse to slg.exe
@@ -134,7 +139,6 @@ global lux_main = "LuxMax Starting..."
 						btn_slg_EXE.text = f as string
 					)
 				)
-				
 				on btn_Export_SLG pressed do
 				(
 					objectArray = objects as array
@@ -267,9 +271,14 @@ global lux_main = "LuxMax Starting..."
 							close outputFile
 							flush BatchFile
 							close BatchFile
+								if (chk_slg_lauch.checked)do
+								(
+									templaunchPath = (btn_export_path.text+ "\\"+ (getSceneName()) + "_" +  (GetFrame()) + ".bat" )
+										messagebox (templaunchPath as string)
+									ShellLaunch  (templaunchPath ) ""
+								)
+								
 				)
-				
-				
 				on btn_export_path pressed do
 				(
 					--set export path
