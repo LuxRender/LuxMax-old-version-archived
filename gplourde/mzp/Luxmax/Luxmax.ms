@@ -160,6 +160,7 @@ global lux_main = "LuxMax Starting..."
 						print (FixedPath)
 						outputFile = createFile (FixedPath) --scnFilePath
 						cfgFile = createfile (fixWindowsPath (cfgFilePath as string))
+							
 						BatchFile = createfile (fixWindowsPath (batchfilePath as string))
 						--begin put all logic here....
 						
@@ -254,8 +255,8 @@ global lux_main = "LuxMax Starting..."
 							format "scene.file = %\n " (scnFileName) to:cfgFile
 								format "opencl.platform.index = 0\n" to:cfgFile
 							--SETUP CFG FILES!!!!!!!
-							
-							format "% %" (btn_slg_EXE.text)(FixedPath) to:BatchFile
+							tempScnfileName = (getSceneName()) + "_" +  (GetFrame()) + ".cfg" 
+							format "\"%\" \"%\"" (btn_slg_EXE.text)(tempScnfileName) to:BatchFile
 								
 								
 							flush cfgFile
