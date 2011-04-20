@@ -274,7 +274,7 @@ global lux_main = "LuxMax Starting..."
 								if (chk_slg_lauch.checked)do
 								(
 									templaunchPath = (btn_export_path.text+ "\\"+ (getSceneName()) + "_" +  (GetFrame()) + ".bat" )
-										messagebox (templaunchPath as string)
+										
 									ShellLaunch  (templaunchPath ) ""
 								)
 								
