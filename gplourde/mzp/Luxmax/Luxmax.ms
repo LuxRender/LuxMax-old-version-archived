@@ -20,7 +20,7 @@ global lux_main = "LuxMax Starting..."
 	lux_VolumeIntegrator = undefined
 	lux_Filter = undefined
 	lux_Accelerator = undefined
-	lux_LuxRenderNetwork = undefined
+	--lux_LuxRenderNetwork = undefined
 	lux_Output = undefined
 	lux_Sampler_Random = undefined
 	lux_Sampler_LowDiscrepancy = undefined
@@ -644,21 +644,14 @@ global lux_main = "LuxMax Starting..."
 			
 			on lux_Accelerator open do (GetControlParams(lux_Accelerator))
 		)
-		rollout lux_LuxRenderNetwork "LuxRender Network" width:269 height:231
+		rollout lux_LuxRenderNetwork "LuxRender Network"
 		(
-			edittext edt_addIp "" pos:[8,24] width:176 height:24
+			-- edittext edt_addIp "" pos:[8,24] width:176 height:24 -- This line corrupt the max scene
+			
 			label lbl_server "IP" pos:[8,8] width:168 height:16
 			listbox lbx_servers "ListBox" pos:[16,48] width:168 height:7
 			button btn_add_server "add" pos:[192,24] width:72 height:24
-			
-			
-			
-			on btn_add_server pressed  do
-			(
-				
-				
-				
-			)
+			on btn_add_server pressed  do ()
 		)
 		rollout lux_Film "Film" rolledup:true
 		(
