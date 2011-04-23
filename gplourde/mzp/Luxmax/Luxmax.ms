@@ -204,6 +204,14 @@ global lux_main = "LuxMax Starting..."
 								c = 1
 								while c <= objectArray.count do
 								(
+									if(objectArray[c].name == "")do
+									(
+										errormsg = stringstream ""
+										format ("ERROR: Found object with no name, it's been renamed to: %") ("no_name" + c as string) to:errormsg
+										objectArray[c].name = ("no_name" + c as string)
+										messagebox (errormsg)
+									)
+									
 									if(classOf objectArray[c].material == SLGMaterial)do
 									(
 										---------------------------------------------------------------------------------
