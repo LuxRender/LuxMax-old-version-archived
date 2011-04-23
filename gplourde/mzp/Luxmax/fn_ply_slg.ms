@@ -54,18 +54,15 @@
 			SLG_ply_WriteString stream "format binary_little_endian 1.0"
 			SLG_ply_WriteString stream "comment LuxMax Maxscript PLY Exporter"
 			SLG_ply_WriteString stream ("element vertex " + (numfaces *  3) as string)
+			
 			SLG_ply_WriteString stream "property float x"
 			SLG_ply_WriteString stream "property float y"
 			SLG_ply_WriteString stream "property float z"
 			SLG_ply_WriteString stream "property float nx"
 			SLG_ply_WriteString stream "property float ny"
 			SLG_ply_WriteString stream "property float nz"
-			
-			if (exportUV == true) then
-			(
-				SLG_ply_WriteString stream "property float s"
-				SLG_ply_WriteString stream "property float t"
-			)
+			SLG_ply_WriteString stream "property float s"
+			SLG_ply_WriteString stream "property float t"
 			
 			SLG_ply_WriteString stream ("element face " + numfaces as string)
 			SLG_ply_WriteString stream "property list int int vertex_indices"
@@ -75,22 +72,20 @@
 			(
 				tf = undefined
 				f = getFace _trimsh i
-				
-				if (exportUV == true) then tf = getTVFace  _trimsh i
-				
+				tf = getTVFace  _trimsh i
 				normals = (meshop.getFaceRNormals _trimsh i)
 				
 				SLG_ply_WriteFaceVertex stream _trimsh f[1] ws
 				SLG_ply_WriteFaceVertexNormal stream normals[1]
-				if (exportUV == true) then SLG_ply_WriteFaceTVertex stream _trimsh tf[1] 
+				SLG_ply_WriteFaceTVertex stream _trimsh tf[1] 
 				
 				SLG_ply_WriteFaceVertex stream _trimsh f[2] ws
 				SLG_ply_WriteFaceVertexNormal stream normals[2]
-				if (exportUV == true) then SLG_ply_WriteFaceTVertex stream _trimsh tf[2]
+				SLG_ply_WriteFaceTVertex stream _trimsh tf[2]
 				
 				SLG_ply_WriteFaceVertex stream _trimsh f[3] ws
 				SLG_ply_WriteFaceVertexNormal stream normals[3]
-				if (exportUV == true) then SLG_ply_WriteFaceTVertex stream _trimsh tf[3]
+				SLG_ply_WriteFaceTVertex stream _trimsh tf[3]
 			)
 
 			c = 0

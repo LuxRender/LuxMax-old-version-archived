@@ -20,7 +20,7 @@ global lux_main = "LuxMax Starting..."
 	lux_VolumeIntegrator = undefined
 	lux_Filter = undefined
 	lux_Accelerator = undefined
-	--lux_LuxRenderNetwork = undefined
+	lux_LuxRenderNetwork = undefined
 	lux_Output = undefined
 	lux_Sampler_Random = undefined
 	lux_Sampler_LowDiscrepancy = undefined
@@ -47,7 +47,7 @@ global lux_main = "LuxMax Starting..."
 		removeSubRollout lux_main.lx0 lux_VolumeIntegrator
 		removeSubRollout lux_main.lx0 lux_Filter
 		removeSubRollout lux_main.lx0 lux_Accelerator
-		--removeSubRollout lux_main.lx0 lux_LuxRenderNetwork
+		removeSubRollout lux_main.lx0 lux_LuxRenderNetwork
 		removeSubRollout lux_main.lx0 lux_Film
 		removeSubRollout lux_main.lx0 lux_Output
 		removeSubRollout lux_main.lx0 Slg_FilmRollout
@@ -62,7 +62,7 @@ global lux_main = "LuxMax Starting..."
 		AddSubRollout lux_main.lx0 lux_VolumeIntegrator
 		AddSubRollout lux_main.lx0 lux_Filter
 		AddSubRollout lux_main.lx0 lux_Accelerator
-		--AddSubRollout lux_main.lx0 lux_LuxRenderNetwork
+		AddSubRollout lux_main.lx0 lux_LuxRenderNetwork
 		AddSubRollout lux_main.lx0 lux_Film
 		AddSubRollout lux_main.lx0 lux_Output
 	)
@@ -102,41 +102,37 @@ global lux_main = "LuxMax Starting..."
 	
 	( --// Main rollouts
 		
-			rollout Slg_FilmRollout "SLG Film" width:353 height:300
+			rollout Slg_FilmRollout "SmallLuxGPU Settings"
 			(
-		
-				dropdownList ddl_filter_type "Filter Type" pos:[8,112] width:144 height:40 items:#("None", "Guassian")
-				dropdownList ddl_tonemapType "Tonemap Type:" pos:[8,152] width:144 height:40 items:#("Linear Scale")
-				spinner spn_Gamma "Gamma" pos:[16,200] width:136 height:16 --range:[0,100,1] --default:2,2
- --range:[0,100,1] --default:2,2
- --range:[0,100,1] --default:2,2
-				dropdownList ddl6 "renderEngineType" pos:[8,224] width:152 height:40 items:#("PathGPU", "SPPMRenderEngine", "PathRenderEngine", "PathGPURenderEngine")
-				edittext edt_image_name "" pos:[161,72] width:144 height:24
-				label lbl_imagename "Image Name:" pos:[168,56] width:144 height:16
-				edittext edt_flmName "" pos:[8,72] width:144 height:24
-		
-		--film.filter.type 
-		--if (filterType == 0)
-		--film->SetFilterType(FILTER_NONE);
-		--else
-		--film->SetFilterType(FILTER_GAUSSIAN);
-				label lbl_flm_name "Film Name:" pos:[16,56] width:144 height:16
-				button btn_slg_EXE "Browse to SLG.exe" pos:[8,8] width:144 height:16
-				button btn_Export_SLG "Export SLG" pos:[8,32] width:144 height:16
-				button btn_export_path "Export Path" pos:[160,8] width:160 height:16
-		
+				label lb_slg_path "Full path to SmallLuxSPU's executable:" align:#left
+				button btn_slg_EXE "Browse to SLG.exe" width:280 height:20
 				
-				checkbox chk_slg_lauch "Lauch after export" pos:[160,32] width:152 height:16
+				label lb_export_path "Save location:" align:#left
+				button btn_export_path "c:\\tmp\\" width:280 height:20 
 				
+				button btn_Export_SLG "Export SLG" width:130 height:18 across:2 align:#left				
+				checkbox chk_slg_lauch "Lauch after export" width:152 height:16
+				
+				dropdownList ddl6 "renderEngineType" width:152 height:40 items:#("PathGPU", "SPPMRenderEngine", "PathRenderEngine", "PathGPURenderEngine")
+				
+				dropdownList ddl_filter_type "Filter Type" width:135 height:40 items:#("None", "Guassian") across:2
+				dropdownList ddl_tonemapType "Tonemap Type:" width:135 height:40 items:#("Linear Scale") align:#right 
+				spinner spn_Gamma "Gamma:" align:#right width:120 height:16 fieldwidth:65 --range:[0,100,1] --default:2,2
+				
+				on Slg_FilmRollout open do
+				(
+					btn_slg_EXE.Text = (luxmaxcfg.GetLuxMaxSetting "Engine" "SLGPath") as string
+					if (btn_slg_EXE.Text == "") do btn_slg_EXE.Text = "undefined"
+				)
 				
 				on btn_slg_EXE pressed do
 				(
 					--browse to slg.exe
-					f = getOpenFileName caption:"Open SLG.Exe :" \
-					filename:"c:/slg.exe"
-					if (f != undefined)do
+					local slg_bin = getOpenFileName caption:"Locate SLG :" types:"Executable(*.exe)|*.exe"
+					if (slg_bin != undefined)do
 					(
-						btn_slg_EXE.text = f as string
+						luxmaxcfg.SetLuxMaxSetting "Engine" "SLGPath" slg_bin
+						btn_slg_EXE.text = slg_bin as string
 					)
 				)
 				on btn_Export_SLG pressed do
@@ -162,10 +158,15 @@ global lux_main = "LuxMax Starting..."
 						FixedPath = fixWindowsPath (scnFilePath as string)
 						print "Exporting scn file to:"
 						print (FixedPath)
-						outputFile = createFile (FixedPath) --scnFilePath
-						cfgFile = createfile (fixWindowsPath (cfgFilePath as string))
+						
+						--outputFile = createFile (FixedPath) --scnFilePath
+						--cfgFile = createfile (fixWindowsPath (cfgFilePath as string))
+						--BatchFile = createfile (fixWindowsPath (batchfilePath as string))
+
+						outputFile = stringStream ""
+						cfgFile = stringStream ""
+						BatchFile = stringStream ""
 							
-						BatchFile = createfile (fixWindowsPath (batchfilePath as string))
 						--begin put all logic here....
 						
 						--scene.camera.lookat = 7.634103 -4.168197 1.421921 12.037415 4.713311 0.106751
@@ -249,34 +250,42 @@ global lux_main = "LuxMax Starting..."
 								)
 							)
 							
-							--SETUP CFG FILES!!!!!!!
-							--Takes setting from 3dsmax main GUI
-							format "image.width = %\n" renderwidth to:cfgFile
-							format "image.height = %\n" renderheight to:cfgFile
-							--format "%%_%.cfg" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:cfgFilePath
-							format "image.filename = %_%\n" (getSceneName())  (GetFrame()) to:cfgFile
-							--scene.file = SLG_test_scene_000000.scn
-							format "scene.file = %\n " (scnFileName) to:cfgFile
-								format "opencl.platform.index = 0\n" to:cfgFile
-							--SETUP CFG FILES!!!!!!!
-							tempScnfileName = (getSceneName()) + "_" +  (GetFrame()) + ".cfg" 
-							format "\"%\" \"%\"" (btn_slg_EXE.text)(tempScnfileName) to:BatchFile
-								
-								
-							flush cfgFile
-							close cfgFile
-							flush scnFilePath
-							close scnFilePath
-							flush outputFile
-							close outputFile
-							flush BatchFile
-							close BatchFile
-								if (chk_slg_lauch.checked)do
-								(
-									templaunchPath = (btn_export_path.text+ "\\"+ (getSceneName()) + "_" +  (GetFrame()) + ".bat" )
-										
-									ShellLaunch  (templaunchPath ) ""
-								)
+					--SETUP CFG FILES!!!!!!!
+					--Takes setting from 3dsmax main GUI
+					format "image.width = %\n" renderwidth to:cfgFile
+					format "image.height = %\n" renderheight to:cfgFile
+					--format "%%_%.cfg" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:cfgFilePath
+					format "image.filename = %_%\n" (getSceneName())  (GetFrame()) to:cfgFile
+					--scene.file = SLG_test_scene_000000.scn
+					format "scene.file = %\n " (scnFileName) to:cfgFile
+					format "opencl.platform.index = 0\n" to:cfgFile
+					--SETUP CFG FILES!!!!!!!
+					tempScnfileName = (getSceneName()) + "_" +  (GetFrame()) + ".cfg" 
+					format "\"%\" \"%\"\n" (luxmaxcfg.GetLuxMaxSetting "Engine" "SLGPath") (tempScnfileName) to:BatchFile
+					format "pause" to:BatchFile
+						
+					--outputFile = createFile (FixedPath) --scnFilePath
+					--cfgFile = createfile (fixWindowsPath (cfgFilePath as string))
+					--BatchFile = createfile (fixWindowsPath (batchfilePath as string))
+						
+					F_outputFile = dotNetObject "System.IO.StreamWriter" FixedPath
+					F_outputFile.Write (outputFile as string)
+					F_outputFile.Close()
+
+					F_cfgFile = dotNetObject "System.IO.StreamWriter" (fixWindowsPath (cfgFilePath as string))
+					F_cfgFile.Write (cfgFile as string)
+					F_cfgFile.Close()
+
+					F_BatchFile = dotNetObject "System.IO.StreamWriter" (fixWindowsPath (batchfilePath as string))
+					F_BatchFile.Write (BatchFile as string)
+					F_BatchFile.Close()
+						
+					if (chk_slg_lauch.checked)do
+					(
+						templaunchPath = (btn_export_path.text+ "\\"+ (getSceneName()) + "_" +  (GetFrame()) + ".bat" )
+							
+						ShellLaunch  (templaunchPath ) ""
+					)
 								
 				)
 				on btn_export_path pressed do
@@ -289,8 +298,6 @@ global lux_main = "LuxMax Starting..."
 					)
 				)
 			)
-		
-		
 		
 		rollout lux_Dimmensions "Dimmensions" rolledup:true
 		(
@@ -646,11 +653,12 @@ global lux_main = "LuxMax Starting..."
 		)
 		rollout lux_LuxRenderNetwork "LuxRender Network"
 		(
-			-- edittext edt_addIp "" pos:[8,24] width:176 height:24 -- This line corrupt the max scene
+			edittext edt_addip "IP:" width:190 height:20 labelontop:true -- This line corrupt the max scene
+
+			label lb_serverList "Servers:" align:#left
+			listbox lbx_servers "" width:190 height:7 across:2
+			button btn_add_server "add" width:72 height:20 align:#right
 			
-			label lbl_server "IP" pos:[8,8] width:168 height:16
-			listbox lbx_servers "ListBox" pos:[16,48] width:168 height:7
-			button btn_add_server "add" pos:[192,24] width:72 height:24
 			on btn_add_server pressed  do ()
 		)
 		rollout lux_Film "Film" rolledup:true

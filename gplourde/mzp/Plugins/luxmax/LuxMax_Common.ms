@@ -234,7 +234,7 @@ struct LuxMax
 		if ((GetLuxValue "ddl_filter") != undefined) then
 			CollectSettings(FilltersRollouts[(GetLuxValue "ddl_filter")])
 		CollectSettings(lux_Accelerator)
-		CollectSettings(lux_LuxRenderNetwork)
+		--CollectSettings(lux_LuxRenderNetwork)
 		CollectSettings(lux_Output)
 		
 		CollectSettings(lux_Film)
