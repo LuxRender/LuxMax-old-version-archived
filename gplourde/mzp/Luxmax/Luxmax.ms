@@ -292,7 +292,7 @@ global lux_main = "LuxMax Starting..."
 							format "image.width = %\n" renderwidth to:cfgFileStr
 							format "image.height = %\n" renderheight to:cfgFileStr
 							--format "%%_%.cfg" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:cfgFilePath
-							format "image.filename = %_%\n" (getSceneName())  (GetFrame()) to:cfgFileStr
+							format "image.filename = %_%.png\n" (getSceneName())  (GetFrame()) to:cfgFileStr
 							--scene.file = SLG_test_scene_000000.scn
 							format "scene.file = %\n " (scnFileName) to:cfgFileStr
 								format "opencl.platform.index = 0\n" to:cfgFileStr
