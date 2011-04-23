@@ -101,12 +101,17 @@ global lux_main = "LuxMax Starting..."
 	
 	( --// Main rollouts
 		
-			rollout Slg_FilmRollout "SLG Film" width:353 height:300
+			rollout Slg_FilmRollout "SLG Film" width:352 height:320
 			(
-		
+				progressBar doit_prog "" pos:[8,296] width:296 height:14 color:(color 255 0 0)
+ -- a red progress bar
+ -- a red progress bar
 				dropdownList ddl_filter_type "Filter Type" pos:[8,112] width:144 height:40 items:#("None", "Guassian")
 				dropdownList ddl_tonemapType "Tonemap Type:" pos:[8,152] width:144 height:40 items:#("Linear Scale")
 				spinner spn_Gamma "Gamma" pos:[16,200] width:136 height:16 --range:[0,100,1] --default:2,2
+ --range:[0,100,1] --default:2,2
+ --range:[0,100,1] --default:2,2
+ --range:[0,100,1] --default:2,2
  --range:[0,100,1] --default:2,2
  --range:[0,100,1] --default:2,2
 				dropdownList ddl6 "renderEngineType" pos:[8,224] width:152 height:40 items:#("PathGPU", "SPPMRenderEngine", "PathRenderEngine", "PathGPURenderEngine")
@@ -124,6 +129,7 @@ global lux_main = "LuxMax Starting..."
 				button btn_Export_SLG "Export SLG" pos:[8,32] width:144 height:16
 				button btn_export_path "Export Path" pos:[160,8] width:160 height:16
 				checkbox chk_slg_lauch "Lauch after export" pos:[160,32] width:152 height:16
+				label lbl7 "" pos:[8,280] width:296 height:16
 				
 				
 				on btn_slg_EXE pressed do
@@ -222,36 +228,46 @@ global lux_main = "LuxMax Starting..."
 								)
 								
 								--Sort out all the other shaders \ objects
+								i =1
 								for CurrObj in objectArray do
 								(
+									
+									doit_prog.value = 100.*i/objectArray.count
+									i +=1
 									if (CurrObj != undefined)do
 									(
-									print "Exporting:"
-									print (CurrObj.name as string)
+									--print "Exporting:"
+									--print (CurrObj.name as string)
+									
+										--doit_prog.caption = ( "Exporting: " + CurrObj.name as string)
+										lbl7.caption = ( "Exporting: " + CurrObj.name as string)
 									--Create an array to store all materials to, so that they get exported first into the file....
 									MatArray = #()
 									if (superclassof CurrObj == geometryclass) do
 									(
 											if(classOf Currobj.material == SLGMaterial)do
 											(
-												---------------------------------------------------------------------------------
-												--Matte material
-												---------------------------------------------------------------------------------
-												if(CurrObj.material.useMattemat == true)do
-												(
-													--Matte material
-													test = CurrObj.material.GetLuxRenderString()
-													format "%" (test as string) to:OutputFileStr
-												)
-												format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (CurrObj.name + ".ply\n") to:OutputFileStr
-											)
-											
-											if(classOf Currobj.material != SLGMaterial)do
-											(
-												print "not SLG material, creating default"
-												format "scene.materials.matte.% = 0.85 0.85 0.85\n" (CurrObj.material.name) to:OutputFileStr
-											)
-											
+				/* 												---------------------------------------------------------------------------------
+				* 												--Matte material
+				* 												---------------------------------------------------------------------------------
+				* 												if(CurrObj.material.useMattemat == true)do
+				* 												(
+				* 													--Matte material
+				* 													test = CurrObj.material.GetLuxRenderString()
+				* 													format "%" (test as string) to:OutputFileStr
+				* 												)
+				* 												format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (CurrObj.name + ".ply\n") to:OutputFileStr
+				* 											)
+				* 											
+				* 											if(classOf Currobj.material != SLGMaterial)do
+				* 											(
+				* 												print "not SLG material, creating default"
+				* 												format "scene.materials.matte.% = 0.85 0.85 0.85\n" (CurrObj.material.name) to:OutputFileStr
+				* 											)
+				*/											
+											CurrObjMatStr = CurrObj.material.GetLuxRenderString()
+											format "%" (CurrObjMatStr as string) to:OutputFileStr
+											format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (CurrObj.name + ".ply\n") to:OutputFileStr
 											--Export geometry..
 										try(
 											SLG_ply_export_script CurrObj (btn_export_path.text + "\\" + CurrObj.name + ".ply") (luxScaleUnit())
@@ -261,8 +277,10 @@ global lux_main = "LuxMax Starting..."
 										catch()
 									)
 								)
+								)
 							)
-							
+							doit_prog.value = 0 -- when ready, reset the progress bar to 0%
+							lbl7.caption = ("")
 							--SETUP CFG FILES!!!!!!!
 							--Takes setting from 3dsmax main GUI
 							format "image.width = %\n" renderwidth to:cfgFileStr
