@@ -271,11 +271,14 @@ global lux_main = "LuxMax Starting..."
 											CurrObjMatStr = CurrObj.material.GetLuxRenderString()
 											format "%" (CurrObjMatStr as string) to:OutputFileStr
 											format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (CurrObj.name + ".ply\n") to:OutputFileStr
+											format "scene.objects.%.%.useplynormals = 1\n" (CurrObj.material.name) (CurrObj.name) to:OutputFileStr
+											--scene.objects.07 - Default.Teapot010.useplynormals = 1
+											
 											--Export geometry..
 										try(
 											SLG_ply_export_script CurrObj (btn_export_path.text + "\\" + CurrObj.name + ".ply") (luxScaleUnit())
-											print "material"
-											print CurrObj.material.GetLuxRenderString
+											--print "material"
+											--print CurrObj.material.GetLuxRenderString
 											)
 										catch()
 									)
