@@ -28,7 +28,7 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 			format "scene.materials.mirror.% = % % % 1\n" this.name (this.MirrorReflColor.r / 255) (this.MirrorReflColor.g / 255) (this.MirrorReflColor.b / 255)  to:str
 		)
 		
-		if this.useGlassMat == true then
+		if (this.useGlassMat == true and this.useArchGlassMat != true) then
 		(
 			format "scene.materials.glass.% = % % % % % % 1 % 1 1\n" this.name (this.GlassTransColor.r / 255) (this.GlassTransColor.g / 255) (this.GlassTransColor.b / 255) (this.GlassReflColor.r / 255) (this.GlassReflColor.g / 255) (this.GlassReflColor.b / 255) this.index to:str
 		)
