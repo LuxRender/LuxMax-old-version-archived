@@ -101,47 +101,42 @@ global lux_main = "LuxMax Starting..."
 	
 	( --// Main rollouts
 		
-			rollout Slg_FilmRollout "SLG Film" width:352 height:320
+			rollout Slg_FilmRollout "SLG Film"
 			(
-				progressBar doit_prog "" pos:[8,296] width:296 height:14 color:(color 255 0 0)
- -- a red progress bar
- -- a red progress bar
-				dropdownList ddl_filter_type "Filter Type" pos:[8,112] width:144 height:40 items:#("None", "Guassian")
-				dropdownList ddl_tonemapType "Tonemap Type:" pos:[8,152] width:144 height:40 items:#("Linear Scale")
-				spinner spn_Gamma "Gamma" pos:[16,200] width:136 height:16 --range:[0,100,1] --default:2,2
- --range:[0,100,1] --default:2,2
- --range:[0,100,1] --default:2,2
- --range:[0,100,1] --default:2,2
- --range:[0,100,1] --default:2,2
- --range:[0,100,1] --default:2,2
-				dropdownList ddl6 "renderEngineType" pos:[8,224] width:152 height:40 items:#("PathGPU", "SPPMRenderEngine", "PathRenderEngine", "PathGPURenderEngine")
-				edittext edt_image_name "" pos:[161,72] width:144 height:24
-				label lbl_imagename "Image Name:" pos:[168,56] width:144 height:16
-				edittext edt_flmName "" pos:[8,72] width:144 height:24
-		
-		--film.filter.type 
-		--if (filterType == 0)
-		--film->SetFilterType(FILTER_NONE);
-		--else
-		--film->SetFilterType(FILTER_GAUSSIAN);
-				label lbl_flm_name "Film Name:" pos:[16,56] width:144 height:16
-				button btn_slg_EXE "Browse to SLG.exe" pos:[8,8] width:144 height:16
-				button btn_Export_SLG "Export SLG" pos:[8,32] width:144 height:16
-				button btn_export_path "Export Path" pos:[160,8] width:160 height:16
-				checkbox chk_slg_lauch "Lauch after export" pos:[160,32] width:152 height:16
-				label lbl7 "" pos:[8,280] width:296 height:16
+				label lb_slg_path "Full path to SmallLuxSPU's executable:" align:#left
+				button btn_slg_EXE "Browse to SLG.exe" width:280 height:20
 				
+				label lb_export_path "Save location:" align:#left
+				button btn_export_path "c:\\tmp\\" width:280 height:20 
+				
+				button btn_Export_SLG "Export SLG" width:130 height:18 across:2 align:#left				
+				checkbox chk_slg_lauch "Lauch after export" width:152 height:16
+				
+				dropdownList ddl6 "Render Engine Type" width:135 height:40 items:#("PathGPU", "SPPMRenderEngine", "PathRenderEngine", "PathGPURenderEngine")
+				
+				dropdownList ddl_filter_type "Filter Type" width:135 height:40 items:#("None", "Guassian") across:2
+				dropdownList ddl_tonemapType "Tonemap Type:" width:135 height:40 items:#("Linear Scale") align:#right 
+				spinner spn_Gamma "Gamma:" align:#right width:120 height:16 fieldwidth:65 --range:[0,100,1] --default:2,2
+				
+				label lbl7 "" align:#left width:296 height:16
+				progressBar doit_prog "" width:280 height:14 color:(color 255 0 0)
+				
+				on Slg_FilmRollout open do
+				(
+					btn_slg_EXE.Text = (luxmaxcfg.GetLuxMaxSetting "Engine" "SLGPath") as string
+					if (btn_slg_EXE.Text == "") do btn_slg_EXE.Text = "undefined"
+				)
 				
 				on btn_slg_EXE pressed do
 				(
-					--browse to slg.exe
-					f = getOpenFileName caption:"Open SLG.Exe :" \
-					filename:"c:/slg.exe"
-					if (f != undefined)do
+					local slg_bin = getOpenFileName caption:"Locate SLG :" types:"Executable(*.exe)|*.exe"
+					if (slg_bin != undefined)do
 					(
-						btn_slg_EXE.text = f as string
+						luxmaxcfg.SetLuxMaxSetting "Engine" "SLGPath" slg_bin
+						btn_slg_EXE.text = slg_bin as string
 					)
 				)
+				
 				on btn_Export_SLG pressed do
 				(
 					objectArray = objects as array
