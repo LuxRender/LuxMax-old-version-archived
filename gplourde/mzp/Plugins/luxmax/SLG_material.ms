@@ -63,8 +63,12 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 	
 	parameters main rollout:params
 	(
+		bumpscale type:#float ui:mbumpscale default:0
+		bumpmap type:#texturemap ui:mbumpmap
+		
 		useMattemat type:#boolean ui:museMatteMat
 		MatteDifColor type:#color default:[90,90,90] ui:mMatteDifColor
+		MatteDifTexture type:#texturemap ui:mMatteDifTexture
 		
 		LightDifColor type:#color default:[254,254,254]ui:mLightColor
 		LightPower type:#float ui:mPower default:0
@@ -82,6 +86,7 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 		useMatteMirrorMat type:#boolean ui:museMatteMirrorMat
 		MatteMirrorDifColor type:#color default:[90,90,90] ui:mMatteMirrorDifColor
 		MatteMirrorReflColor type:#color default:[90,90,90] ui:mMatteMirrorReflColor
+		MatteMirrorDifTexture type:#texturemap ui:mMatteMirrorDifTexture
 		
 		useMetalMat type:#boolean ui:museMetalMat
 		MetalReflColor type:#color default:[90,90,90] ui:mMetalReflColor
@@ -91,12 +96,14 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 		MatteMetalDifColor type:#color default:[90,90,90] ui:mMatteMetalDifColor
 		MatteMetalReflColor type:#color default:[90,90,90] ui:mMatteMetalReflColor
 		MatteMetalExponent type:#integer ui:mMatteMetalExponent default:10
+		MatteMetalDifTexture type:#texturemap ui:mMatteMetalDifTexture
 		
 		useAlloyMat type:#boolean ui:museAlloyMat
 		AlloyDifColor type:#color default:[90,90,90] ui:mAlloyDifColor
 		AlloyReflColor type:#color default:[90,90,90] ui:mAlloyReflColor
 		AlloyExponent type:#integer ui:mAlloyExponent default:10
 		AlloySchlick type:#float ui:mAlloySchlick default:0.1
+		AlloyDifTexture type:#texturemap ui:mAlloyDifTexture
 	)
 	
 rollout params "SLG Material Parameters"
@@ -168,7 +175,7 @@ rollout params "SLG Material Parameters"
 	checkbox museMatteMetalMat "" align:#left across:2
 	spinner mMatteMetalExponent "Exponent" scale:1 range:[1,10000,10] width:50 align:#right fieldwidth:40	 align:#left
 	
-	label lbMatteMetalDif "Difuse Color . . . . . . ."  align:#left across:3
+label lbMatteMetalDif "Difuse Color . . . . . . ."  align:#left across:3
 	colorpicker mMatteMetalDifColor "" align:#left width:80 height:16 
 	mapbutton mMatteMetalDifTexture "" width:110 height:16 align:#right
 	label lbMattemetalreflection "Reflection . . . . . . ."  align:#left across:3

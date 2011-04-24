@@ -272,6 +272,27 @@ global lux_main = "LuxMax Starting..."
 											format "%" (CurrObjMatStr as string) to:OutputFileStr
 											format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (CurrObj.name + ".ply\n") to:OutputFileStr
 											format "scene.objects.%.%.useplynormals = 1\n" (CurrObj.material.name) (CurrObj.name) to:OutputFileStr
+											if 	(CurrObj.material.useMattemat == true and Currobj.material.MatteDifTexture != undefined) do
+												(
+													format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.MatteDifTexture.filename) to:OutputFileStr
+												)
+											if 	(CurrObj.material.useMatteMetalMat == true and Currobj.material.MatteMetalDifTexture != undefined) do
+												(
+													format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.MatteMetalDifTexture.filename) to:OutputFileStr
+												)
+											if 	(CurrObj.material.useMatteMirrorMat == true and Currobj.material.MatteMirrorDifTexture != undefined) do
+												(
+													format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.MatteMirrorDifTexture.filename) to:OutputFileStr
+												)
+											if 	(CurrObj.material.useAlloyMat == true and Currobj.material.AlloyDifTexture != undefined) do
+												(
+													format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.AlloyDifTexture.filename) to:OutputFileStr
+												)
+											if Currobj.material.bumpmap != undefined do
+												(
+													format "scene.objects.%.%.bumpmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.bumpmap.filename) to:OutputFileStr
+													format "scene.objects.%.%.bumpscale = %\n" (CurrObj.material.name) (CurrObj.name) (CurrObj.material.bumpscale) to:OutputFileStr
+												)
 											--scene.objects.07 - Default.Teapot010.useplynormals = 1
 											
 											--Export geometry..
@@ -292,7 +313,7 @@ global lux_main = "LuxMax Starting..."
 							format "image.width = %\n" renderwidth to:cfgFileStr
 							format "image.height = %\n" renderheight to:cfgFileStr
 							--format "%%_%.cfg" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:cfgFilePath
-							format "image.filename = %_%.png\n" (getSceneName())  (GetFrame()) to:cfgFileStr
+							format "image.filename = %_%\n" (getSceneName())  (GetFrame()) to:cfgFileStr
 							--scene.file = SLG_test_scene_000000.scn
 							format "scene.file = %\n " (scnFileName) to:cfgFileStr
 								format "opencl.platform.index = 0\n" to:cfgFileStr
