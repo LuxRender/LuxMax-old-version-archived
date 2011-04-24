@@ -195,6 +195,15 @@ global lux_main = "LuxMax Starting..."
 						
 								--Sort out all the lights so that they get created first.
 								--NOTE: Not really needed, just be sure to have a \n at the end of last export.
+							
+								--ENVIRONMENT MAP
+								
+								if (useEnvironmentMap == true and environmentMap != undefined and classof environmentMap == Bitmaptexture and environmentMap.fileName != undefined) then
+								(
+									format "scene.infinitelight.file = %\n" (fixWindowsPath environmentmap.filename) to:OutputFileStr
+									format "scene.infinitelight.gain = 1.0 1.0 1.0\n" to:OutputFileStr
+									format "scene.infinitelight.shift = 0 0\n" to:OutputFileStr
+								)
 								
 								c = 1
 								while c <= objectArray.count do
