@@ -28,7 +28,7 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 			format "scene.materials.mirror.% = % % % 1\n" this.name (this.MirrorReflColor.r / 255) (this.MirrorReflColor.g / 255) (this.MirrorReflColor.b / 255)  to:str
 		)
 		
-		if (this.useGlassMat == true and this.useArchGlassMat != true) then
+		if this.useGlassMat == true then
 		(
 			format "scene.materials.glass.% = % % % % % % 1 % 1 1\n" this.name (this.GlassTransColor.r / 255) (this.GlassTransColor.g / 255) (this.GlassTransColor.b / 255) (this.GlassReflColor.r / 255) (this.GlassReflColor.g / 255) (this.GlassReflColor.b / 255) this.index to:str
 		)
@@ -97,41 +97,40 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 		AlloyReflColor type:#color default:[90,90,90] ui:mAlloyReflColor
 		AlloyExponent type:#integer ui:mAlloyExponent default:10
 		AlloySchlick type:#float ui:mAlloySchlick default:0.1
-		
-		
-		
 	)
 	
 rollout params "SLG Material Parameters"
 	(
---LIGHT MATERIAL
+--GENERAL PARAMETERS
+	group "Bump Settings"	
+	(
+	label lbBump "Bump . . . . . . . . . . . "  align:#left across:3
+	spinner mBumpScale "Scale:" scale:0.001 range:[0,1,1] width:50 fieldwidth:40  align:#left
+	mapbutton mBumpMap "Bump Map" width:110 height:16 align:#right
+	)
+--LIGHT MATERIAL and PORTAL
 	group "Light Material"
 	(	
 	checkbox museLightMat "" align:#left across:2
-	spinner mPower "Power" scale:0.01 range:[0,1,0] width:50 fieldwidth:40  align:#right
+	checkbox museExitPortalMat "Use Portal" align:#right 
 	label lbLight "Light Color . . . . . . ."  align:#left across:3
-	colorpicker mLightColor "" align:#left width:80 height:16 across:2
-	mapbutton mLigthTexture "" width:110 height:16 align:#right
+	colorpicker mLightColor "" align:#left width:80 height:16
+	spinner mPower "Power" scale:0.01 range:[0,1,0] width:50 fieldwidth:40  align:#right
 	)
---EXIT PORTAL MATERIAL
-	group "Exit Portal Material"   
-	(	
-	checkbox useExitPortalMat "" align:#left across:1
-	)
+
 --GLASS MATERIAL AND ARCH
 	group "Glass Material" 
 	(	
-	checkbox museGlassMat "" align:#left across:3
-	checkbox museArchGlassMat "Architectural" align:#left across:1
-	checkbox museGlassCaustics "Caustics" align:#right
-	spinner mindex " "scale:0.001 range:[1,6,1.5] width:50 align:#left fieldwidth:40 across:2
+	checkbox museGlassMat "" align:#left across:2
+	checkbox museArchGlassMat "Architectural" align:#right
+	spinner mindex "IOR value"scale:0.001 range:[1,6,1.5] width:50 align:#left fieldwidth:40 across:2
 	dropdownlist ddl_ior "" width:200 height:16 align:#right 
 	label lbtransmission "Transmission . . . . . . ."  align:#left across:3
 	colorpicker mGlassTransColor "" align:#left width:80 height:16 
-	mapbutton mGlassTransTexture "" width:110 height:16 align:#right
-	label lbGlassreflection "Reflection . . . . . . ."  align:#left across:3
+	checkbox museGlassTransCaustics "Transm Caustics" align:#right
+	label lbGlassreflection "Reflection . . . . . . . . . . . . . . . . "  align:#left across:3
 	colorpicker mGlassReflColor "" align:#left width:80 height:16 
-	mapbutton mGlassReflTexture "" width:110 height:16 align:#right	
+	checkbox museGlassReflCaustics "Reflect Caustics" align:#right
 	)
 	
 --MATTE MATERIAL
@@ -141,78 +140,97 @@ rollout params "SLG Material Parameters"
 	label lbMatteDif "Difuse Color . . . . . . ."  align:#left across:3
 	colorpicker mMatteDifColor "" align:#left width:80 height:16 across:2
 	mapbutton mMatteDifTexture "" width:110 height:16 align:#right	
-	label lbMatteBump "Bump Texture . . . . . . . . . . . . . . . . ."  align:#left across:2
-	mapbutton mMatteBumpTexture "" width:110 height:16 align:#right	
 	)	
 	
 --MIRROR MATERIAL
 	group "Mirror Material"
 	(	
-	checkbox museMirrorMat "" align:#left across:2
-	checkbox museMirrorCaustics "Caustics" align:#right
+	checkbox museMirrorMat "" align:#left across:1
 	label lbmirrorreflection "Reflection . . . . . . ."  align:#left across:3
 	colorpicker mMirrorReflColor "" align:#left width:80 height:16 
-	mapbutton mMirrorReflTexture "" width:110 height:16 align:#right	
+	checkbox museMirrorCaustics "Reflect Caustics" align:#right
 	)	
 	
 --METAL MATERIAL
 	group "Metal Material"
 	(
-	checkbox museMetalMat "" align:#left across:3
-	spinner mMetalExponent "Exponent" scale:1 range:[1,10000,10] width:50 align:#center fieldwidth:40	
-	checkbox museMetalCaustics "Caustics" align:#right
+	checkbox museMetalMat "" align:#left across:2
+	spinner mMetalExponent "Exponent" scale:1 range:[1,10000,10] width:50 align:#right fieldwidth:40	
 	label lbmetalreflection "Reflection . . . . . . ."  align:#left across:3
 	colorpicker mMetalReflColor "" align:#left width:80 height:16 
-	mapbutton mMetalReflTexture "" width:110 height:16 align:#right
-	label lbMetalBump "Bump Texture . . . . . . . . . . . . . . . . ."  align:#left across:2
-	mapbutton mMetalBumpTexture "" width:110 height:16 align:#right					
+	checkbox museMetalCaustics "Reflect Caustics" align:#right
+			
 	)
 	
 --MATTEMETAL MATERIAL
 	group "MatteMetal Material"
 	(
-	checkbox museMatteMetalMat "" align:#left across:3
-	spinner mMatteMetalExponent "Exponent" scale:1 range:[1,10000,10] width:50 align:#center fieldwidth:40	 align:#left
-	checkbox museMatteMetalCaustics "Caustics" align:#right
+	checkbox museMatteMetalMat "" align:#left across:2
+	spinner mMatteMetalExponent "Exponent" scale:1 range:[1,10000,10] width:50 align:#right fieldwidth:40	 align:#left
+	
 	label lbMatteMetalDif "Difuse Color . . . . . . ."  align:#left across:3
 	colorpicker mMatteMetalDifColor "" align:#left width:80 height:16 
 	mapbutton mMatteMetalDifTexture "" width:110 height:16 align:#right
 	label lbMattemetalreflection "Reflection . . . . . . ."  align:#left across:3
 	colorpicker mMatteMetalReflColor "" align:#left width:80 height:16 
-	mapbutton mMatteMetalReflTexture "" width:110 height:16 align:#right	
-	label lbMatteMetalBump "Bump Texture . . . . . . . . . . . . . . . . ."  align:#left across:2
-	mapbutton mMatteMetalBumpTexture "" width:110 height:16 align:#right			
+	checkbox museMatteMetalCaustics "Reflect Caustics" align:#right	
 	)
 
 --MATTEMIRROR MATERIAL
 	group "MatteMirror Material"
 	(
-	checkbox museMatteMirrorMat "" align:#left across:2
-	checkbox museMatteMirrorCaustics "Caustics" align:#right
+	checkbox museMatteMirrorMat "" align:#left across:1
+	
 	label lbMatteMirrorlDif "Difuse Color . . . . . . ."  align:#left across:3
 	colorpicker mMatteMirrorDifColor "" align:#left width:80 height:16 
 	mapbutton mMatteMirrorDifTexture "" width:110 height:16 align:#right
 	label lbMatteMirrorreflection "Reflection . . . . . . ."  align:#left across:3
 	colorpicker mMatteMirrorReflColor "" align:#left width:80 height:16 
-	mapbutton mMatteMirrorReflTexture "" width:110 height:16 align:#right	
-	label lbMatteMirrorBump "Bump Texture . . . . . . . . . . . . . . . . ."  align:#left across:2
-	mapbutton mMatteMirrorBumpTexture "" width:110 height:16 align:#right		
+	checkbox museMatteMirrorCaustics "Reflect Caustics" align:#right
+	
 	)
 	
 --ALLOY MATERIAL
 	group "Alloy Material"
 	(
-	checkbox museAlloyMat "" align:#left across:1
-	spinner mAlloyExponent "Exponent" scale:1 range:[1,10000,10] width:50 align:#left fieldwidth:40	across:3
-	spinner mAlloySchlick "Schlick" scale:0.001 range:[0,0.999,0.5] width:50 align:#left fieldwidth:40
-	checkbox mAlloyCaustics "Caustics" align:#right
+	checkbox museAlloyMat "" align:#left across:3
+	spinner mAlloyExponent "Exponent" scale:1 range:[1,10000,10] width:50 align:#left fieldwidth:40	
+	spinner mAlloySchlick "Schlick" scale:0.001 range:[0,0.999,0.5] width:50 align:#right fieldwidth:40
 	label lbAlloyDif "Difuse Color . . . . . . ."  align:#left across:3
 	colorpicker mAlloyDifColor "" align:#left width:80 height:16 
 	mapbutton mAlloyDifTexture "" width:110 height:16 align:#right
 	label lbAlloyreflection "Reflection . . . . . . ."  align:#left across:3
 	colorpicker mAlloyReflColor "" align:#left width:80 height:16 
-	mapbutton mAlloyReflTexture "" width:110 height:16 align:#right	
+	checkbox mAlloyCaustics "Reflect Caustics" align:#right
 	)
+	
+	fn updatecheckbox theIndex theState =
+	(
+	thecheckboxArray = #(museLightMat,museGlassMat,museMatteMat,museMatteMirrorMat,museMetalMat,museMatteMetalMat,museAlloyMat,museMirrorMat)
+	if theState then
+	for i = 1 to 8 where i != theIndex do thecheckboxArray[i].state = false
+	else
+		(
+	thecheckboxArray[1].state = true
+	for i = 2 to 8 do thecheckboxArray[i].state = false
+		)
+	)
+	
+	on museLightMat changed state do updatecheckbox 1 state
+	on museGlassMat changed state do updatecheckbox 2 state
+	on museMatteMat changed state do updatecheckbox 3 state
+	on museMatteMirrorMat changed state do updatecheckbox 4 state
+	on museMetalMat changed state do updatecheckbox 5 state
+	on museMatteMetalMat changed state do updatecheckbox 6 state
+	on museAlloyMat changed state do updatecheckbox 7 state
+	on museMirrorMat changed state do updatecheckbox 8 state
+	
+	on ddl_ior selected val do
+		(
+			ior_presets = luxGetIORPresets()
+			if ior_presets[val].value == undefined do return false
+			mindex.value = ior_presets[val].value
+		)
 	
 		on params open do
 		(
