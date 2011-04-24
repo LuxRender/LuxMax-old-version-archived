@@ -112,7 +112,7 @@ rollout params "SLG Material Parameters"
 	group "Bump Settings"	
 	(
 	label lbBump "Bump . . . . . . . . . . . "  align:#left across:3
-	spinner mBumpScale "Scale:" scale:0.001 range:[0,1,1] width:50 fieldwidth:40  align:#left
+	spinner mBumpScale "Scale:" scale:0.001 range:[0,100,1] width:50 fieldwidth:40  align:#left
 	mapbutton mBumpMap "Bump Map" width:110 height:16 align:#right
 	)
 --LIGHT MATERIAL and PORTAL
