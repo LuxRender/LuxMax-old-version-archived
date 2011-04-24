@@ -103,7 +103,9 @@ global lux_main = "LuxMax Starting..."
 		
 			rollout Slg_FilmRollout "SLG Film"
 			(
-				label lb_slg_path "Full path to SmallLuxSPU's executable:" align:#left
+				group "Basic Settings"
+				(
+				label lb_slg_path "Full path to SmallLuxGPU's executable:" align:#left
 				button btn_slg_EXE "Browse to SLG.exe" width:280 height:20
 				
 				label lb_export_path "Save location:" align:#left
@@ -111,16 +113,56 @@ global lux_main = "LuxMax Starting..."
 				
 				button btn_Export_SLG "Export SLG" width:130 height:18 across:2 align:#left				
 				checkbox chk_slg_lauch "Lauch after export" width:152 height:16
+					
+				label lbl7 "Export Progress Bar" align:#left width:296 height:16 across:1 
+				progressBar doit_prog "" width:280 height:14 color:(color 255 0 0) across:1
+				)
 				
-				dropdownList ddl6 "Render Engine Type" width:135 height:40 items:#("PathGPU", "SPPMRenderEngine", "PathRenderEngine", "PathGPURenderEngine")
+				group "OpenCL Settings"
+				(
+				spinner spn_nativethreads "Native Threads:" scale:1 range:[0,1024,2] align:#left width:120 height:16 fieldwidth:30 across:2
+				spinner spn_openclthreads "OpenCL Threads:" scale:1 range:[0,1024,2] align:#right width:120 height:16 fieldwidth:30 
+				checkbox ch_cpu "Use CPU" align:#left across:2
+				checkbox ch_gpu "Use GPU" align:#left 
+				spinner spn_opencltaskcount "Task Count:" scale:1 range:[1,1000000,131072] align:#left width:120 height:16 fieldwidth:60 across:2
+				spinner spn_gpuworkgroupsize "GPU Workgroup Size:" scale:1 range:[0,4096,64] align:#right width:120 height:16 fieldwidth:30 
+				)
 				
-				dropdownList ddl_filter_type "Filter Type" width:135 height:40 items:#("None", "Guassian") across:2
-				dropdownList ddl_tonemapType "Tonemap Type:" width:135 height:40 items:#("Linear Scale") align:#right 
-				spinner spn_Gamma "Gamma:" align:#right width:120 height:16 fieldwidth:65 --range:[0,100,1] --default:2,2
+				group "Advanced Settings"
+				(
+				dropdownList ddl_render_engine "Render Engine Type" width:135 height:40 items:#("Path", "SPPM", "Direct", "PathGPU","PathGPU2") across:2 align:#left
+				dropdownList ddl_accel_type "Accelerator Type" width:135 height:40 items:#("Default", "BVH","QBVH","QBVH (image stored disabled)", "MQBVH (instances support)")  align:#right
+				dropdownList ddl_film_filter_type "Film Filter Type" width:135 height:40 items:#("None", "Guassian") across:2 align:#left
+				dropdownList ddl_tonemapType "Tonemap Type:" width:135 height:40 items:#("Linear", "Reinhard '02") align:#right 
+				spinner spn_scale "Scale:" scale:0.001 range:[0.001,10,1] align:#right width:120 height:16 fieldwidth:65
+				spinner spn_burn "Burn:" scale:0.001 range:[0.001,10,3.75] align:#right width:120 height:16 fieldwidth:65
+				spinner spn_prescale "Pre-Scale:" scale:0.001 range:[0.001,10,1] align:#right width:120 height:16 fieldwidth:65
+				spinner spn_postscale "Post-Scale:" scale:0.001 range:[0.001,10,1.2] align:#right width:120 height:16 fieldwidth:65
 				
-				label lbl7 "" align:#left width:296 height:16
-				progressBar doit_prog "" width:280 height:14 color:(color 255 0 0)
+				dropdownList ddl_image_format "Image file format" width:135 height:40 items:#("PNG", "OpenEXR", "JPG") across:2 align:#left
+				spinner spn_Gamma "Image Output Gamma:" scale:0.001 range:[0,100,1] align:#right width:120 height:16 fieldwidth:65 
+				dropdownList ddl_sampler_type "Sampler type" width:135 height:40 items:#("Metropolis", "Stratisfied", "Random", "Inlined Random") across:2 align:#left
+				dropdownList ddl_filter_type "Filter type" width:135 height:40 items:#("None", "Box", "Gausian", "Mitchel") align:#right
+				)
 				
+				group "Light Strategy"
+				(	
+				dropdownList ddl_light_strategy "" width:135 height:40 items:#("ONE_UNIFORM", "ALL_UNIFORM") align:#left 
+				spinner spn_depth "Depth:" scale:1 range:[1,1024,6] align:#left width:120 height:16 fieldwidth:65 across:2
+				spinner spn_shadow "Shadow:" scale:1 range:[1,1024,1] align:#right width:120 height:16 fieldwidth:65
+				)
+				
+				dropdownList ddl_samples_per_pixel "Samples per pixel" width:135 height:40 items:#("1x1", "2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8", "9x9") align:#left 
+				
+				group "Russian Roulette Strategy"
+				(
+				dropdownList ddl_rrs_strategy "" width:135 height:40 items:#("Importance", "Probability") align:#left 
+				spinner spn_rrdepth "Depth:" scale:1 range:[1,1024,6] align:#left width:120 height:16 fieldwidth:40 across:3
+				spinner spn_rrcap "Cap:" scale:0.001 range:[0,1,0.25] align:#left width:120 height:16 fieldwidth:40
+				spinner spn_rrprob "Prob:" scale:0.001 range:[0,1,0.75] align:#right width:120 height:16 fieldwidth:40
+				)
+				
+			
 				on Slg_FilmRollout open do
 				(
 					btn_slg_EXE.Text = (luxmaxcfg.GetLuxMaxSetting "Engine" "SLGPath") as string
@@ -258,25 +300,7 @@ global lux_main = "LuxMax Starting..."
 									if (superclassof CurrObj == geometryclass) do
 									(
 											if(classOf Currobj.material == SLGMaterial)do
-											(
-				/* 												---------------------------------------------------------------------------------
-				* 												--Matte material
-				* 												---------------------------------------------------------------------------------
-				* 												if(CurrObj.material.useMattemat == true)do
-				* 												(
-				* 													--Matte material
-				* 													test = CurrObj.material.GetLuxRenderString()
-				* 													format "%" (test as string) to:OutputFileStr
-				* 												)
-				* 												format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (CurrObj.name + ".ply\n") to:OutputFileStr
-				* 											)
-				* 											
-				* 											if(classOf Currobj.material != SLGMaterial)do
-				* 											(
-				* 												print "not SLG material, creating default"
-				* 												format "scene.materials.matte.% = 0.85 0.85 0.85\n" (CurrObj.material.name) to:OutputFileStr
-				* 											)
-				*/											
+											(									
 											CurrObjMatStr = CurrObj.material.GetLuxRenderString()
 											format "%" (CurrObjMatStr as string) to:OutputFileStr
 											format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (CurrObj.name + ".ply\n") to:OutputFileStr
@@ -325,7 +349,14 @@ global lux_main = "LuxMax Starting..."
 							format "image.filename = %_%\n" (getSceneName())  (GetFrame()) to:cfgFileStr
 							--scene.file = SLG_test_scene_000000.scn
 							format "scene.file = %\n " (scnFileName) to:cfgFileStr
-								format "opencl.platform.index = 0\n" to:cfgFileStr
+							
+							format "opencl.nativethread.count = %\n" (spn_nativethreads.value as integer) to:cfgFileStr
+							if (ch_cpu.checked == true) then (format "opencl.cpu.use = 1\n" to:cfgFileStr) else (format "opencl.cpu.use = 0\n" to:cfgFileStr)
+							if (ch_gpu.checked == true) then (format "opencl.gpu.use = 1\n" to:cfgFileStr) else (format "opencl.gpu.use = 0\n" to:cfgFileStr)
+							format "opencl.platform.index = 0\n" to:cfgFileStr
+							format "opencl.renderthread.count = %\n" (spn_openclthreads.value as integer) to:cfgFileStr
+							format "opencl.gpu.workgroup.size = %\n" (spn_gpuworkgroupsize.value as integer) to:cfgFileStr
+								
 							--SETUP CFG FILES!!!!!!!
 							tempScnfileName = (getSceneName()) + "_" +  (GetFrame()) + ".cfg" 
 							format "\"%\" \"%\"" (btn_slg_EXE.text)(tempScnfileName) to:BatchFileStr
