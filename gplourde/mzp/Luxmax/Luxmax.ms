@@ -142,7 +142,7 @@ global lux_main = "LuxMax Starting..."
 				dropdownList ddl_image_format "Image file format" width:135 height:40 items:#("PNG", "OpenEXR", "JPG") across:2 align:#left
 				spinner spn_Gamma "Image Output Gamma:" scale:0.001 range:[0,100,1] align:#right width:120 height:16 fieldwidth:65 
 				dropdownList ddl_sampler_type "Sampler type" width:135 height:40 items:#("Metropolis", "Stratisfied", "Random", "Inlined Random") across:2 align:#left
-				dropdownList ddl_filter_type "Filter type" width:135 height:40 items:#("None", "Box", "Gausian", "Mitchel") align:#right
+				dropdownList ddl_filter_type "Filter type" width:135 height:40 items:#("NONE", "BOX", "GAUSIAN", "MITCHEL") align:#right
 				)
 				
 				group "Light Strategy"
@@ -161,6 +161,24 @@ global lux_main = "LuxMax Starting..."
 				spinner spn_rrcap "Cap:" scale:0.001 range:[0,1,0.25] align:#left width:120 height:16 fieldwidth:40
 				spinner spn_rrprob "Prob:" scale:0.001 range:[0,1,0.75] align:#right width:120 height:16 fieldwidth:40
 				)
+				
+				group "Participating Media"
+				(
+					checkbox usePartMedia "Use" align:#left across:3
+					spinner spn_stepsize "Step Size:" scale:0.01 range:[0.01,100,2] align:#left width:120 height:16 fieldwidth:30
+					spinner spn_part_rrprob "RR Prob:" scale:0.01 range:[0.01,1,0.33] align:#right width:120 height:16 fieldwidth:30
+					colorpicker emission "Emission" align:#left width:80 height:16 across:2
+					colorpicker scattering "Scattering" align:#left width:80 height:16
+					label lb_boundingboxmin "Bounding Box Min" across:1
+					spinner spn_bbmin_x "X" scale:0.01 range:[-1000000,100000,-10] align:#right width:120 height:16 fieldwidth:60 across:3
+					spinner spn_bbmin_y "Y" scale:0.01 range:[-1000000,100000,-10] align:#right width:120 height:16 fieldwidth:60
+					spinner spn_bbmin_z "Z" scale:0.01 range:[-1000000,100000,-10] align:#right width:120 height:16 fieldwidth:60
+					label lb_boundingboxmax "Bounding Box Max" across:1
+					spinner spn_bbmax_x "X" scale:0.01 range:[-1000000,100000,10] align:#right width:120 height:16 fieldwidth:60 across:3
+					spinner spn_bbmax_y "Y" scale:0.01 range:[-1000000,100000,10] align:#right width:120 height:16 fieldwidth:60
+					spinner spn_bbmax_z "Z" scale:0.01 range:[-1000000,100000,10] align:#right width:120 height:16 fieldwidth:60
+				)
+				
 				
 			
 				on Slg_FilmRollout open do
@@ -238,14 +256,25 @@ global lux_main = "LuxMax Starting..."
 								--Sort out all the lights so that they get created first.
 								--NOTE: Not really needed, just be sure to have a \n at the end of last export.
 							
-								--ENVIRONMENT MAP
-								
-								if (useEnvironmentMap == true and environmentMap != undefined and classof environmentMap == Bitmaptexture and environmentMap.fileName != undefined) then
+							--ENVIRONMENT MAP
+							if (useEnvironmentMap == true and environmentMap != undefined and classof environmentMap == Bitmaptexture and environmentMap.fileName != undefined) then
 								(
 									format "scene.infinitelight.file = %\n" (fixWindowsPath environmentmap.filename) to:OutputFileStr
 									format "scene.infinitelight.gain = 1.0 1.0 1.0\n" to:OutputFileStr
 									format "scene.infinitelight.shift = 0 0\n" to:OutputFileStr
 								)
+						
+							--PARTICIPATING MEDIA
+							if (usePartMedia.checked == true) then
+								(
+									format "scene.partecipatingmedia.singlescatering.bbox = % % % % % %\n" spn_bbmin_x.value spn_bbmin_y.value spn_bbmin_z.value spn_bbmax_x.value spn_bbmax_y.value spn_bbmax_z.value to:OutputFileStr
+									format "scene.partecipatingmedia.singlescatering.emission = % % %\n" (emission.color.r/255) (emission.color.b/255) (emission.color.g/255) to:OutputFileStr
+									format "scene.partecipatingmedia.singlescatering.enable = 1\n" to:OutputFileStr
+									format "scene.partecipatingmedia.singlescatering.rrprob = %\n" (spn_part_rrprob.value) to:OutputFileStr
+									format "scene.partecipatingmedia.singlescatering.scattering = % % %\n" (scattering.color.r/255) (scattering.color.b/255) (scattering.color.g/255) to:OutputFileStr
+									format "scene.partecipatingmedia.singlescatering.stepsize = %\n" (spn_stepsize.value) to:OutputFileStr
+								)
+								
 								
 								c = 1
 								while c <= objectArray.count do
@@ -341,21 +370,105 @@ global lux_main = "LuxMax Starting..."
 							)
 							doit_prog.value = 0 -- when ready, reset the progress bar to 0%
 							lbl7.caption = ("")
-							--SETUP CFG FILES!!!!!!!
+							--SETUP CFG FILE
 							--Takes setting from 3dsmax main GUI
+						
+							--ACCEL and FILM
+							format "accelerator.type = %\n" (ddl_accel_type.selection - 1) to:cfgFileStr
+							format "film.filter.type = %\n" (ddl_film_filter_type.selection - 1) to:cfgFileStr
+							format "film.gamma = 2.2\n" to:cfgFileStr
+							format "film.tonemap.linear.scale = 1\n" to:cfgFileStr
+							format "film.tonemap.type = 0\n" to:cfgFileStr
+						
+							--SCENE SETTINGS
 							format "image.width = %\n" renderwidth to:cfgFileStr
 							format "image.height = %\n" renderheight to:cfgFileStr
-							--format "%%_%.cfg" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:cfgFilePath
-							format "image.filename = %_%\n" (getSceneName())  (GetFrame()) to:cfgFileStr
-							--scene.file = SLG_test_scene_000000.scn
+							format "image.filename = %_%.%\n" (getSceneName())  (GetFrame()) (ddl_image_format.selected as string)  to:cfgFileStr
 							format "scene.file = %\n " (scnFileName) to:cfgFileStr
 							
-							format "opencl.nativethread.count = %\n" (spn_nativethreads.value as integer) to:cfgFileStr
+							--OPENCL
 							if (ch_cpu.checked == true) then (format "opencl.cpu.use = 1\n" to:cfgFileStr) else (format "opencl.cpu.use = 0\n" to:cfgFileStr)
 							if (ch_gpu.checked == true) then (format "opencl.gpu.use = 1\n" to:cfgFileStr) else (format "opencl.gpu.use = 0\n" to:cfgFileStr)
+							format "opencl.nativethread.count = %\n" (spn_nativethreads.value as integer) to:cfgFileStr
 							format "opencl.platform.index = 0\n" to:cfgFileStr
 							format "opencl.renderthread.count = %\n" (spn_openclthreads.value as integer) to:cfgFileStr
 							format "opencl.gpu.workgroup.size = %\n" (spn_gpuworkgroupsize.value as integer) to:cfgFileStr
+							format "opencl.task.count = %\n" (spn_opencltaskcount.value as integer) to:cfgFileStr
+							
+							--FILTER
+							format "path.filter.B = 0.333333\n" to:cfgFileStr
+							format "path.filter.C = 0.333333\n" to:cfgFileStr
+							format "path.filter.alpha = 2\n" to:cfgFileStr
+							
+							format "path.filter.type = %\n" (ddl_filter_type.selected) to:cfgFileStr
+							format "path.filter.width.x = 1.5\n" to:cfgFileStr
+							format "path.filter.width.y = 1.5\n" to:cfgFileStr
+								
+							--LIGHT STRATEGY
+							format "path.lightstrategy = %\n" (ddl_light_strategy.selection) to:cfgFileStr
+							format "path.maxdepth = %\n" (spn_depth.value as integer) to:cfgFileStr
+							format "path.shadowrays = %\n" (spn_shadow.value as integer) to:cfgFileStr
+							
+							--RUSSIAN ROULETTE
+							if (ddl_rrs_strategy.selection == 1) then
+							(
+							format "path.russianroulette.strategy = 1\n" to:cfgFileStr
+							format "path.russianroulette.depth = %\n" (spn_rrdepth.value as integer) to:cfgFileStr
+							format "path.russianroulette.cap = %\n" (spn_rrcap.value as float) to:cfgFileStr
+							)
+							if (ddl_rrs_strategy.selection == 2) then
+							(
+							format "path.russianroulette.strategy = 0\n" to:cfgFileStr
+							format "path.russianroulette.depth = %\n" (spn_rrdepth.value as integer) to:cfgFileStr
+							format "path.russianroulette.prob = %\n" (spn_rrprob.value as float) to:cfgFileStr
+							)
+							
+							
+							--SAMPLER 
+							--Metropolis (hardcoded)
+							if (ddl_sampler_type.selection == 1) then
+							(
+							format "path.sampler.type = METROPOLIS\n" to:cfgFileStr
+							format "path.sampler.largesteprate = 0.4\n" to:cfgFileStr
+							format "path.sampler.maxconsecutivereject = 512\n" to:cfgFileStr
+							)
+							--Stratisfied  (hardcoded)
+							if (ddl_sampler_type.selection == 2) then
+							(
+							format "path.sampler.type = STRATIFIED\n" to:cfgFileStr
+							format "path.sampler.xsamples = 3\n" to:cfgFileStr
+							format "path.sampler.ysamples = 3\n" to:cfgFileStr
+							)
+							--Random
+							if (ddl_sampler_type.selection == 3) then
+							(
+							format "path.sampler.type = RANDOM\n" to:cfgFileStr
+							)
+							--Inlined Random
+							if (ddl_sampler_type.selection == 4) then
+							(
+							format "path.sampler.type = INLINED_RANDOM\n" to:cfgFileStr
+							)
+							
+							
+							--SAMPLES PER PIXEL
+							format "path.sampler.spp = %\n" (ddl_samples_per_pixel.selection as integer) to:cfgFileStr
+							
+							--RENDER ENGINE
+							format "renderengine.type = %\n" (ddl_render_engine.selection - 1) to:cfgFileStr
+							
+							--ADD SPPM SETTINGS  (Hardcoded)
+							format "sppm.directlight.enable = 0"
+							format "sppm.eyepath.maxdepth = 16"
+							format "sppm.lookup.type = 2"
+							format "sppm.photon.alpha = 0.7"
+							format "sppm.photon.maxdepth = 8"
+							format "sppm.photon.startradiusscale = 1."
+							format "sppm.stochastic.count = 2500000"
+							
+							
+							
+							
 								
 							--SETUP CFG FILES!!!!!!!
 							tempScnfileName = (getSceneName()) + "_" +  (GetFrame()) + ".cfg" 
