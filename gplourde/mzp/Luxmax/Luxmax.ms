@@ -301,7 +301,7 @@ global lux_main = "LuxMax Starting..."
 											(
 												test = objectArray[c].material.GetLuxRenderString()
 												format "%" (test as string) to:OutputFileStr
-												format "scene.objects.whitelight.all = %" (objectArray[c].name + ".ply\n") to:OutputFileStr
+												format "scene.objects.%.% = %" (objectArray[c].material.name) (objectArray[c].name) (objectArray[c].name + ".ply\n") to:OutputFileStr
 												--Set the current item to undefined so that the next loop skips it.
 												SLG_ply_export_script objectArray[c] (btn_export_path.text + "\\" + objectArray[c].name + ".ply") (luxScaleUnit())
 												objectArray[c] = undefined
