@@ -103,6 +103,8 @@ global lux_main = "LuxMax Starting..."
 		
 			rollout Slg_FilmRollout "SLG Film"
 			(
+				
+				
 				group "Basic Settings"
 				(
 				label lb_slg_path "Full path to SmallLuxGPU's executable:" align:#left
@@ -122,8 +124,8 @@ global lux_main = "LuxMax Starting..."
 				(
 				spinner spn_nativethreads "Native Threads:" scale:1 range:[0,1024,2] align:#left width:120 height:16 fieldwidth:30 across:2
 				spinner spn_openclthreads "OpenCL Threads:" scale:1 range:[0,1024,2] align:#right width:120 height:16 fieldwidth:30 
-				checkbox ch_cpu "Use CPU" align:#left across:2
-				checkbox ch_gpu "Use GPU" align:#left 
+				checkbox ch_cpu "Use CPU" align:#left across:2 checked:true
+				checkbox ch_gpu "Use GPU" align:#left  checked:true
 				spinner spn_opencltaskcount "Task Count:" scale:1 range:[1,1000000,131072] align:#left width:120 height:16 fieldwidth:60 across:2
 				spinner spn_gpuworkgroupsize "GPU Workgroup Size:" scale:1 range:[0,4096,64] align:#right width:120 height:16 fieldwidth:30 
 				)
@@ -279,32 +281,35 @@ global lux_main = "LuxMax Starting..."
 								c = 1
 								while c <= objectArray.count do
 								(
-									if(objectArray[c].name == "")do
+									if (objectArray[c].ishidden == false)do
 									(
-										errormsg = stringstream ""
-										format ("ERROR: Found object with no name, it's been renamed to: %") ("no_name" + c as string) to:errormsg
-										objectArray[c].name = ("no_name" + c as string)
-										messagebox (errormsg)
-									)
-									
-									if(classOf objectArray[c].material == SLGMaterial)do
-									(
-										---------------------------------------------------------------------------------
-										--Light material
-										---------------------------------------------------------------------------------
-										-- scene.materials.light.whitelight
-										if(objectArray[c].material.useLightMat == true)then
+										if(objectArray[c].name == "")do
 										(
-											test = objectArray[c].material.GetLuxRenderString()
-											format "%" (test as string) to:OutputFileStr
-											format "scene.objects.whitelight.all = %" (objectArray[c].name + ".ply\n") to:OutputFileStr
-											--Set the current item to undefined so that the next loop skips it.
-											SLG_ply_export_script objectArray[c] (btn_export_path.text + "\\" + objectArray[c].name + ".ply") (luxScaleUnit())
-											objectArray[c] = undefined
+											errormsg = stringstream ""
+											format ("ERROR: Found object with no name, it's been renamed to: %") ("no_name" + c as string) to:errormsg
+											objectArray[c].name = ("no_name" + c as string)
+											messagebox (errormsg)
 										)
-										else
+										
+										if(classOf objectArray[c].material == SLGMaterial)do
 										(
-											--Do nothing.
+											---------------------------------------------------------------------------------
+											--Light material
+											---------------------------------------------------------------------------------
+											-- scene.materials.light.whitelight
+											if(objectArray[c].material.useLightMat == true)then
+											(
+												test = objectArray[c].material.GetLuxRenderString()
+												format "%" (test as string) to:OutputFileStr
+												format "scene.objects.whitelight.all = %" (objectArray[c].name + ".ply\n") to:OutputFileStr
+												--Set the current item to undefined so that the next loop skips it.
+												SLG_ply_export_script objectArray[c] (btn_export_path.text + "\\" + objectArray[c].name + ".ply") (luxScaleUnit())
+												objectArray[c] = undefined
+											)
+											else
+											(
+												--Do nothing.
+											)
 										)
 									)
 									c +=1
@@ -326,48 +331,52 @@ global lux_main = "LuxMax Starting..."
 										lbl7.caption = ( "Exporting: " + CurrObj.name as string)
 									--Create an array to store all materials to, so that they get exported first into the file....
 									MatArray = #()
-									if (superclassof CurrObj == geometryclass) do
-									(
-											if(classOf Currobj.material == SLGMaterial)do
-											(									
-											CurrObjMatStr = CurrObj.material.GetLuxRenderString()
-											format "%" (CurrObjMatStr as string) to:OutputFileStr
-											format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (CurrObj.name + ".ply\n") to:OutputFileStr
-											format "scene.objects.%.%.useplynormals = 1\n" (CurrObj.material.name) (CurrObj.name) to:OutputFileStr
-											if 	(CurrObj.material.useMattemat == true and Currobj.material.MatteDifTexture != undefined) do
-												(
-													format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.MatteDifTexture.filename) to:OutputFileStr
+										if (CurrObj.ishidden == false)do
+										(
+											if (superclassof CurrObj == geometryclass) do
+											(
+													if(classOf Currobj.material == SLGMaterial)do
+													(									
+													CurrObjMatStr = CurrObj.material.GetLuxRenderString()
+													format "%" (CurrObjMatStr as string) to:OutputFileStr
+													format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (CurrObj.name + ".ply\n") to:OutputFileStr
+													format "scene.objects.%.%.useplynormals = 1\n" (CurrObj.material.name) (CurrObj.name) to:OutputFileStr
+													if 	(CurrObj.material.useMattemat == true and Currobj.material.MatteDifTexture != undefined) do
+														(
+															format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.MatteDifTexture.filename) to:OutputFileStr
+														)
+													if 	(CurrObj.material.useMatteMetalMat == true and Currobj.material.MatteMetalDifTexture != undefined) do
+														(
+															format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.MatteMetalDifTexture.filename) to:OutputFileStr
+														)
+													if 	(CurrObj.material.useMatteMirrorMat == true and Currobj.material.MatteMirrorDifTexture != undefined) do
+														(
+															format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.MatteMirrorDifTexture.filename) to:OutputFileStr
+														)
+													if 	(CurrObj.material.useAlloyMat == true and Currobj.material.AlloyDifTexture != undefined) do
+														(
+															format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.AlloyDifTexture.filename) to:OutputFileStr
+														)
+													if Currobj.material.bumpmap != undefined do
+														(
+															format "scene.objects.%.%.bumpmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.bumpmap.filename) to:OutputFileStr
+															format "scene.objects.%.%.bumpscale = %\n" (CurrObj.material.name) (CurrObj.name) (CurrObj.material.bumpscale) to:OutputFileStr
+														)
+													--scene.objects.07 - Default.Teapot010.useplynormals = 1
+													
+													--Export geometry..
+												try(
+													SLG_ply_export_script CurrObj (btn_export_path.text + "\\" + CurrObj.name + ".ply") (luxScaleUnit())
+													--print "material"
+													--print CurrObj.material.GetLuxRenderString
+													)
+													catch()
 												)
-											if 	(CurrObj.material.useMatteMetalMat == true and Currobj.material.MatteMetalDifTexture != undefined) do
-												(
-													format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.MatteMetalDifTexture.filename) to:OutputFileStr
-												)
-											if 	(CurrObj.material.useMatteMirrorMat == true and Currobj.material.MatteMirrorDifTexture != undefined) do
-												(
-													format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.MatteMirrorDifTexture.filename) to:OutputFileStr
-												)
-											if 	(CurrObj.material.useAlloyMat == true and Currobj.material.AlloyDifTexture != undefined) do
-												(
-													format "scene.objects.%.%.texmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.AlloyDifTexture.filename) to:OutputFileStr
-												)
-											if Currobj.material.bumpmap != undefined do
-												(
-													format "scene.objects.%.%.bumpmap = %\n" (CurrObj.material.name) (CurrObj.name) (fixWindowsPath CurrObj.material.bumpmap.filename) to:OutputFileStr
-													format "scene.objects.%.%.bumpscale = %\n" (CurrObj.material.name) (CurrObj.name) (CurrObj.material.bumpscale) to:OutputFileStr
-												)
-											--scene.objects.07 - Default.Teapot010.useplynormals = 1
-											
-											--Export geometry..
-										try(
-											SLG_ply_export_script CurrObj (btn_export_path.text + "\\" + CurrObj.name + ".ply") (luxScaleUnit())
-											--print "material"
-											--print CurrObj.material.GetLuxRenderString
 											)
-										catch()
+										)
 									)
 								)
-								)
-							)
+							
 							doit_prog.value = 0 -- when ready, reset the progress bar to 0%
 							lbl7.caption = ("")
 							--SETUP CFG FILE
@@ -500,6 +509,7 @@ global lux_main = "LuxMax Starting..."
 					)
 					
 				)
+			--)
 				on btn_export_path pressed do
 				(
 					--set export path
@@ -509,6 +519,7 @@ global lux_main = "LuxMax Starting..."
 						btn_export_path.text = f as string
 					)
 				)
+			--)
 			)
 		
 		
