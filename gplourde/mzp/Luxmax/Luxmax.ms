@@ -124,8 +124,8 @@ global lux_main = "LuxMax Starting..."
 				(
 				spinner spn_nativethreads "Native Threads:" scale:1 range:[0,1024,2] align:#left width:120 height:16 fieldwidth:30 across:2
 				spinner spn_openclthreads "OpenCL Threads:" scale:1 range:[0,1024,2] align:#right width:120 height:16 fieldwidth:30 
-				checkbox ch_cpu "Use CPU" align:#left across:2
-				checkbox ch_gpu "Use GPU" align:#left 
+				checkbox ch_cpu "Use CPU" align:#left across:2 checked:true
+				checkbox ch_gpu "Use GPU" align:#left  checked:true
 				spinner spn_opencltaskcount "Task Count:" scale:1 range:[1,1000000,131072] align:#left width:120 height:16 fieldwidth:60 across:2
 				spinner spn_gpuworkgroupsize "GPU Workgroup Size:" scale:1 range:[0,4096,64] align:#right width:120 height:16 fieldwidth:30 
 				)
