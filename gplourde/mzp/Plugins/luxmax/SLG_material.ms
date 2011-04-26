@@ -20,7 +20,7 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 		if this.useLightMat == true then
 		(
 			--scene.materials.light.whitelight
-			format "scene.materials.light.whitelight = % % %\n"  (this.LightDifColor.r / 255) (this.LightDifColor.g / 255) (this.LightDifColor.b / 255) to:str
+			format "scene.materials.light.% = % % %\n" this.name (this.LightDifColor.r * this.LightPower / 255) (this.LightDifColor.g * this.LightPower / 255) (this.LightDifColor.b * this.LightPower / 255) to:str
 		)
 		
 		if this.useMirrorMat == true then
@@ -63,6 +63,8 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 	
 	parameters main rollout:params
 	(
+		
+		
 		bumpscale type:#float ui:mbumpscale default:0
 		bumpmap type:#texturemap ui:mbumpmap
 		
