@@ -71,6 +71,8 @@ global lux_main = "LuxMax Starting..."
 	function SetUpSLGPUUI =
 	(
 		AddSubRollout lux_main.lx0 Slg_FilmRollout
+		AddSubRollout lux_main.lx0 sgl_telnetTest
+		
 	)
 	
 	( --// Presets
@@ -98,6 +100,7 @@ global lux_main = "LuxMax Starting..."
 	include "luxmax\\rollout_sampler.ms"
 	include "luxmax\\rollout_filter.ms"
 	include "luxmax\\rollout_integrator.ms"
+	include "luxmax\\telnet.ms"
 	
 	( --// Main rollouts
 		
