@@ -33,15 +33,15 @@ rollout sgl_telnetTest "SGL Telnet" width:216 height:104
 	
 	
 	on btn_echo_on pressed do
-		slgtelnetWrite "echocmd.on\n"
+		slgtelnetWrite "echocmd.on"
 	on btn_echo_off pressed do
-		slgtelnetWrite "echocmd.off\n"
+		slgtelnetWrite "echocmd.off"
 	on btn_render_start pressed do
-		slgtelnetWrite "render.start\n"
+		slgtelnetWrite "render.start"
 	on btn_render_stop pressed do
-		slgtelnetWrite "render.stop\n"
+		slgtelnetWrite "render.stop"
 	on btn_image_reset pressed do
-		slgtelnetWrite "image.reset\n"
+		slgtelnetWrite "image.reset"
 )
 
 --createdialog sgl_telnetTest 140 200 
