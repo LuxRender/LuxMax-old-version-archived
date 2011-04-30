@@ -73,7 +73,7 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 		MatteDifTexture type:#texturemap ui:mMatteDifTexture
 		
 		LightDifColor type:#color default:[254,254,254]ui:mLightColor
-		LightPower type:#float ui:mPower default:0
+		LightPower type:#float ui:mPower default:1
 		useLightMat type:#boolean ui:museLightMat
 		
 		useMirrorMat type:#boolean ui:museMirrorMat
