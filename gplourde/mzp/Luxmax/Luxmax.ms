@@ -68,12 +68,7 @@ global lux_main = "LuxMax Starting..."
 	
 
 	
-	function SetUpSLGPUUI =
-	(
-		AddSubRollout lux_main.lx0 Slg_FilmRollout
-		AddSubRollout lux_main.lx0 sgl_telnetTest
-		
-	)
+
 	
 	( --// Presets
 		-- Add your own presets here
@@ -102,6 +97,13 @@ global lux_main = "LuxMax Starting..."
 	include "luxmax\\rollout_integrator.ms"
 	include "luxmax\\telnet.ms"
 	
+	function SetUpSLGPUUI =
+	(
+		AddSubRollout lux_main.lx0 Slg_FilmRollout
+		AddSubRollout lux_main.lx0 sgl_telnetTest
+		
+	)
+	
 	( --// Main rollouts
 		
 			rollout Slg_FilmRollout "SLG Film"
@@ -118,7 +120,7 @@ global lux_main = "LuxMax Starting..."
 				
 				button btn_Export_SLG "Export SLG" width:130 height:18 across:2 align:#left				
 				checkbox chk_slg_lauch "Lauch after export" width:152 height:16
-					
+				checkbox chk_slg_telnet "Enable Telnet" width:152 height:16
 				label lbl7 "Export Progress Bar" align:#left width:296 height:16 across:1 
 				progressBar doit_prog "" width:280 height:14 color:(color 255 0 0) across:1
 				)
@@ -484,7 +486,16 @@ global lux_main = "LuxMax Starting..."
 								
 							--SETUP CFG FILES!!!!!!!
 							tempScnfileName = (getSceneName()) + "_" +  (GetFrame()) + ".cfg" 
-							format "\"%\" \"%\"" (btn_slg_EXE.text)(tempScnfileName) to:BatchFileStr
+								
+								if (chk_slg_telnet.checked)then
+								(
+									format "\"%\" -T \"%\"" (btn_slg_EXE.text)(tempScnfileName) to:BatchFileStr
+								)
+								else
+								(
+										format "\"%\" \"%\"" (btn_slg_EXE.text)(tempScnfileName) to:BatchFileStr
+								)
+							
 								
 								
 							--flush cfgFile
