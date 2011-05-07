@@ -127,8 +127,8 @@ global lux_main = "LuxMax Starting..."
 				)
 				group "Dof"
 				(
-					spinner spn_lensradius "Lens Radius:" scale:1 range:[0,9999,0.1] align:#left width:120 height:16 fieldwidth:30 across:2
-					spinner spn_focaldistance "focaldistance:" scale:1 range:[0,9999,0.1] align:#left width:120 height:16 fieldwidth:30 across:2 default:10
+					spinner spn_lensradius "Lens Radius:" scale:1 range:[0,9999,0.1] align:#left width:120 height:16 fieldwidth:60 across:2
+					spinner spn_focaldistance "focaldistance:" scale:1 range:[0,9999,0.1] align:#left width:120 height:16 fieldwidth:60 across:2 default:10
 				)
 				
 				group "OpenCL Settings"
