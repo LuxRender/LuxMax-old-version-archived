@@ -99,8 +99,9 @@ global lux_main = "LuxMax Starting..."
 	
 	function SetUpSLGPUUI =
 	(
-		AddSubRollout lux_main.lx0 Slg_FilmRollout
 		AddSubRollout lux_main.lx0 sgl_telnetTest
+		AddSubRollout lux_main.lx0 Slg_FilmRollout
+		
 		
 	)
 	
@@ -123,6 +124,11 @@ global lux_main = "LuxMax Starting..."
 				checkbox chk_slg_telnet "Enable Telnet" width:152 height:16
 				label lbl7 "Export Progress Bar" align:#left width:296 height:16 across:1 
 				progressBar doit_prog "" width:280 height:14 color:(color 255 0 0) across:1
+				)
+				group "Dof"
+				(
+					spinner spn_lensradius "Lens Radius:" scale:1 range:[0,9999,0.1] align:#left width:120 height:16 fieldwidth:30 across:2
+					spinner spn_focaldistance "focaldistance:" scale:1 range:[0,9999,0.1] align:#left width:120 height:16 fieldwidth:30 across:2 default:10
 				)
 				
 				group "OpenCL Settings"
@@ -221,6 +227,7 @@ global lux_main = "LuxMax Starting..."
 					
 					outputFileStr = Stringstream ""
 					
+					SlgSun =#()
 					
 					--Create a cfg file
 					format "%%_%.cfg" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:cfgFilePath
@@ -263,6 +270,10 @@ global lux_main = "LuxMax Starting..."
 								--Sort out all the lights so that they get created first.
 								--NOTE: Not really needed, just be sure to have a \n at the end of last export.
 							
+								--DOF
+								format "scene.camera.lensradius = %\n" (spn_lensradius.value) to:OutputFileStr
+								format "scene.camera.focaldistance = %\n" (spn_focaldistance.value) to:OutputFileStr
+								
 							--ENVIRONMENT MAP
 							if (useEnvironmentMap == true and environmentMap != undefined and classof environmentMap == Bitmaptexture and environmentMap.fileName != undefined) then
 								(
