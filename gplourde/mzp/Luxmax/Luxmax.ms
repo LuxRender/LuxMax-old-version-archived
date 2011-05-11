@@ -29,12 +29,17 @@ global lux_main = "LuxMax Starting..."
 	lux_SurfaceIntegrator_Path = undefined
 	lux_Filter_mitchell = undefined
 	lux_Film = undefined
-	
+	lux_Tonemapping = undefined
+	lux_Tonemapping_reignhard = undefined
+	lux_Tonemapping_linear = undefined
+	lux_Tonemapping_autolinear = undefined
+	lux_Tonemapping_maxwhite = undefined
+	lux_Tonemapping_contrast = undefined
 	Slg_FilmRollout = undefined
-	
 	SurfaceIntegratorsRollouts = #()
 	SamplerRollouts = #()
 	FilltersRollouts =#()
+	TonemapperRollouts =#()
 
 	function ResetUI =
 	(
@@ -47,6 +52,7 @@ global lux_main = "LuxMax Starting..."
 		removeSubRollout lux_main.lx0 lux_Filter
 		removeSubRollout lux_main.lx0 lux_Accelerator
 		--removeSubRollout lux_main.lx0 lux_LuxRenderNetwork
+		removeSubRollout lux_main.lx0 lux_Tonemapping
 		removeSubRollout lux_main.lx0 lux_Film
 		removeSubRollout lux_main.lx0 lux_Output
 		removeSubRollout lux_main.lx0 Slg_FilmRollout
@@ -62,6 +68,7 @@ global lux_main = "LuxMax Starting..."
 		AddSubRollout lux_main.lx0 lux_Filter
 		AddSubRollout lux_main.lx0 lux_Accelerator
 		--AddSubRollout lux_main.lx0 lux_LuxRenderNetwork
+		AddSubRollout lux_main.lx0 lux_Tonemapping
 		AddSubRollout lux_main.lx0 lux_Film
 		AddSubRollout lux_main.lx0 lux_Output
 	)
@@ -95,6 +102,7 @@ global lux_main = "LuxMax Starting..."
 	include "luxmax\\rollout_sampler.ms"
 	include "luxmax\\rollout_filter.ms"
 	include "luxmax\\rollout_integrator.ms"
+	include "luxmax\\rollout_tonemapping.ms"
 	include "luxmax\\telnet.ms"
 	
 	function SetUpSLGPUUI =
@@ -762,9 +770,6 @@ global lux_main = "LuxMax Starting..."
 		rollout lux_Sampler "Sampler" rolledup:true
 		(
 			dropdownlist ddl_sampler "Sampler Type:" -- items:#("Random", "Low Discrepancy", "ERPT" ,"Metropolis")
-			spinner haltspp "Halt SPP:" type:#integer range:[0,999999,0] width:100 align:#right across:2
-			spinner halttime "Halt Time:" type:#integer range:[0,999999,0] width:100 align:#right
-			
 			subrollout lx0 "" width:280 height:200
 			
 			function GetLuxRenderString =
@@ -910,11 +915,51 @@ global lux_main = "LuxMax Starting..."
 			button btn_add_server "add" pos:[192,24] width:72 height:24
 			on btn_add_server pressed  do ()
 		)
+		rollout lux_Tonemapping "Tonemapping" rolledup:true
+		(
+			dropdownlist ddl_tonemapper "Tonemapper:"
+			subrollout lx0 "" width:280 height:80
+
+				on ddl_tonemapper selected idx do
+				(
+					for o in TonemapperRollouts do
+					(
+					try (removeSubRollout lx0 o) catch()
+					)
+					AddSubRollout lux_Tonemapping.lx0 TonemapperRollouts[ddl_tonemapper.selection]
+				)
+				
+				on lux_Tonemapping open do
+				(
+					local items = #()
+				
+					for o in TonemapperRollouts do
+					(
+					append items o.title
+					)
+				
+					ddl_tonemapper.items = items
+				
+					GetControlParams(lux_Tonemapping)
+					AddSubRollout lux_Tonemapping.lx0 TonemapperRollouts[ddl_tonemapper.selection]
+				)
+				
+				function GetLuxRenderString =
+				(
+				return TonemapperRollouts[ddl_tonemapper.selection].GetLuxRenderString()
+				)
+		)	
 		rollout lux_Film "Film" rolledup:true
 		(
-			spinner writeinterval "Save interval:" fieldwidth:50 range:[0, 999999, 10] type:#integer
-			spinner displayinterval "GUI refresh intervals:" fieldwidth:50 range:[0, 999999, 10] type:#integer
 			
+			group "General"
+			(
+			spinner haltspp "Halt SPP:" type:#integer range:[0,999999,0] width:100 align:#left across:2
+			spinner halttime "Halt Time:" type:#integer range:[0,999999,0] width:100 align:#right
+			spinner writeinterval "Save interval:" fieldwidth:50 range:[0, 999999, 120] type:#integer across:2 align:#left
+			spinner displayinterval "GUI refresh:" fieldwidth:50 range:[0, 999999, 8] type:#integer align:#right
+			)
+				
 			group "Output Formats"
 			(
 				checkbox png "PNG" across:4 checked:true
@@ -922,33 +967,25 @@ global lux_main = "LuxMax Starting..."
 				checkbox tga "TGA"
 				checkbox flm "FLM"
 				checkbox rgba "Enable alpha Channels"
-				checkbox effr "Enable Firefly rejection"
-				spinner outlierrejection_k "Firefly rejection:" fieldwidth:50 range:[0, 20, 5] type:#integer
+				checkbox effr "Enable Firefly rejection"across:2 align:#left
+				spinner outlierrejection_k "Firefly rejection:" fieldwidth:50 range:[0, 20, 5] type:#integer align:#right
 			)
 			
-			group "Color Space"
+			group "Color Space, Default:sRGB"
 			(
-				spinner whitex "White X:" across:2 fieldwidth:50 range:[0, 1, 0.31]
-				spinner whitey "White Y:" fieldwidth:50 range:[-0, 1, 0.316]
-				spinner redx "Red X:" across:2 fieldwidth:50 range:[-0, 1, 0.67]
-				spinner redy "Red Y:" fieldwidth:50 range:[-0, 1, 0.33]
-				spinner greenx "Green X:" across:2 fieldwidth:50 range:[-0, 1, 0.21]
-				spinner greeny "Green Y:" fieldwidth:50 range:[-0, 999999, 0.71]
-				spinner bluex "Blue X:" across:2 fieldwidth:50 range:[-0, 1, 0.14]
-				spinner bluey "Blue Y:" fieldwidth:50 range:[-0, 1, 0.08]
+				spinner whitex "White X:" across:2 fieldwidth:50 range:[0, 1, 0.314275]
+				spinner whitey "White Y:" fieldwidth:50 range:[-0, 1, 0.329411]
+				spinner redx "Red X:" across:2 fieldwidth:50 range:[-0, 1, 0.63]
+				spinner redy "Red Y:" fieldwidth:50 range:[-0, 1, 0.34]
+				spinner greenx "Green X:" across:2 fieldwidth:50 range:[-0, 1, 0.31]
+				spinner greeny "Green Y:" fieldwidth:50 range:[-0, 999999, 0.595]
+				spinner bluex "Blue X:" across:2 fieldwidth:50 range:[-0, 1, 0.155]
+				spinner bluey "Blue Y:" fieldwidth:50 range:[-0, 1, 0.07]
 			)
 			
-			group "Gamma"
+			group "Film Gamma"
 			(
-				spinner gamma "Gamma:" fieldwidth:50 range:[-999999, 999999, 2.2]
-			)
-			
-			group "Tonemapping"
-			(
-				dropdownlist tonemapkernel "Tonemapper:" items:#("reinhard")
-				spinner reinhard_prescale "Pre:" fieldwidth:50 across:3 range:[-999999, 999999, 1]
-				spinner reinhard_postscale "Post:" fieldwidth:50 range:[-999999, 999999, 1.200000047683716]
-				spinner reinhard_burn "Burn:" fieldwidth:50 range:[-999999, 999999, 6]
+				spinner gamma "Gamma:" fieldwidth:50 range:[0, 5, 2.2]
 			)
 			
 			function GetLuxRenderString =
@@ -958,7 +995,7 @@ global lux_main = "LuxMax Starting..."
 				format "\nFilm \"fleximage\"\n" to:str
 				format "\t\"integer xresolution\" [%]\n" (GetLuxValue "xresolution") to:str
 				format "\t\"integer yresolution\" [%]\n" (GetLuxValue "yresolution") to:str
-				
+					
 				luxWriteInteger "haltspp" (getLuxValue "haltspp") str
 				luxWriteInteger "halttime" (getLuxValue "halttime") str
 
@@ -973,9 +1010,9 @@ global lux_main = "LuxMax Starting..."
 				
 				if (rgba.state == true) then
 				(
-					format "\t\"string write_exr_channels\" [\"RGBA\"]\n" to:str
-					format "\t\"string write_png_channels\" [\"RGBA\"]\n" to:str
-					format "\t\"string write_tga_channels\" [\"RGBA\"]\n" to:str
+				format "\t\"string write_exr_channels\" [\"RGBA\"]\n" to:str
+				format "\t\"string write_png_channels\" [\"RGBA\"]\n" to:str
+				format "\t\"string write_tga_channels\" [\"RGBA\"]\n" to:str
 				)
 
 				format "\t\"float colorspace_white\" [% %]\n" (whitex.value as string) (whitey.value as string) to:str
@@ -983,20 +1020,22 @@ global lux_main = "LuxMax Starting..."
 				format "\t\"float colorspace_green\" [% %]\n" (greenx.value as string) (greeny.value as string) to:str
 				format "\t\"float colorspace_blue\" [% %]\n" (bluex.value as string) (bluey.value as string) to:str
 
-				LuxWriteString "tonemapkernel" tonemapkernel.selected str
-				luxWriteFloat "reinhard_prescale" reinhard_prescale.value str
-				luxWriteFloat "reinhard_postscale" reinhard_postscale.value str
-				luxWriteFloat "reinhard_burn" reinhard_burn.value str
-				
 				LuxWriteString "filename" (getSceneName() + "_" + getFrame()) str
-					if (effr.state == true) then
-					(
-						luxWriteInteger "outlierrejection_k" outlierrejection_k.value str
-					)
+				if (effr.state == true) then
+				(
+				luxWriteInteger "outlierrejection_k" outlierrejection_k.value str
+				)
 				
-				return str as string
+				return str as string	
 			)
-			on lux_Film open do (GetControlParams(lux_Film))
+			
+			on effr changed s do (outlierrejection_k.enabled = s)
+			
+			on lux_Film open do
+			(
+			(GetControlParams(lux_Film))
+			outlierrejection_k.enabled = effr.state
+			)
 		)
 		rollout lux_Output "Output"
 		(
@@ -1021,7 +1060,7 @@ global lux_main = "LuxMax Starting..."
 		)
 		rollout lux_main "LuxRender Parameters"
 		(
-			subRollout lx0 "" width:320 height:570 pos:[0,0]
+			subRollout lx0 "" width:320 height:770 pos:[0,0]
 			
 			label lb_camera "Camera:" align:#left
 			dropdownList ddl_camera "" width:200 across:2
@@ -1146,7 +1185,7 @@ global lux_main = "LuxMax Starting..."
 		)
 	)
 	
-	createDialog lux_main 320 650 style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu)
+	createDialog lux_main 320 850 style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu)
 	AddSubRollout lux_main.lx0 lux_Dimmensions
 	AddSubRollout lux_main.lx0 lux_LuxRenderEngineConfiguration
 )
