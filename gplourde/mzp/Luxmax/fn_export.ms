@@ -48,9 +48,12 @@
 				
 			-- Pixel Filter
 			format "%" (lux_Filter.GetLuxRenderString()) to:str
-			
+								
 			-- Film
 			format "%" (lux_Film.GetLuxRenderString()) to:str
+			
+			--Tonemapping
+			format "%" (lux_Tonemapping.GetLuxRenderString()) to:str
 			
 			format "\r\nWorldBegin\r\n\r\n" to:str
 			
