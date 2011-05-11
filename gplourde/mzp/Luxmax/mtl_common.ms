@@ -29,6 +29,10 @@ parameters common_parameters rollout:common
 	iespath type:#string 
 	useies type:#boolean ui:museies	
 	useflipz type:#boolean ui:museflipz
+	
+	
+	
+	
 )
 
 rollout common "Common Parameters" rolledup:true
@@ -255,10 +259,37 @@ function luxWriteEmission objmaterial strout =
 function luxMaterialPreview mat =
 (
 	strout = stringstream ""
-
-	format "LookAt 0.0 -3.0 0.5 0.0 -2.0 0.5 0.0 0.0 1.0\n" to:strout
+	if (mat.bzoom == false) then (format "LookAt 0.0 -3.0 0.5 0.0 -2.0 0.5 0.0 0.0 1.0\n" to:strout)
+	else (format "LookAt 0.250000 -1.500000 0.750000 0.250000 -0.500000 0.750000 0.000000 0.000000 1.000000\n" to:strout)
 	format "Camera \"perspective\" \"float fov\" [22.5]\n" to:strout
-	format "Film \"fleximage\" \"integer xresolution\" [200] \"integer yresolution\" [200] \"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [100] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview\"]\n" to:strout
+	format "Film \"fleximage\"" to:strout
+	--Size Params
+	if (mat.dd_preview_size == 1) then
+	(
+	format "\"integer xresolution\" [80] \"integer yresolution\" [80]" to:strout 
+	)
+	if (mat.dd_preview_size == 2) then
+	(
+	format "\"integer xresolution\" [140] \"integer yresolution\" [140]" to:strout 
+	)
+	if (mat.dd_preview_size == 3) then
+	(
+	format "\"integer xresolution\" [200] \"integer yresolution\" [200]" to:strout 
+	)
+	--Quality Params
+	if (mat.dd_preview_quality == 1) then
+	(
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [50] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview\"]\n" to:strout
+	)
+	if (mat.dd_preview_quality == 2) then
+	(
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [100] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview\"]\n" to:strout
+	)
+	if (mat.dd_preview_quality == 3) then
+	(
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [150] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview\"]\n" to:strout
+	)
+		
 	format "PixelFilter \"mitchell\"\n" to:strout
 	format "Sampler \"metropolis\"\n" to:strout
 	format "SurfaceIntegrator \"bidirectional\"\n" to:strout
@@ -280,7 +311,12 @@ function luxMaterialPreview mat =
 	try (format "%\r\n" (mat.GetLuxRenderString()) to:strout) catch ()
 	
 	format "\nAttributeBegin\n" to:strout
-	format "Transform [0.5 0.0 0.0 0.0  0.0 0.5 0.0 0.0  0.0 0.0 0.5 0.0  0.0 0.0 0.5 1.0]\n" to:strout
+		
+	--CAMERA LOOK AT PROPERTIES
+	if (mat.dd_preview_scene ==  1) then
+	(format "Transform [0.5 0.0 0.0 0.0  0.0 0.5 0.0 0.0  0.0 0.0 0.5 0.0  0.0 0.0 0.5 1.0]\n" to:strout)
+	if (mat.dd_preview_scene ==  2) then
+	(format "Transform [0.35 -0.35 0.0 0.0  0.25 0.25 0.35 0.0  -0.25 -0.25 0.35 0.0  0.0 0.0 0.5 1.0]\n" to:strout)
 	format "TransformBegin\n" to:strout
 	format "Scale 1.000000 1.000000 1.000000\n" to:strout
 	format "TransformEnd\n" to:strout
@@ -292,10 +328,24 @@ function luxMaterialPreview mat =
 				
 	format "NamedMaterial \"%\"\n" mat.name to:strout
 
-	if (mat.interior != undefined) do	format "Interior  \"%\"\n" mat.interior.name  to:strout
+	if (mat.interior != undefined) do format "Interior  \"%\"\n" mat.interior.name  to:strout
 	if (mat.exterior != undefined) do format "Exterior  \"%\"\n" mat.exterior.name to:strout
-		
+	
+	
+	--SCENE SELECTION
+	if (mat.dd_preview_scene ==  1) then
+	(
 	format "Shape \"sphere\" \"float radius\" [1.0]\n" to:strout
+	)
+	if (mat.dd_preview_scene ==  2) then
+	(
+	format "Shape \"torus\" \"float radius\" [1.0]\n" to:strout
+	)
+	--if (mat.dd_preview_scene ==  3) then
+	--(
+	--format "Shape \"trianglemesh\" \"integer indices\" [ 0 1 2 0 2 3 ] \"point P\" [0.5,0.5,0.5,-0.5,-0.5,-0.5,-0.5,0.5] \"float uv\" [0.0 1.0  0.0 0.0  1.0 0.0  1.0 1.0] \n" to:strout
+	--)
+	
 	format "AttributeEnd\n\n" to:strout
 
 	format "AttributeBegin\n" to:strout
@@ -306,14 +356,42 @@ function luxMaterialPreview mat =
 	format "Shape \"loopsubdiv\" \"integer nlevels\" [3] \"bool dmnormalsmooth\" [\"true\"] \"bool dmsharpboundary\" [\"false\"] \"integer indices\" [ 0 1 2 0 2 3 1 0 4 1 4 5 5 4 6 5 6 7 ]\"point P\" [ 1.000000 1.000000 0.000000 -1.000000 1.000000 0.000000 -1.000000 -1.000000 0.000000 1.000000 -1.000000 0.000000 1.000000 3.000000 0.000000 -1.000000 3.000000 0.000000 1.000000 3.000000 2.000000 -1.000000 3.000000 2.000000] \"normal N\" [ 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 -0.707083 0.707083 0.000000 -0.707083 0.707083 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000] \"float uv\" [ 0.333334 0.000000 0.333334 0.333334 0.000000 0.333334 0.000000 0.000000 0.666667 0.000000 0.666667 0.333333 1.000000 0.000000 1.000000 0.333333 ]\n" to:strout
 	format "AttributeEnd\n" to:strout
 	
+	
+	--LIGHT SELECTION
 	if (mat.useEmission == false) then
 	(
-	format "AttributeBegin\n" to:strout
-	format "Transform [1.0 0.0 0.0 0.0  0.0 1.0 0.0 0.0  0.0 0.0 1.0 0.0  1.0 -1.0 4.0 1.0]\n" to:strout
-	format "Texture \"pL\" \"color\" \"blackbody\" \"float temperature\" [6500.0]\n" to:strout
-	format "LightSource \"point\" \"texture L\" [\"pL\"] \"float gain\" [0.002]\n" to:strout
-	format "AttributeEnd\n" to:strout
+		
+			if (mat.dd_preview_light == 1) then
+				(	
+				format "AttributeBegin\n" to:strout
+				format "Transform [1.0 0.0 0.0 0.0  0.0 1.0 0.0 0.0  0.0 0.0 1.0 0.0  1.0 -1.0 4.0 1.0]\n" to:strout
+				format "Texture \"pL\" \"color\" \"blackbody\" \"float temperature\" [6500.0]\n" to:strout
+				format "LightSource \"point\" \"texture L\" [\"pL\"] \"float gain\" [0.002]\n" to:strout
+				format "AttributeEnd\n" to:strout
+				)
+			if (mat.dd_preview_light == 2) then
+				(
+				format "AttributeBegin\n" to:strout
+				format "Transform [1.0 0.0 0.0 0.0  0.0 1.0 0.0 0.0  0.0 0.0 1.0 0.0  1.0 -4.0 1.0 1.0]\n" to:strout
+				format "ReverseOrientation\n" to:strout
+				format "AreaLightSource \"area\" \"color L\" [1.0 1.0 1.0]\n" to:strout
+				format "\"float gain\" [0.3]\n" to:strout
+				format "Shape \"disk\" \"float radius\" [1.0]\n" to:strout
+				format "AttributeEnd\n" to:strout
+				)
+			if (mat.dd_preview_light == 3) then
+				(
+				format "AttributeBegin\n" to:strout
+				format "Transform [1.0 0.0 0.0 0.0  0.0 1.0 0.0 0.0  0.0 0.0 1.0 0.0  1.0 -1.0 4.0 1.0]\n" to:strout
+				format "Texture \"pL\" \"color\" \"blackbody\" \"float temperature\" [6500.0]\n" to:strout
+				format "LightSource \"point\" \"texture L\" [\"pL\"] \"float gain\" [0.002]\n" to:strout
+				format "AttributeEnd\n" to:strout
+				format "AttributeBegin\n" to:strout
+				format "LightSource \"sky\" \"float gain\" [0.0001]\n" to:strout
+				format "AttributeEnd\n" to:strout
+				)
 	)
+	
 		
 	format "WorldEnd\n" to:strout
 
@@ -360,24 +438,52 @@ function luxMaterialPreview mat =
 parameters preview_params rollout:preview
 (
 	--image type:#bitmap ui:pictureBox2
+	dd_preview_scene type:#integer ui:m_dd_preview_scene default:1
+	dd_preview_quality type:#integer ui:m_dd_preview_quality default:1
+	dd_preview_size type:#integer ui:m_dd_preview_size default:1
+	dd_preview_light type:#integer ui:m_dd_preview_light default:1
+	bzoom type:#boolean ui:m_bzoom default:false
 )
 
-rollout preview "Preview"
+rollout preview "Preview" width:334 height:260
 (
-	dotnetControl pictureBox1 "System.Windows.Forms.PictureBox" width:100 height:100 bgcolor:black across:2
+	dotNetControl pictureBox1 "System.Windows.Forms.PictureBox" pos:[5,16] width:200 height:200 bgcolor:(color 0 0 0) across:1
 	--bitmap pictureBox2
-	button m_preview "Make Preview" width:110 height:16 align:#right
-	timer timer1 "" interval:100
+	button m_preview "Make Preview" pos:[217,16] width:80 height:16 
+ 
+	dropdownList m_dd_preview_scene "Scene" pos:[217,46] width:80 height:40 items:#("sphere", "torus")
+	dropdownList m_dd_preview_quality "Render Quality" pos:[217,96] width:80 height:40 items:#("low", "medium", "high")
+	dropdownList m_dd_preview_size "Render Size" pos:[217,146] width:80 height:40 items:#("small", "medium", "large")
+	dropdownList m_dd_preview_light "Lighting" pos:[217,196] width:80 height:40 items:#("direct", "area", "direct+sky")
+	checkbox m_bzoom "Zoom" pos:[217,246] width:80 height:16 
+	Timer timer1 "" pos:[103,162] width:24 height:24 interval:100
 	
-	on m_preview pressed do
-	(
-		luxMaterialPreview this
-	)
 	
 	on preview open do
 	(
 		pictureBox1.SizeMode = (DotNetClass "PictureBoxSizeMode").StretchImage
 	)
+	on m_preview pressed do
+	(
+		luxMaterialPreview this
+	)
+	/*
+	on m_dd_preview_scene selected val do
+	(
+		print m_dd_preview_scene.selected  
+		print dd_preview_scene
+	)
+	on m_dd_preview_quality selected val do
+	(
+		print m_dd_preview_quality.selected  
+		print dd_preview_quality
+	)
+	on m_dd_preview_size selected val do
+	(
+		print m_dd_preview_size.selected  
+		print dd_preview_size
+	)
+	*/
 	on timer1 tick do
 	(
 		pictureBox1.Image = updateRenderBuffer()
