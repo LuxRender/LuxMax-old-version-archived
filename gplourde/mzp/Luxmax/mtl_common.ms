@@ -212,9 +212,11 @@ function export_volumes =
 	return str as string
 )
 
-function updateRenderBuffer =
+--UPDATERENDERBUFFER
+/*
+function updateRenderBuffer mat =
 (
-	filename = ((getdir #temp) + "\matpreview.png")
+	
 	try (
 		_bitmapStream = dotNetObject "System.IO.FileStream" (filename) (dotNetClass "System.IO.FileMode").Open (dotNetClass "System.IO.FileAccess").Read (dotNetClass "System.IO.FileShare").ReadWrite
 		local _bitmap = dotNetObject "System.Drawing.Bitmap" _bitmapStream
@@ -228,7 +230,9 @@ function updateRenderBuffer =
 		local _bitmap = dotNetObject "System.Drawing.Bitmap" 1 1
 		return _bitmap
 	)
+	
 )
+*/
 
 --// Write emission properties of given material
 function luxWriteEmission objmaterial strout =
@@ -276,18 +280,26 @@ function luxMaterialPreview mat =
 	(
 	format "\"integer xresolution\" [200] \"integer yresolution\" [200]" to:strout 
 	)
+	if (mat.dd_preview_size == 4) then
+	(
+	format "\"integer xresolution\" [300] \"integer yresolution\" [300]" to:strout 
+	)
 	--Quality Params
 	if (mat.dd_preview_quality == 1) then
 	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [50] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview\"]\n" to:strout
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [50] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
 	)
 	if (mat.dd_preview_quality == 2) then
 	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [100] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview\"]\n" to:strout
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [100] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
 	)
 	if (mat.dd_preview_quality == 3) then
 	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [150] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview\"]\n" to:strout
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [150] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
+	)
+	if (mat.dd_preview_quality == 4) then
+	(
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [200] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
 	)
 		
 	format "PixelFilter \"mitchell\"\n" to:strout
@@ -317,6 +329,8 @@ function luxMaterialPreview mat =
 	(format "Transform [0.5 0.0 0.0 0.0  0.0 0.5 0.0 0.0  0.0 0.0 0.5 0.0  0.0 0.0 0.5 1.0]\n" to:strout)
 	if (mat.dd_preview_scene ==  2) then
 	(format "Transform [0.35 -0.35 0.0 0.0  0.25 0.25 0.35 0.0  -0.25 -0.25 0.35 0.0  0.0 0.0 0.5 1.0]\n" to:strout)
+	if (mat.dd_preview_scene ==  3) then
+	(format "Transform [0.4 0.4 0.0 0.0 -0.4 0.4 0.0 0.0 0.0 0.0 0.6 0.0 0.0 0.0 0.0 1]\n" to:strout)
 	format "TransformBegin\n" to:strout
 	format "Scale 1.000000 1.000000 1.000000\n" to:strout
 	format "TransformEnd\n" to:strout
@@ -341,10 +355,10 @@ function luxMaterialPreview mat =
 	(
 	format "Shape \"torus\" \"float radius\" [1.0]\n" to:strout
 	)
-	--if (mat.dd_preview_scene ==  3) then
-	--(
-	--format "Shape \"trianglemesh\" \"integer indices\" [ 0 1 2 0 2 3 ] \"point P\" [0.5,0.5,0.5,-0.5,-0.5,-0.5,-0.5,0.5] \"float uv\" [0.0 1.0  0.0 0.0  1.0 0.0  1.0 1.0] \n" to:strout
-	--)
+	if (mat.dd_preview_scene ==  3) then
+	(
+	format "Shape \"plymesh\" \"string filename\" [\"C:/Program Files/Autodesk/3ds Max 2012/Scripts/Luxmax/Ply/Teapot.ply\"]\n" to:strout
+	)
 	
 	format "AttributeEnd\n\n" to:strout
 
@@ -443,49 +457,36 @@ parameters preview_params rollout:preview
 	dd_preview_size type:#integer ui:m_dd_preview_size default:1
 	dd_preview_light type:#integer ui:m_dd_preview_light default:1
 	bzoom type:#boolean ui:m_bzoom default:false
+    filename type:#string	
 )
 
 rollout preview "Preview" width:334 height:260
 (
-	dotNetControl pictureBox1 "System.Windows.Forms.PictureBox" pos:[5,16] width:200 height:200 bgcolor:(color 0 0 0) across:1
-	--bitmap pictureBox2
-	button m_preview "Make Preview" pos:[217,16] width:80 height:16 
- 
-	dropdownList m_dd_preview_scene "Scene" pos:[217,46] width:80 height:40 items:#("sphere", "torus")
-	dropdownList m_dd_preview_quality "Render Quality" pos:[217,96] width:80 height:40 items:#("low", "medium", "high")
-	dropdownList m_dd_preview_size "Render Size" pos:[217,146] width:80 height:40 items:#("small", "medium", "large")
-	dropdownList m_dd_preview_light "Lighting" pos:[217,196] width:80 height:40 items:#("direct", "area", "direct+sky")
-	checkbox m_bzoom "Zoom" pos:[217,246] width:80 height:16 
-	Timer timer1 "" pos:[103,162] width:24 height:24 interval:100
+	dropdownList m_dd_preview_scene "Scene"  width:70 height:40 items:#("sphere", "torus", "teapot") across:4
+	dropdownList m_dd_preview_quality "Render Quality"  width:70 height:40 items:#("low", "medium", "high", "extra")
+	dropdownList m_dd_preview_size "Render Size"  width:70 height:40 items:#("small", "medium", "large", "extra") 
+	dropdownList m_dd_preview_light "Lighting"  width:70 height:40 items:#("direct", "area", "direct+sky")
+	checkbox m_bzoom "Zoom"  width:80 height:19 across:2
+	button m_preview "Make Preview" width:80 height:40 
+	
+
+	Timer timer1 "" width:24 height:24 interval:1000
+	bitmap pictureBox1 "" across:1 align:#center width:300 height:300 across:1
 	
 	
 	on preview open do
 	(
-		pictureBox1.SizeMode = (DotNetClass "PictureBoxSizeMode").StretchImage
+		filename = this.name as string
+		pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
 	)
+	
 	on m_preview pressed do
-	(
+	(	
 		luxMaterialPreview this
 	)
-	/*
-	on m_dd_preview_scene selected val do
-	(
-		print m_dd_preview_scene.selected  
-		print dd_preview_scene
-	)
-	on m_dd_preview_quality selected val do
-	(
-		print m_dd_preview_quality.selected  
-		print dd_preview_quality
-	)
-	on m_dd_preview_size selected val do
-	(
-		print m_dd_preview_size.selected  
-		print dd_preview_size
-	)
-	*/
+
 	on timer1 tick do
 	(
-		pictureBox1.Image = updateRenderBuffer()
+		pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
 	)
 )
