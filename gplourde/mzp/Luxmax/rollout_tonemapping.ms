@@ -31,7 +31,7 @@
 		function GetLuxRenderString =
 		(
 			str = stringstream ""
-			format "\"string tonemapkernel\" [\"linear\"]\n" str
+			format "\"string tonemapkernel\" [\"linear\"]\n" to:str
 			luxWriteFloat "linear_sensitivity" linear_sensitivity.value str
 			luxWriteFloat "linear_exposure" linear_exposure.value str
 			luxWriteFloat "linear_fstop" linear_fstop.value str
