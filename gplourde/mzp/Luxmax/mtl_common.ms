@@ -287,19 +287,19 @@ function luxMaterialPreview mat =
 	--Quality Params
 	if (mat.dd_preview_quality == 1) then
 	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [50] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [50] \"integer halttime\" [3] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
 	)
 	if (mat.dd_preview_quality == 2) then
 	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [100] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [100] \"integer halttime\" [5] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
 	)
 	if (mat.dd_preview_quality == 3) then
 	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [150] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [150] \"integer halttime\" [10] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
 	)
 	if (mat.dd_preview_quality == 4) then
 	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [200] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [200] \"integer halttime\" [20] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
 	)
 		
 	format "PixelFilter \"mitchell\"\n" to:strout
@@ -457,7 +457,8 @@ parameters preview_params rollout:preview
 	dd_preview_size type:#integer ui:m_dd_preview_size default:1
 	dd_preview_light type:#integer ui:m_dd_preview_light default:1
 	bzoom type:#boolean ui:m_bzoom default:false
-    filename type:#string	
+    filename type:#string
+	preview_time type:#float default:3
 )
 
 rollout preview "Preview" width:334 height:260
@@ -470,12 +471,13 @@ rollout preview "Preview" width:334 height:260
 	button m_preview "Make Preview" width:80 height:40 
 	
 
-	Timer timer1 "" width:24 height:24 interval:1000
+	Timer timer1 "" width:24 height:24 interval:1000 active:false
 	bitmap pictureBox1 "" across:1 align:#center width:300 height:300 across:1
 	
 	
 	on preview open do
 	(
+		timer1.active = false
 		filename = this.name as string
 		pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
 	)
@@ -483,10 +485,31 @@ rollout preview "Preview" width:334 height:260
 	on m_preview pressed do
 	(	
 		luxMaterialPreview this
+		
+		if dd_preview_quality == 1 then preview_time = 3
+		if dd_preview_quality == 2 then preview_time = 5
+		if dd_preview_quality == 3 then preview_time = 10
+		if dd_preview_quality == 4 then preview_time = 20
+		
+		if timer1.active == false then
+		(	
+		timer1.active = true
+		)
+		
 	)
-
+	
 	on timer1 tick do
-	(
-		pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
-	)
+		(
+			
+		if timer1.ticks == preview_time do
+		(	
+		print "updating preview"
+		pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" )
+		timer1.active = false
+		timer1.ticks = 0
+		)
+		
+		)
+		
+	
 )
