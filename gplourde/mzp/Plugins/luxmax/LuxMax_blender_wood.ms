@@ -1,4 +1,4 @@
-plugin TextureMap LuxrenderBlenderStucci name:"LR Blender Stucci" classID:#(0xc1b3763, 0xe33083e) extends:Bitmaptexture replaceUI:true version:1
+plugin TextureMap LuxrenderBlenderWood name:"LR Blender Wood" classID:#(0x36ca5bec, 0xd677481) extends:Bitmaptexture replaceUI:true version:1
 (
 	include "luxmax\\fn_common.ms"
 	
@@ -12,9 +12,9 @@ plugin TextureMap LuxrenderBlenderStucci name:"LR Blender Stucci" classID:#(0xc1
 	(
 		str = stringstream ""
 		
-		format "Texture \"%:amount\" \"float\" \"blender_stucci\"\n" this.name to:str
+		format "Texture \"%:amount\" \"float\" \"blender_wood\"\n" this.name to:str
 		
-		ntype = #("plastic", "wall_in", "wall_out")
+		ntype = #("bands", "rings", "bandnoise", "ringnoise")
 		luxWriteString "type" ntype[this.ntype] str
 		
 		noisetype = #("soft_noise", "hard_noise")
@@ -23,6 +23,8 @@ plugin TextureMap LuxrenderBlenderStucci name:"LR Blender Stucci" classID:#(0xc1
 		luxWriteFloat "noisesize" this.noisesize str
 		luxWriteFloat "turbulence" this.turbulence str
 		
+		noisebasis2 = #("sin", "saw", "tri")
+		luxWriteString "noisebasis2" noisebasis2[this.noisebasis2] str
 		noisebasis = #("blender_original", "original_perlin", "improved_perlin","voronoi_f1" , "voronoi_f2", "voronoi_f3", "voronoi_f4", "voronoi_f2f1", "voronoi_crackle", "cell_noise")
 		luxWriteString "noisebasis" noisebasis[this.noisebasis] str
 		
@@ -78,6 +80,7 @@ plugin TextureMap LuxrenderBlenderStucci name:"LR Blender Stucci" classID:#(0xc1
 		noisesize type:#float ui:mnoisesize default:0.25
 		turbulence type:#float ui:mturbulence default:5
 		
+		noisebasis2 type:#integer default:1 ui:mnoisebasis2 
 		noisebasis type:#integer default:1 ui:mnoisebasis 
 		
 		bright type:#float ui:mbright default:1
@@ -86,7 +89,7 @@ plugin TextureMap LuxrenderBlenderStucci name:"LR Blender Stucci" classID:#(0xc1
 		
 	)
 		
-	rollout params "Blender Stucci"
+	rollout params "Blender Wood"
 	(
 		group "Colors or Textures"
 		(
@@ -99,10 +102,11 @@ plugin TextureMap LuxrenderBlenderStucci name:"LR Blender Stucci" classID:#(0xc1
 		)
 		group "Noise Parameters"
 		(
-		dropdownlist mntype "Type" items:#("plastic", "wall_in", "wall_out") align:#left across:2
+		dropdownlist mntype "Type" items:#("bands", "rings", "bandnoise", "ringnoise") align:#left across:2
 		dropdownlist mnoisetype "Noise Type" items:#("soft_noise", "hard_noise") align:#right
-		spinner mnoisesize "noise size:" type:#float range:[0,10,0.25] fieldwidth:65 across:2 align:#left
-		spinner mturbulence "turbulence:" type:#float range:[0,200,5] fieldwidth:65 align:#right
+		spinner mnoisesize "size:" type:#float range:[0,10,0.25] fieldwidth:40  across:2 align:#left
+		spinner mturbulence "turbul:" type:#float range:[0,200,5] fieldwidth:40 align:#right
+		dropdownlist mnoisebasis2 "Noise Basis 2" items:#("sin", "saw", "tri") across:2 align:#left
 		dropdownlist mnoisebasis "Noise Basis" items:#("blender_original", "original_perlin", "improved_perlin","voronoi_f1" , "voronoi_f2", "voronoi_f3", "voronoi_f4", "voronoi_f1f2", "voronoi_crackle", "cell_noise") align:#right
 		)
 
@@ -115,5 +119,6 @@ plugin TextureMap LuxrenderBlenderStucci name:"LR Blender Stucci" classID:#(0xc1
 		
 	)
 	
+
 	include "luxmax\\texture_common.ms"
 )

@@ -27,7 +27,7 @@ plugin TextureMap LuxrenderBlenderMarble name:"LR Blender Marble" classID:#(0x79
 		
 		noisebasis2 = #("sin", "saw", "tri")
 		luxWriteString "noisebasis2" noisebasis2[this.noisebasis2] str
-		noisebasis = #("blender_original", "original_perlin", "improved_perlin","voronoi_f1" , "voronoi_f2", "voronoi_f3", "voronoi_f4", "voronoi_f1f2", "voronoi_crackle", "cell_noise")
+		noisebasis = #("blender_original", "original_perlin", "improved_perlin","voronoi_f1" , "voronoi_f2", "voronoi_f3", "voronoi_f4", "voronoi_f2f1", "voronoi_crackle", "cell_noise")
 		luxWriteString "noisebasis" noisebasis[this.noisebasis] str
 		
 		luxWriteFloat "bright" this.bright str
@@ -92,7 +92,7 @@ plugin TextureMap LuxrenderBlenderMarble name:"LR Blender Marble" classID:#(0x79
 		
 	)
 		
-	rollout params "Blender Voronoi"
+	rollout params "Blender Marble"
 	(
 		group "Colors or Textures"
 		(
@@ -111,7 +111,7 @@ plugin TextureMap LuxrenderBlenderMarble name:"LR Blender Marble" classID:#(0x79
 		spinner mnoisesize "size:" type:#float range:[0,10,0.25] fieldwidth:40  align:#middle
 		spinner mturbulence "turbul:" type:#float range:[0,200,5] fieldwidth:40 align:#right
 		dropdownlist mnoisebasis2 "Noise Basis 2" items:#("sin", "saw", "tri") across:2 align:#left
-		dropdownlist mnoisebasis "Noise Basis" items:#("blender_original", "original_perlin", "improved_perlin","voronoi_f1" , "voronoi_f2", "voronoi_f3", "voronoi_f4", "voronoi_f1f2", "voronoi_crackle", "cell_noise") align:#right
+		dropdownlist mnoisebasis "Noise Basis" items:#("blender_original", "original_perlin", "improved_perlin","voronoi_f1" , "voronoi_f2", "voronoi_f3", "voronoi_f4", "voronoi_f2f1", "voronoi_crackle", "cell_noise") align:#right
 		)
 
 		group "Level"
