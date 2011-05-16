@@ -1060,7 +1060,7 @@ global lux_main = "LuxMax Starting..."
 		)
 		rollout lux_main "LuxRender Parameters"
 		(
-			subRollout lx0 "" width:320 height:770 pos:[0,0]
+			subRollout lx0 "" width:320 height:670 pos:[0,0]
 			
 			label lb_camera "Camera:" align:#left
 			dropdownList ddl_camera "" width:200 across:2
@@ -1185,7 +1185,7 @@ global lux_main = "LuxMax Starting..."
 		)
 	)
 	
-	createDialog lux_main 320 850 style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu)
+	createDialog lux_main 320 750 style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu)
 	AddSubRollout lux_main.lx0 lux_Dimmensions
 	AddSubRollout lux_main.lx0 lux_LuxRenderEngineConfiguration
 )
