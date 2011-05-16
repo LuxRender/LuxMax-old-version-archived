@@ -1,4 +1,4 @@
-plugin TextureMap LuxrenderBlenderVoronoi name:"LR Blender Voronoi" classID:#(0x591413be, 0x184011e6) extends:Bitmaptexture replaceUI:true version:1
+plugin TextureMap LuxrenderBlenderMarble name:"LR Blender Marble" classID:#(0x7993480e, 0x799c73df) extends:Bitmaptexture replaceUI:true version:1
 (
 	include "luxmax\\fn_common.ms"
 	
@@ -12,21 +12,23 @@ plugin TextureMap LuxrenderBlenderVoronoi name:"LR Blender Voronoi" classID:#(0x
 	(
 		str = stringstream ""
 		
-		format "Texture \"%:amount\" \"float\" \"blender_voronoi\"\n" this.name to:str
+		format "Texture \"%:amount\" \"float\" \"blender_marble\"\n" this.name to:str
 		
-		distmetric = #("actual_distance", "minkovsky", "minkovsky_four", "minkovsky_half", "chebychev", "manhattan", "distance_squared")
-		luxWriteString "distmetric" distmetric[this.distmetric] str
+		ntype = #("soft", "sharp", "sharper")
+		luxWriteString "type" ntype[this.ntype] str
 		
-		luxWriteFloat "minkovsky_exp" this.minkovsky_exp str
-		luxWriteFloat "outscale" this.outscale str
+		noisetype = #("soft_noise", "hard_noise")
+		luxWriteString "noisetype" noisetype[this.noisetype] str
+		
+		luxwriteInteger "noisedepth" this.noisedepth str
+		
 		luxWriteFloat "noisesize" this.noisesize str
-		luxWriteFloat "nabla" this.nabla str
+		luxWriteFloat "turbulence" this.turbulence str
 		
-		luxWriteFloat "w1" this.w1 str
-		luxWriteFloat "w2" this.w2 str
-		luxWriteFloat "w3" this.w3 str
-		luxWriteFloat "w4" this.w4 str
-		
+		noisebasis2 = #("sin", "saw", "tri")
+		luxWriteString "noisebasis2" noisebasis2[this.noisebasis2] str
+		noisebasis = #("blender_original", "original_perlin", "improved_perlin","voronoi_f1" , "voronoi_f2", "voronoi_f3", "voronoi_f4", "voronoi_f1f2", "voronoi_crackle", "cell_noise")
+		luxWriteString "noisebasis" noisebasis[this.noisebasis] str
 		
 		luxWriteFloat "bright" this.bright str
 		luxWriteFloat "contrast" this.contrast str
@@ -74,17 +76,15 @@ plugin TextureMap LuxrenderBlenderVoronoi name:"LR Blender Voronoi" classID:#(0x
 		Color2 type:#color ui:mColor2 default:[0,0,0]
 		Tex2 type:#textureMap ui: mTex2
 		
-		distmetric type:#integer default:1 ui:mdistmetric 
+		ntype type:#integer default:1 ui:mntype 
+		noisetype type:#integer default:1 ui:mnoisetype 
 		
-		minkovsky_exp type:#float ui:mminkovsky_exp default:2.5
-		outscale type:#float ui:moutscale default:1
-		noisesize type:#float ui:mnoisesize default:0.025
-		nabla type:#float ui:mnabla default:0.025
+		noisedepth type:#float ui:mnoisedepth default:2
+		noisesize type:#float ui:mnoisesize default:0.25
+		turbulence type:#float ui:mturbulence default:5
 		
-		w1 type:#float ui:mw1 default:1
-		w2 type:#float ui:mw2 default:0
-		w3 type:#float ui:mw3 default:0
-		w4 type:#float ui:mw4 default:0
+		noisebasis2 type:#integer default:1 ui:mnoisebasis2 
+		noisebasis type:#integer default:1 ui:mnoisebasis 
 		
 		bright type:#float ui:mbright default:1
 		contrast type:#float ui:mcontrast default:1
@@ -103,21 +103,17 @@ plugin TextureMap LuxrenderBlenderVoronoi name:"LR Blender Voronoi" classID:#(0x
 		colorpicker mColor2 "" align:#left width:80 height:16
 		mapbutton mTex2 "Tex2" width:110 height:16 align:#right
 		)
-		dropdownlist mdistmetric "Distance Metric" items:#("actual_distance", "minkovsky", "minkovsky_four", "minkovsky_half", "2k acrylack", "chebychev", "manhattan", "distance_squared") align:#center across:1
-		group "General Parameters"
+		group "Noise Parameters"
 		(
-		spinner mminkovsky_exp "minkovsky exp:" type:#float range:[0.001,10,2.5] fieldwidth:65 across:2 align:#left
-		spinner moutscale "outscale:" type:#float range:[0.01,10,1] fieldwidth:65 align:#right
-		spinner mnoisesize "noise size:" type:#float range:[0,2,0.025] fieldwidth:65 across:2 align:#left
-		spinner mnabla "nabla:" type:#float range:[0.001,0.1,0.025] fieldwidth:65 align:#right
+		dropdownlist mntype "Type" items:#("soft", "sharp", "sharper") align:#left across:2
+		dropdownlist mnoisetype "Noise Type" items:#("soft_noise", "hard_noise") align:#right
+		spinner mnoisedepth "depth:" type:#integer range:[0,6,2] fieldwidth:40 across:3 align:#left
+		spinner mnoisesize "size:" type:#float range:[0,10,0.25] fieldwidth:40  align:#middle
+		spinner mturbulence "turbul:" type:#float range:[0,200,5] fieldwidth:40 align:#right
+		dropdownlist mnoisebasis2 "Noise Basis 2" items:#("sin", "saw", "tri") across:2 align:#left
+		dropdownlist mnoisebasis "Noise Basis" items:#("blender_original", "original_perlin", "improved_perlin","voronoi_f1" , "voronoi_f2", "voronoi_f3", "voronoi_f4", "voronoi_f1f2", "voronoi_crackle", "cell_noise") align:#right
 		)
-		group "Weight Parameters"
-		(
-		spinner mw1 "w1:" type:#float range:[-2,2,1] fieldwidth:65 across:2 align:#left
-		spinner mw2 "w2:" type:#float range:[-2,2,0] fieldwidth:65 align:#right
-		spinner mw3 "w3:" type:#float range:[-2,2,0] fieldwidth:65 across:2 align:#left
-		spinner mw4 "w4:" type:#float range:[-2,2,0] fieldwidth:65 align:#right
-		)
+
 		group "Level"
 		(
 		spinner mbright "bright:" type:#float range:[-2,2,1] fieldwidth:65 across:2 align:#left
