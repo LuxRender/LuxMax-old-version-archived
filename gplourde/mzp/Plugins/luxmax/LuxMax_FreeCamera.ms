@@ -30,6 +30,8 @@ plugin camera LuxrenderCamera name:"LR Camera" classID:#(0x3465725b, 0x7a7b54a6)
 		distribution type:#integer ui:mdistribution default:1
 		cameramotionblur type:#boolean default:false ui:mcameramotionblur
 		objectmotionblur type:#boolean default:false ui:mobjectmotionblur
+		
+		exterior type:#node ui:mExterior
 			
 	)
 	rollout params "Parameters"
@@ -85,6 +87,19 @@ plugin camera LuxrenderCamera name:"LR Camera" classID:#(0x3465725b, 0x7a7b54a6)
 			spinner m_nearclip "Start:" type:#worldunits fieldwidth:50 range:[-99999999,99999999,0]
 			spinner m_farclip "End:" type:#worldunits fieldwidth:50 range:[-99999999,99999999,0]
 		)
+		
+		fn volumeFilter obj = ((classof obj) as string == "LuxRenderVolume")
+		group "Exterior Medium"
+		(
+			pickbutton mExterior "none" width:138 height:20 align:#right autoDisplay:true filter:volumeFilter
+		)
+		
+		on mExterior rightclick do
+		(
+			mExterior.text = "none"
+			exterior = undefined
+		)
+		
 		on btn_createTarget pressed do
 		(
 			if ($.target == undefined) then

@@ -115,7 +115,11 @@
 					format "AttributeEnd # default\r\n\r\n" to:str
 				)
 			)
-						
+				
+			--Camera Medium
+			if (p_camera.exterior != undefined) do
+			luxWriteName "Exterior" p_camera.exterior.name str
+			
 			format "\r\nWorldEnd" to:str
 			
 			if (GetLuxValue "chk_lxs") then
