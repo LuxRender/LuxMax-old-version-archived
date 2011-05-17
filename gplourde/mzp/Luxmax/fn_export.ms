@@ -117,8 +117,11 @@
 			)
 				
 			--Camera Medium
+			if CheckLuxRenderCompat p_camera == true then
+			(	
 			if (p_camera.exterior != undefined) do
 			luxWriteName "Exterior" p_camera.exterior.name str
+			)
 			
 			format "\r\nWorldEnd" to:str
 			
