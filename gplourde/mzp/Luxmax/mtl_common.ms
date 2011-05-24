@@ -347,6 +347,7 @@ function luxMaterialPreview mat =
 	
 	
 	--SCENE SELECTION
+	
 	if (mat.dd_preview_scene ==  1) then
 	(
 	format "Shape \"sphere\" \"float radius\" [1.0]\n" to:strout
@@ -357,7 +358,7 @@ function luxMaterialPreview mat =
 	)
 	if (mat.dd_preview_scene ==  3) then
 	(
-	format "Shape \"plymesh\" \"string filename\" [\"C:/Program Files/Autodesk/3ds Max 2012/Scripts/Luxmax/Ply/Teapot.ply\"]\n" to:strout
+	format "Shape \"plymesh\" \"string filename\" [\"%\"]\n" (mat.teapotfilename as string) to:strout
 	)
 	
 	format "AttributeEnd\n\n" to:strout
@@ -459,6 +460,7 @@ parameters preview_params rollout:preview
 	bzoom type:#boolean ui:m_bzoom default:false
     filename type:#string
 	preview_time type:#float default:3
+	teapotfilename type:#string
 )
 
 rollout preview "Preview" width:334 height:260
@@ -472,14 +474,18 @@ rollout preview "Preview" width:334 height:260
 	
 
 	Timer timer1 "" width:24 height:24 interval:1000 active:false
-	bitmap pictureBox1 "" across:1 align:#center width:300 height:300 across:1
+	bitmap pictureBox1 "" across:1 align:#center width:300 height:300  across:1  
 	
 	
 	on preview open do
 	(
+		oldInGamma = FileInGamma
+        FileInGamma = 1
+		teapotfilename = fixWindowsPath ((getdir #scripts) + "\Luxmax\Ply\Teapot.ply")
 		timer1.active = false
 		filename = this.name as string
 		pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
+		FileInGamma = oldInGamma
 	)
 	
 	on m_preview pressed do
