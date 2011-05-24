@@ -479,13 +479,11 @@ rollout preview "Preview" width:334 height:260
 	
 	on preview open do
 	(
-		oldInGamma = FileInGamma
         FileInGamma = 1
 		teapotfilename = fixWindowsPath ((getdir #scripts) + "\Luxmax\Ply\Teapot.ply")
 		timer1.active = false
 		filename = this.name as string
 		pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
-		FileInGamma = oldInGamma
 	)
 	
 	on m_preview pressed do
