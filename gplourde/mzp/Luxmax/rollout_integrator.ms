@@ -114,6 +114,7 @@
 		spinner startradius "startradius:" type:#float scale:0.05 range:[-9999, 9999, 2] fieldwidth:60
 		spinner malpha "alpha:" type:#float scale:0.05 range:[-9999, 9999, 0.7] fieldwidth:60
 		dropdownlist lookupaccel "Look up accelerator:" items:#("hybridhashgrid","kdtree","hashgrid")
+		dropdownlist ddlrandom_sampler "Pixel Sampler:" items:#("vegas", "hilbert", "tile", "linear")
 		checkbox includeenvironment "include environment"
 		
 		function GetLuxRenderString =
@@ -126,6 +127,7 @@
 			luxWriteFloat "alpha" (getLuxValue "malpha") str
 			luxWriteFloat "startradius" (getLuxValue "startradius") str
 			luxWriteString "lookupaccel" (GetLuxString "lookupaccel") str
+			format "\"string pixelsampler\" [\"%\"]\n" (getLuxString "ddlrandom_sampler") to:str
 			luxWriteBool "includeenvironment" (getLuxValue "includeenvironment") str
 			return (str as string)
 		)

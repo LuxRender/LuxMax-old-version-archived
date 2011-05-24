@@ -110,8 +110,6 @@ global lux_main = "LuxMax Starting..."
 	(
 		AddSubRollout lux_main.lx0 sgl_telnetTest
 		AddSubRollout lux_main.lx0 Slg_FilmRollout
-		
-		
 	)
 	
 	( --// Main rollouts

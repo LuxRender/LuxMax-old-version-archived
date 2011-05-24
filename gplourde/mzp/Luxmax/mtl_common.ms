@@ -287,19 +287,19 @@ function luxMaterialPreview mat =
 	--Quality Params
 	if (mat.dd_preview_quality == 1) then
 	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [50] \"integer halttime\" [3] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [80] \"integer halttime\" [5] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
 	)
 	if (mat.dd_preview_quality == 2) then
 	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [100] \"integer halttime\" [5] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [120] \"integer halttime\" [10] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
 	)
 	if (mat.dd_preview_quality == 3) then
 	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [150] \"integer halttime\" [10] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [150] \"integer halttime\" [15] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
 	)
 	if (mat.dd_preview_quality == 4) then
 	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [200] \"integer halttime\" [20] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
+	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [200] \"integer halttime\" [30] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
 	)
 		
 	format "PixelFilter \"mitchell\"\n" to:strout
@@ -486,10 +486,10 @@ rollout preview "Preview" width:334 height:260
 	(	
 		luxMaterialPreview this
 		
-		if dd_preview_quality == 1 then preview_time = 3
-		if dd_preview_quality == 2 then preview_time = 5
-		if dd_preview_quality == 3 then preview_time = 10
-		if dd_preview_quality == 4 then preview_time = 20
+		if dd_preview_quality == 1 then preview_time = 5
+		if dd_preview_quality == 2 then preview_time = 10
+		if dd_preview_quality == 3 then preview_time = 15
+		if dd_preview_quality == 4 then preview_time = 30
 		
 		if timer1.active == false then
 		(	
