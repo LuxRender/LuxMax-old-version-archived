@@ -2,7 +2,7 @@ try (destroyDialog lux_main) catch ()
 global lux_main = "LuxMax Starting..."
 (
 	persistent global luxMax_Version = 1.0
-	
+	--
 	-- // Check the scene name for the script lifetime only
 	luxMax_Scene = (getFilenameFile maxFileName)
 	if (luxMax_Settings == undefined) then (persistent global luxMax_Settings = #())
