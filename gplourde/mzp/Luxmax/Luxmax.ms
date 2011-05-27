@@ -40,6 +40,15 @@ global lux_main = "LuxMax Starting..."
 	SamplerRollouts = #()
 	FilltersRollouts =#()
 	TonemapperRollouts =#()
+	sgl_telnetTest = undefined
+
+	function SetMrayAsDefault =
+	(
+		if (renderers.current != mental_ray_renderer())do
+		(
+			renderers.current = mental_ray_renderer()
+		)
+	)
 
 	function ResetUI =
 	(
@@ -56,6 +65,7 @@ global lux_main = "LuxMax Starting..."
 		removeSubRollout lux_main.lx0 lux_Film
 		removeSubRollout lux_main.lx0 lux_Output
 		removeSubRollout lux_main.lx0 Slg_FilmRollout
+		removeSubRollout lux_main.lx0 sgl_telnetTest
 	)
 	function SetUpLuxRenderUI =
 	(
@@ -732,6 +742,7 @@ global lux_main = "LuxMax Starting..."
 		)
 	)
 	
+	SetMrayAsDefault()
 	createDialog lux_main 320 600 style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu)
 	AddSubRollout lux_main.lx0 lux_Dimmensions
 	AddSubRollout lux_main.lx0 lux_LuxRenderEngineConfiguration
