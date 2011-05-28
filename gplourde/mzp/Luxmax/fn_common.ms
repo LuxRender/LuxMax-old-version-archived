@@ -217,7 +217,9 @@ function SaveSettings =
 	CollectSettings(lux_Accelerator)
 	CollectSettings(lux_LuxRenderNetwork)
 	CollectSettings(lux_Output)
-	
+	CollectSettings(lux_Tonemapping)
+	if ((GetLuxValue "ddl_tonemapper") != undefined) then
+		CollectSettings(TonemapperRollouts[(GetLuxValue "ddl_tonemapper")])
 	CollectSettings(lux_Film)
 )
 --// Check if the component is compatible with luxrender
