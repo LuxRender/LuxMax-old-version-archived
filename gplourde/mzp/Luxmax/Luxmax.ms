@@ -490,7 +490,7 @@ global lux_main = "LuxMax Starting..."
 				(
 					for o in TonemapperRollouts do
 					(
-					try (removeSubRollout lx0 o) catch()
+						try (removeSubRollout lx0 o) catch()
 					)
 					AddSubRollout lux_Tonemapping.lx0 TonemapperRollouts[ddl_tonemapper.selection]
 				)
@@ -512,7 +512,7 @@ global lux_main = "LuxMax Starting..."
 				
 				function GetLuxRenderString =
 				(
-				return TonemapperRollouts[ddl_tonemapper.selection].GetLuxRenderString()
+					return TonemapperRollouts[ddl_tonemapper.selection].GetLuxRenderString()
 				)
 		)	
 		rollout lux_Film "Film" rolledup:true
