@@ -51,5 +51,38 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 		spinner spn_sunhalobrightness "Halo brightness:" width:136 range:[1,10,1]  fieldwidth:40 align:#right
 		spinner spn_sunhalosize "Halo Size:" width:136 range:[1,10,0]  fieldwidth:40 align:#right
 		spinner spn_backscattering "Back Scattering:" width:136 range:[1,10,0]  fieldwidth:40 align:#right
+		
+		on ddl_type selected val do
+		(
+			if ddl_type.selection == 1 then
+			(
+				spn_turbidity.enabled = false
+				spn_horizonbrightness.enabled = false
+				spn_horizonsize.enabled = false
+				spn_sunhalobrightness.enabled = false
+				spn_sunhalosize.enabled = false
+				spn_backscattering.enabled = false
+			)
+			if ddl_type.selection == 2 then
+			(
+				spn_turbidity.enabled = true
+				spn_horizonbrightness.enabled = true
+				spn_horizonsize.enabled = true
+				spn_sunhalobrightness.enabled = false
+				spn_sunhalosize.enabled = false
+				spn_backscattering.enabled = false
+			)
+			if ddl_type.selection == 3 then
+			(
+				spn_turbidity.enabled = true
+				spn_horizonbrightness.enabled = true
+				spn_horizonsize.enabled = true
+				spn_sunhalobrightness.enabled = true
+				spn_sunhalosize.enabled = true
+				spn_backscattering.enabled = true
+			)
+			
+		)
+		
 	)
 )
