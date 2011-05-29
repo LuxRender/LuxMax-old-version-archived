@@ -123,6 +123,16 @@ global lux_main = "LuxMax Starting..."
 	)
 	
 	( --// Main rollouts
+		rollout lux_Credits "Credits" rolledup:true
+		(
+			label lb_code "LuxMax code by," align:#left
+			label lb0 "Konstantinos Mourelas"
+			label lb1 "Guillaume Plourde"
+			label lb2 "Stig Atle Steffensen"
+			
+			label lb3 "Additional thanks to," align:#left
+			label lb4 "Patro"
+		)
 		rollout lux_Dimmensions "Dimmensions" rolledup:true
 		(
 			dropdownlist DimmensionsPresets_ui "Render Presets"
@@ -746,4 +756,5 @@ global lux_main = "LuxMax Starting..."
 	createDialog lux_main 320 600 style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu)
 	AddSubRollout lux_main.lx0 lux_Dimmensions
 	AddSubRollout lux_main.lx0 lux_LuxRenderEngineConfiguration
+	AddSubRollout lux_main.lx0 lux_Credits
 )
