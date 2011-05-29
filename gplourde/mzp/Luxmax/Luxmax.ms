@@ -125,6 +125,8 @@ global lux_main = "LuxMax Starting..."
 	( --// Main rollouts
 		rollout lux_Credits "Credits" rolledup:true
 		(
+			bitmap bmp1 "Bitmap"  width:320 height:90 fileName:"luxmax\\res\\luxmax_credits.png" align:#center 
+			
 			label lb_code "LuxMax code by," align:#left
 			label lb0 "Konstantinos Mourelas"
 			label lb1 "Guillaume Plourde"
