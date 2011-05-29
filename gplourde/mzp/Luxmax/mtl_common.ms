@@ -490,10 +490,10 @@ rollout preview "Preview" width:334 height:260
 	(	
 		luxMaterialPreview this
 		
-		if dd_preview_quality == 1 then preview_time = 5
-		if dd_preview_quality == 2 then preview_time = 10
-		if dd_preview_quality == 3 then preview_time = 15
-		if dd_preview_quality == 4 then preview_time = 30
+		if dd_preview_quality == 1 then preview_time = 7
+		if dd_preview_quality == 2 then preview_time = 12
+		if dd_preview_quality == 3 then preview_time = 17
+		if dd_preview_quality == 4 then preview_time = 32
 		
 		if timer1.active == false then
 		(	

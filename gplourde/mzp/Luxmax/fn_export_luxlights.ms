@@ -93,12 +93,19 @@ fn lux_export_luxsky obj =
 	luxWriteFloat "importance" obj.importance str
 	luxWriteInteger "nsamples" obj.nsamples str
 	
+	
+	if (obj.type == 2 or obj.type == 3) then
+	(
 	luxWriteFloat "turbidity" obj.turbidity str
 	luxWriteFloat "horizonbrightness" obj.horizonbrightness str 
-	luxWriteFloat "horizonsize" obj.horizonsize str 
+	luxWriteFloat "horizonsize" obj.horizonsize str
+	)
+	if (obj.type == 3) then
+	(
 	luxWriteFloat "sunhalobrightness" obj.sunhalobrightness str 
 	luxWriteFloat "sunhalosize" obj.sunhalosize str 
 	luxWriteFloat "backscattering" obj.backscattering str
+	)
 	
 	vec_dir = ([0, 0, 1] * obj.transform)
 	vec_dir = vec_dir - obj.position
