@@ -70,11 +70,11 @@ global lux_main = "LuxMax Starting..."
 	TonemapperRollouts =#()
 	sgl_telnetTest = undefined
 
-	function SetVrayAsDefault =
+	function SetMrayAsDefault =
 	(
-		if (renderers.current != vray())do
+		if (renderers.current != mental_ray_renderer())do
 		(
-			renderers.current = vray()
+			renderers.current = mental_ray_renderer()
 		)
 	)
 
@@ -782,7 +782,7 @@ global lux_main = "LuxMax Starting..."
 		)
 	)
 	
-	SetVrayAsDefault()
+	SetMrayAsDefault()
 	createDialog lux_main 320 600 style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu)
 	AddSubRollout lux_main.lx0 lux_Dimmensions
 	AddSubRollout lux_main.lx0 lux_LuxRenderEngineConfiguration
