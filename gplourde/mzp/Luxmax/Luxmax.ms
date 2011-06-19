@@ -1,3 +1,31 @@
+/*
+***** BEGIN GPL LICENSE BLOCK *****
+
+--------------------------------------------------------------------------
+LuxMax Autodesk® 3ds Max® to Luxrender exporter
+--------------------------------------------------------------------------
+
+Authors:
+Guillaume Plourde
+Konstantinos Mourelas
+Stig Atle Steffensen
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, see <http://www.gnu.org/licenses/>.
+
+***** END GPL LICENCE BLOCK *****
+*/
+
 try (destroyDialog lux_main) catch ()
 global lux_main = "LuxMax Starting..."
 (
@@ -42,11 +70,11 @@ global lux_main = "LuxMax Starting..."
 	TonemapperRollouts =#()
 	sgl_telnetTest = undefined
 
-	function SetMrayAsDefault =
+	function SetVrayAsDefault =
 	(
-		if (renderers.current != mental_ray_renderer())do
+		if (renderers.current != vray())do
 		(
-			renderers.current = mental_ray_renderer()
+			renderers.current = vray()
 		)
 	)
 
@@ -135,7 +163,7 @@ global lux_main = "LuxMax Starting..."
 			label lb3 "Additional thanks to," align:#left
 			label lb4 "Patro"
 		)
-		rollout lux_Dimmensions "Dimmensions" rolledup:true
+		rollout lux_Dimmensions "Dimensions" rolledup:true
 		(
 			dropdownlist DimmensionsPresets_ui "Render Presets"
 			
@@ -754,7 +782,7 @@ global lux_main = "LuxMax Starting..."
 		)
 	)
 	
-	SetMrayAsDefault()
+	SetVrayAsDefault()
 	createDialog lux_main 320 600 style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu)
 	AddSubRollout lux_main.lx0 lux_Dimmensions
 	AddSubRollout lux_main.lx0 lux_LuxRenderEngineConfiguration
