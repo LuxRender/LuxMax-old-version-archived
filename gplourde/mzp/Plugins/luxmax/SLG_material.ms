@@ -2,7 +2,7 @@
 ***** BEGIN GPL LICENSE BLOCK *****
 
 --------------------------------------------------------------------------
-LuxMax Autodesk® 3ds Max® to Luxrender exporter
+LuxMax SLG Material
 --------------------------------------------------------------------------
 
 Authors:
@@ -47,33 +47,75 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 		
 		if this.useLightMat == true then
 		(
-			--scene.materials.light.whitelight
 			format "scene.materials.light.% = % % %\n" this.name (this.LightDifColor.r * this.LightPower / 255) (this.LightDifColor.g * this.LightPower / 255) (this.LightDifColor.b * this.LightPower / 255) to:str
 		)
 		
 		if this.useMirrorMat == true then
 		(
-			format "scene.materials.mirror.% = % % % 1\n" this.name (this.MirrorReflColor.r / 255) (this.MirrorReflColor.g / 255) (this.MirrorReflColor.b / 255)  to:str
+			if this.useMirrorCaustics == true then
+			(	
+			format "scene.materials.mirror.% = % % % 1\n" this.name (this.MirrorReflColor.r / 255) (this.MirrorReflColor.g / 255) (this.MirrorReflColor.b / 255) to:str
+			)
+			else
+			(
+			format "scene.materials.mirror.% = % % % 0\n" this.name (this.MirrorReflColor.r / 255) (this.MirrorReflColor.g / 255) (this.MirrorReflColor.b / 255) to:str
+			)
 		)
 		
 		if (this.useGlassMat == true and this.useArchGlassMat != true) then
 		(
+			if this.useGlassReflCaustics == false and this.useGlassTransCaustics == false then
+			(	
+			format "scene.materials.glass.% = % % % % % % 1 % 0 0\n" this.name (this.GlassTransColor.r / 255) (this.GlassTransColor.g / 255) (this.GlassTransColor.b / 255) (this.GlassReflColor.r / 255) (this.GlassReflColor.g / 255) (this.GlassReflColor.b / 255) this.index to:str
+			)
+			if this.useGlassReflCaustics == true and this.useGlassTransCaustics == true then
+			(	
 			format "scene.materials.glass.% = % % % % % % 1 % 1 1\n" this.name (this.GlassTransColor.r / 255) (this.GlassTransColor.g / 255) (this.GlassTransColor.b / 255) (this.GlassReflColor.r / 255) (this.GlassReflColor.g / 255) (this.GlassReflColor.b / 255) this.index to:str
+			)	
+			if this.useGlassReflCaustics == true and this.useGlassTransCaustics == false then
+			(	
+			format "scene.materials.glass.% = % % % % % % 1 % 1 0\n" this.name (this.GlassTransColor.r / 255) (this.GlassTransColor.g / 255) (this.GlassTransColor.b / 255) (this.GlassReflColor.r / 255) (this.GlassReflColor.g / 255) (this.GlassReflColor.b / 255) this.index to:str
+			)
+			if this.useGlassReflCaustics == false and this.useGlassTransCaustics == true then
+			(	
+			format "scene.materials.glass.% = % % % % % % 1 % 0 1\n" this.name (this.GlassTransColor.r / 255) (this.GlassTransColor.g / 255) (this.GlassTransColor.b / 255) (this.GlassReflColor.r / 255) (this.GlassReflColor.g / 255) (this.GlassReflColor.b / 255) this.index to:str
+			)
 		)
 		
 		if this.useMatteMirrorMat == true then
 		(
+			if this.useMatteMirrorCaustics == true then  
+			(	
 			format "scene.materials.mattemirror.% = % % % % % % 1\n" this.name (this.MatteMirrorDifColor.r / 255) (this.MatteMirrorDifColor.g / 255) (this.MatteMirrorDifColor.b / 255) (this.MatteMirrorReflColor.r / 255) (this.MatteMirrorReflColor.g / 255) (this.MatteMirrorReflColor.b / 255) to:str
+			)
+			else
+			(	
+			format "scene.materials.mattemirror.% = % % % % % % 0\n" this.name (this.MatteMirrorDifColor.r / 255) (this.MatteMirrorDifColor.g / 255) (this.MatteMirrorDifColor.b / 255) (this.MatteMirrorReflColor.r / 255) (this.MatteMirrorReflColor.g / 255) (this.MatteMirrorReflColor.b / 255) to:str
+			)
 		)
 		
 		if this.useMetalMat == true then
 		(
+			if this.useMetalCaustics == true then
+			(	
 			format "scene.materials.metal.% = % % % % 1\n" this.name (this.MetalReflColor.r / 255) (this.MetalReflColor.g / 255) (this.MetalReflColor.b / 255) this.MetalExponent  to:str
+			)
+			else
+			(
+			format "scene.materials.metal.% = % % % % 0\n" this.name (this.MetalReflColor.r / 255) (this.MetalReflColor.g / 255) (this.MetalReflColor.b / 255) this.MetalExponent  to:str
+			)
 		)
 		
 		if this.useMatteMetalMat == true then
 		(
+			if this.useMatteMetalCaustics == true then
+			(	
 			format "scene.materials.mattemetal.% = % % % % % % % 1\n" this.name (this.MatteMetalDifColor.r / 255) (this.MatteMetalDifColor.g / 255) (this.MatteMetalDifColor.b / 255) (this.MatteMetalReflColor.r / 255) (this.MatteMetalReflColor.g / 255) (this.MatteMetalReflColor.b / 255) this.MatteMetalExponent  to:str
+			)
+			else
+			(	
+			format "scene.materials.mattemetal.% = % % % % % % % 0\n" this.name (this.MatteMetalDifColor.r / 255) (this.MatteMetalDifColor.g / 255) (this.MatteMetalDifColor.b / 255) (this.MatteMetalReflColor.r / 255) (this.MatteMetalReflColor.g / 255) (this.MatteMetalReflColor.b / 255) this.MatteMetalExponent  to:str
+			)
 		)
 		
 		if (this.useGlassMat == true and this.useArchGlassMat == true)  then
@@ -83,7 +125,14 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 		
 		if this.useAlloyMat == true then
 		(
+			if this.AlloyCaustics == true then
+			(
 			format "scene.materials.alloy.% = % % % % % % % % 1\n" this.name (this.AlloyDifColor.r / 255) (this.AlloyDifColor.g / 255) (this.AlloyDifColor.b / 255) (this.AlloyReflColor.r / 255) (this.AlloyReflColor.g / 255) (this.AlloyReflColor.b / 255) this.AlloyExponent this.AlloySchlick  to:str
+			)
+			else
+			(
+			format "scene.materials.alloy.% = % % % % % % % % 0\n" this.name (this.AlloyDifColor.r / 255) (this.AlloyDifColor.g / 255) (this.AlloyDifColor.b / 255) (this.AlloyReflColor.r / 255) (this.AlloyReflColor.g / 255) (this.AlloyReflColor.b / 255) this.AlloyExponent this.AlloySchlick  to:str
+			)
 		)
 		
 		return str as string
@@ -106,27 +155,34 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 		
 		useMirrorMat type:#boolean ui:museMirrorMat
 		MirrorReflColor type:#color default:[90,90,90] ui:mMirrorReflColor
+		useMirrorCaustics type:#boolean ui:museMirrorCaustics
 		
 		useGlassMat type:#boolean ui:museGlassMat
 		useArchGlassMat type:#boolean ui:museArchGlassMat
 		GlassTransColor type:#color default:[90,90,90] ui:mGlassTransColor
 		GlassReflColor type:#color default:[90,90,90] ui:mGlassReflColor
 		index type:#float ui:mindex
+		useGlassTransCaustics type:#boolean ui:museGlassTransCaustics
+		useGlassReflCaustics type:#boolean ui:museGlassReflCaustics
+		
 		
 		useMatteMirrorMat type:#boolean ui:museMatteMirrorMat
 		MatteMirrorDifColor type:#color default:[90,90,90] ui:mMatteMirrorDifColor
 		MatteMirrorReflColor type:#color default:[90,90,90] ui:mMatteMirrorReflColor
 		MatteMirrorDifTexture type:#texturemap ui:mMatteMirrorDifTexture
+		useMatteMirrorCaustics type:#boolean ui:museMatteMirrorCaustics 
 		
 		useMetalMat type:#boolean ui:museMetalMat
 		MetalReflColor type:#color default:[90,90,90] ui:mMetalReflColor
 		MetalExponent type:#integer ui:mMetalExponent default:10
+		useMetalCaustics type:#boolean ui:museMetalCaustics
 		
 		useMatteMetalMat type:#boolean ui:museMatteMetalMat
 		MatteMetalDifColor type:#color default:[90,90,90] ui:mMatteMetalDifColor
 		MatteMetalReflColor type:#color default:[90,90,90] ui:mMatteMetalReflColor
 		MatteMetalExponent type:#integer ui:mMatteMetalExponent default:10
 		MatteMetalDifTexture type:#texturemap ui:mMatteMetalDifTexture
+		useMatteMetalCaustics type:#boolean ui:museMatteMetalCaustics
 		
 		useAlloyMat type:#boolean ui:museAlloyMat
 		AlloyDifColor type:#color default:[90,90,90] ui:mAlloyDifColor
@@ -134,6 +190,7 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 		AlloyExponent type:#integer ui:mAlloyExponent default:10
 		AlloySchlick type:#float ui:mAlloySchlick default:0.1
 		AlloyDifTexture type:#texturemap ui:mAlloyDifTexture
+		AlloyCaustics type:#boolean ui:mAlloyCaustics
 	)
 	
 rollout params "SLG Material Parameters"
@@ -205,7 +262,7 @@ rollout params "SLG Material Parameters"
 	checkbox museMatteMetalMat "" align:#left across:2
 	spinner mMatteMetalExponent "Exponent" scale:1 range:[1,10000,10] width:50 align:#right fieldwidth:40	 align:#left
 	
-label lbMatteMetalDif "Difuse Color . . . . . . ."  align:#left across:3
+	label lbMatteMetalDif "Difuse Color . . . . . . ."  align:#left across:3
 	colorpicker mMatteMetalDifColor "" align:#left width:80 height:16 
 	mapbutton mMatteMetalDifTexture "" width:110 height:16 align:#right
 	label lbMattemetalreflection "Reflection . . . . . . ."  align:#left across:3
