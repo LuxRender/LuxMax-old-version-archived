@@ -46,14 +46,16 @@ rollout Slg_FilmRollout "SLG Film"
 	)
 	group "Dof"
 	(
-		spinner spn_lensradius "Lens Radius:" scale:1 range:[0,9999,0.1] align:#left width:120 height:16 fieldwidth:60 across:2
-		spinner spn_focaldistance "focaldistance:" scale:1 range:[0,9999,0.1] align:#left width:120 height:16 fieldwidth:60 across:2 default:10
+		
+		spinner spn_lensradius "Lens Radius:" scale:0.01 range:[0,99999,0.01] align:#left width:120 height:16 fieldwidth:60 across:2 default:0.0
+		spinner spn_focaldistance "focaldistance:" scale:0.01 range:[0,9999999,0.01] align:#left width:120 height:16 fieldwidth:60 across:2 default:10
+		pickbutton btn_dof_pick "Pick focus object" width:120 height:18 across:2 align:#left	
 	)
 	
 	group "OpenCL Settings"
 	(
 	spinner spn_nativethreads "Native Threads:" scale:1 range:[0,1024,2] align:#left width:120 height:16 fieldwidth:30 across:2
-	spinner spn_openclthreads "OpenCL Threads:" scale:1 range:[0,1024,2] align:#right width:120 height:16 fieldwidth:30 
+	spinner spn_openclthreads "OpenCL Threads:" scale:1 range:[0,1024,2] align:#right width:120 height:16 fieldwidth:30 across:2
 	checkbox ch_cpu "Use CPU" align:#left across:2 checked:true
 	checkbox ch_gpu "Use GPU" align:#left  checked:true
 	spinner spn_opencltaskcount "Task Count:" scale:1 range:[1,1000000,131072] align:#left width:120 height:16 fieldwidth:60 across:2
@@ -111,7 +113,21 @@ rollout Slg_FilmRollout "SLG Film"
 		spinner spn_bbmax_z "Z" scale:0.01 range:[-1000000,100000,10] align:#right width:120 height:16 fieldwidth:60
 	)
 	
-	
+	on btn_dof_pick picked obj do
+	(
+		-- distance object a b obj
+		--messagebox ("distance between cam and obj is: " + (distance $ obj) as string)
+		if (viewport.gettype() == #view_camera)do
+		(
+			currcam = getActiveCamera()
+			spn_focaldistance.value = (distance currcam obj)
+			btn_dof_pick.text = "Focus obj = " + obj.name
+		)
+		if (viewport.gettype() != #view_camera)do
+		(
+			messagebox "Currently only works with a camera active in the current selected viewport."
+		)		
+	)
 
 	on Slg_FilmRollout open do
 	(
