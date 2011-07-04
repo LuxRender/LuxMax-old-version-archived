@@ -100,6 +100,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 		dropdownlist rrstrategy "RR strategy" items:#("efficiency", "probability", "none")
 		spinner rrcontinueprob "RR continue probability:" range:[-9999, 9999, 0.65] type:#float fieldwidth:50
 		checkbox includeenvironment "include environment"
+		checkbox directlightsampling "directlightsampling" 
 		
 		function GetLuxRenderString =
 		(
@@ -107,6 +108,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 			format "\nSurfaceIntegrator \"path\"\n" to:str
 			luxWriteInteger "maxdepth" (getLuxValue "maxdepth") str
 			luxWriteBool "includeenvironment" (getLuxValue "includeenvironment") str
+			luxWriteBool "directlightsampling" (getLuxValue "directlightsampling") str
 			luxWriteString "lightstrategy" (GetLuxString "lightstrategy") str
 			luxWriteString "rrstrategy" (GetLuxString "rrstrategy") str
 			return (str as string)
@@ -140,6 +142,8 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 		spinner maxeyedepth "maxeyedepth:" type:#integer range:[0, 2048, 16] fieldwidth:60
 		spinner photonperpass "photonperpass:" type:#integer range:[0, 99999999, 1000000] fieldwidth:60
 		spinner startradius "startradius:" type:#float scale:0.05 range:[-9999, 9999, 2] fieldwidth:60
+		spinner startk "startk:" type:#integer range:[0,1000,0] fieldwidth:60
+		spinner glossythreshold "glossythreshold:" type:#float range:[0,1000,0] fieldwidth:60
 		spinner malpha "alpha:" type:#float scale:0.05 range:[-9999, 9999, 0.7] fieldwidth:60
 		dropdownlist lookupaccel "Look up accelerator:" items:#("hybridhashgrid","kdtree","hashgrid")
 		dropdownlist ddlrandom_sampler "Pixel Sampler:" items:#("vegas", "hilbert", "tile", "linear")
@@ -154,6 +158,8 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 			luxWriteInteger "maxphotondepth" (getLuxValue "maxphotondepth") str
 			luxWriteFloat "alpha" (getLuxValue "malpha") str
 			luxWriteFloat "startradius" (getLuxValue "startradius") str
+			luxWriteInteger "startk" (getLuxValue "startk") str
+			luxWriteFloat "glossythreshold" (getLuxValue "glossythreshold") str
 			luxWriteString "lookupaccel" (GetLuxString "lookupaccel") str
 			format "\"string pixelsampler\" [\"%\"]\n" (getLuxString "ddlrandom_sampler") to:str
 			luxWriteBool "includeenvironment" (getLuxValue "includeenvironment") str
