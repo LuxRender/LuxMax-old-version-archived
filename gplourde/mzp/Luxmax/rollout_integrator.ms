@@ -122,6 +122,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 		spinner lightdepth "Light depth:" type:#integer range:[0, 2048, 16] fieldwidth:60
 		spinner eyerrthreshold "Eye RR Threshold:" type:#float scale:0.05 range:[-9999, 9999, 0] fieldwidth:60
 		spinner lightrrthreshold "Light RR Threshold:" type:#float scale:0.05 range:[-9999, 9999, 0] fieldwidth:60
+		dropdownlist strategy "Strategy:" items:#("one", "all", "auto") fieldwidth:60
 		
 		function GetLuxRenderString =
 		(
@@ -131,6 +132,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 			luxWriteInteger "lightdepth" (getLuxValue "lightdepth") str
 			luxWriteFloat "eyerrthreshold" (getLuxValue "eyerrthreshold") str
 			luxWriteFloat "lightrrthreshold" (getLuxValue "lightrrthreshold") str
+			luxWriteString "strategy" (GetLuxString "strategy") str
 			return (str as string)
 		)
 		
