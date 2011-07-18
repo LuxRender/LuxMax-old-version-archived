@@ -41,7 +41,14 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		uv = #("uv", "spherical", "cylindrical", "planar")
 		filtertype = #("bilinear", "nearest", "mipmap_ewa", "mipmap_trilinear")
 		
+		if normalmap == false then
+		(	
 		format "Texture \"%\" \"%\" \"imagemap\" \"string wrap\" [\"%\"] \"string filename\" [\"%\"]\n" this.name type[this.type] wrap[this.wrap] this.filename to:str
+		)
+		else
+		(
+		format "Texture \"%\" \"float\" \"normalmap\" \"string wrap\" [\"%\"] \"string filename\" [\"%\"]\n" this.name wrap[this.wrap] this.filename to:str	
+		)
 		luxWriteInteger "discardmipmaps" this.discardmipmaps str
 		luxWriteString "filtertype" filtertype[this.filtertype] str
 		
@@ -60,6 +67,8 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 	
 	parameters main rollout:params
 	(
+		normalmap type:#boolean default:false ui:m_normalmap
+		
 		filename type:#string default:"" ui:m_filename
 		wrap type:#integer default:1 ui:m_wrap
 		filtertype type:#integer default:1 ui:mfiltertype
@@ -76,7 +85,8 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		button m_filename "" width:220 align:#left across:2
 		button m_display "View Image" align:#right
 		
-		dropdownlist mtype "Filter type:" items:#("float", "color") width:140 align:#left across:2
+		checkbox m_normalmap "Normal Map" align:#left
+		dropdownlist mtype "Type:" items:#("float", "color") width:140 align:#left across:2
 		dropdownlist m_wrap "Wrap:" items:#("Repeat", "Black", "white", "Clamp") width:140 align:#left
 		dropdownlist mfiltertype "Filter type:" items:#("bilinear", "nearest", "mipmap_ewa", "mipmap_trilinear") width:140 align:#left
 		
@@ -95,6 +105,20 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 			
 			display delegate.bitmap
 		)
+		
+		on m_normalmap changed state do
+		(
+			if m_normalmap.checked == true then
+			(	
+			gamma = 1.0
+			)
+			else
+			(	
+			gamma = 2.2
+			)
+		)			
+		
+		
 		
 		on m_filename pressed do
 		(
