@@ -41,7 +41,7 @@ plugin TextureMap LuxrenderImageMap name:"LR ImageMap" classID:#(0x1bbf1b50, 0x3
 		uv = #("uv", "spherical", "cylindrical", "planar")
 		filtertype = #("bilinear", "nearest", "mipmap_ewa", "mipmap_trilinear")
 		
-		if normalmap == false then
+		if this.normalmap == false then
 		(	
 		format "Texture \"%\" \"%\" \"imagemap\" \"string wrap\" [\"%\"] \"string filename\" [\"%\"]\n" this.name type[this.type] wrap[this.wrap] this.filename to:str
 		)
