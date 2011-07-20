@@ -47,8 +47,8 @@ function export_texturemaps =
 	str = stringstream ""
 	
 	texturemaps = #()
-	
-	
+	newtexturemaps = #()
+	test = 0
 	
 	for obj in geometry do
 	(
@@ -62,14 +62,31 @@ function export_texturemaps =
 
 	)
 	
-	print texturemaps
 	texturemaps = makeUniqueArray texturemaps
-	print "------AFTER-------"
-	print texturemaps
 	
-    for i = texturemaps.count to 1 by -1 do
+	for i = 1 to texturemaps.count do
+	(		
+		for j = 1 to texturemaps.count do	
+		(
+			if (texturemaps[i] as string) == (newtexturemaps[j] as string) then
+				(
+				test = 1
+				)
+		)
+		
+		if test == 0 then 
+		(
+			append newtexturemaps texturemaps[i]
+		)
+		else
+		(
+			test = 0
+		)
+	)
+	
+    for i = newtexturemaps.count to 1 by -1 do
 	(
-		format "%\r\n" (texturemaps[i].GetLuxRenderString()) to:str
+		format "%\r\n" (newtexturemaps[i].GetLuxRenderString()) to:str
 	)
 	
 	return str as string
