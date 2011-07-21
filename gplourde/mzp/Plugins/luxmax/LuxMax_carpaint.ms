@@ -112,7 +112,7 @@ plugin material LuxrenderCarpaint name:"LR Carpaint" classID:#(0x164f1487, 0x3d0
 		
 		format "MakeNamedMaterial \"%\"\n" this.name to:str
 		
-		if (this.usecarpaintpreset == true) do
+		if (this.usecarpaintpreset != true) do
 		(
 		
 		if this.kdTexture != undefined then
@@ -184,7 +184,7 @@ plugin material LuxrenderCarpaint name:"LR Carpaint" classID:#(0x164f1487, 0x3d0
 	
 		luxWriteString "type" "carpaint" str
 		
-		if (this.usecarpaintpreset != true) do
+		if (this.usecarpaintpreset == true) do
 		(
 		if      (this.preset == 1)do
 				(
@@ -257,10 +257,13 @@ plugin material LuxrenderCarpaint name:"LR Carpaint" classID:#(0x164f1487, 0x3d0
 	
 	rollout params "Carpaint Parameters"
 	(
-		checkbox musecarpaintpreset "Use Custom" across:3 align:#left
-		label lbcarpaintselect "Select Preset" align:#right
+		checkbox musecarpaintpreset "Use Preset:" across:2 align:#right
+		--label lbcarpaintselect "Select Preset:" align:#right
 		dropdownList mname "" items:#("ford f8", "polaris silber", "opel titan", "bmw339", "2k acrylack", "white", "blue", "blue matte") align:#right
 		
+		group "Custom Properties"
+		(
+			
 		label lb1 "Diffuse . . . . . . . . ."  align:#left across:3 default:#enabled 
 		colorpicker mkdColor "" align:#left width:80 height:16
 		mapbutton mkdTexture"None" width:110 height:16 align:#right
@@ -300,49 +303,24 @@ plugin material LuxrenderCarpaint name:"LR Carpaint" classID:#(0x164f1487, 0x3d0
 		label lbM3 "M3 . . . . . . . . . ." across:3 align:#left
 		spinner mM3 " "scale:0.001 range:[0.000,1.000,1.000] width:50 align:#left fieldwidth:65
 		mapbutton mM3Texture "T" width:110 height:16 align:#right
+		)
 		
 		checkbox museabsorption "Use Absorption" across:1 align:#left
+		
+		group "Absorption"
+		(
 		label lbabsorptioncolor "Absorption Color . . . . . . . ." across:3 align:#left
 		colorpicker mkaColor "" align:#left width:80 height:16
 		mapbutton mkaTexture"None" width:110 height:16 align:#right
 		label labsorptiondepth "Absorption Depth . . . . . . ." across:3 align:#left
 		spinner mdfloat "" scale:0.001 range:[0,15,0.15] width:50 align:#left fieldwidth:65
-		
+		)
 		--on mname selected i do
 		--(format "You selected '%'!\n" mname.items[i])
 		
 		on musecarpaintpreset changed s do
 		(
-			 lb1.enabled = s
- mkdColor.enabled = s
- mkdTexture.enabled = s
- lbspecular1.enabled = s
- mks1Color.enabled = s
- mks1Texture.enabled = s
- lbspecular2.enabled = s
- mks2Color.enabled = s
- mks2Texture.enabled = s
- lbspecular3.enabled = s
- mks3Color.enabled = s
- mks3Texture.enabled = s
- lbR1.enabled = s
- mR1.enabled = s
- mR1Texture.enabled = s
- lbR2.enabled = s
- mR2.enabled = s
- mR2Texture.enabled = s
- lbR3.enabled = s
- mR3.enabled = s
- mR3Texture.enabled = s
- lbM1.enabled = s
- mM1.enabled = s
- mM1Texture.enabled = s
- lbM2.enabled = s
- mM2.enabled = s
- mM2Texture.enabled = s
- lbM3.enabled = s
- mM3.enabled = s
- mM3Texture.enabled = s
+			mname.enabled = s
 		)	
 		
 		
@@ -358,43 +336,12 @@ plugin material LuxrenderCarpaint name:"LR Carpaint" classID:#(0x164f1487, 0x3d0
 		on params open do
 		(
 			mental_ray_Preferences.mrExtensionsActive = false
+			mname.enabled = musecarpaintpreset.state
 			lbabsorptioncolor.enabled = museabsorption.state
 			mkacolor.enabled = museabsorption.state
 			mkaTexture.enabled = museabsorption.state
 			mdfloat.enabled = museabsorption.state
 			labsorptiondepth.enabled = museabsorption.state
-			 lb1.enabled = musecarpaintpreset.state
-mkdColor.enabled = musecarpaintpreset.state
- mkdTexture.enabled = musecarpaintpreset.state
- lbspecular1.enabled = musecarpaintpreset.state
- mks1Color.enabled = musecarpaintpreset.state
- mks1Texture.enabled = musecarpaintpreset.state
- lbspecular2.enabled = musecarpaintpreset.state
- mks2Color.enabled = musecarpaintpreset.state
- mks2Texture.enabled = musecarpaintpreset.state
- lbspecular3.enabled = musecarpaintpreset.state
- mks3Color.enabled = musecarpaintpreset.state
- mks3Texture.enabled = musecarpaintpreset.state
- lbR1.enabled = musecarpaintpreset.state
- mR1.enabled = musecarpaintpreset.state
- mR1Texture.enabled = musecarpaintpreset.state
- lbR2.enabled = musecarpaintpreset.state
- mR2.enabled = musecarpaintpreset.state
- mR2Texture.enabled = musecarpaintpreset.state
- lbR3.enabled = musecarpaintpreset.state
- mR3.enabled = musecarpaintpreset.state
- mR3Texture.enabled = musecarpaintpreset.state
- lbM1.enabled = musecarpaintpreset.state
- mM1.enabled = musecarpaintpreset.state
- mM1Texture.enabled = musecarpaintpreset.state
- lbM2.enabled = musecarpaintpreset.state
- mM2.enabled = musecarpaintpreset.state
- mM2Texture.enabled = musecarpaintpreset.state
- lbM3.enabled = musecarpaintpreset.state
- mM3.enabled = musecarpaintpreset.state
- mM3Texture.enabled = musecarpaintpreset.state
- delegate.Specular_Level =  60
- delegate.glossiness =  15
 		)
 	)
 	
