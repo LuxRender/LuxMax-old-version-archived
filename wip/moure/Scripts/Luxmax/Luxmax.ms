@@ -37,10 +37,6 @@ global lux_main = "LuxMax Starting..."
 	
 	numlightsource = 0
 	-- Cache rollouts
-	lux_Dimmensions = undefined
-	lux_LuxRenderEnginePresets = undefined
-	lux_LuxRenderEngineConfiguration = undefined
-	lux_external = undefined
 	lux_Renderer = undefined
 	lux_Sampler = undefined
 	lux_SurfaceIntegrator = undefined
@@ -48,13 +44,14 @@ global lux_main = "LuxMax Starting..."
 	lux_Filter = undefined
 	lux_Accelerator = undefined
 	--lux_LuxRenderNetwork = undefined
-	lux_Output = undefined
 	lux_Sampler_Random = undefined
 	lux_Sampler_LowDiscrepancy = undefined
 	lux_Sampler_ERPT = undefined
 	lux_Sampler_Metropolis = undefined
 	lux_SurfaceIntegrator_ExPhotonMap = undefined
 	lux_SurfaceIntegrator_Path = undefined
+	lux_SurfaceIntegrator_Bidirectional = undefined
+	lux_SurfaceIntegrator_Sppm = undefined
 	lux_Filter_mitchell = undefined
 	lux_Film = undefined
 	lux_Tonemapping = undefined
@@ -63,176 +60,105 @@ global lux_main = "LuxMax Starting..."
 	lux_Tonemapping_autolinear = undefined
 	lux_Tonemapping_maxwhite = undefined
 	lux_Tonemapping_contrast = undefined
-	Slg_FilmRollout = undefined
 	SurfaceIntegratorsRollouts = #()
 	SamplerRollouts = #()
 	FilltersRollouts =#()
 	TonemapperRollouts =#()
-	sgl_telnetTest = undefined
-
-	function SetMrayAsDefault =
+	
+	function SetVrayAsDefault =
 	(
-		if (renderers.current != mental_ray_renderer())do
+		if (renderers.current != vray())do
 		(
-			renderers.current = mental_ray_renderer()
+			renderers.current = vray()
 		)
 	)
-
+	
 	function ResetUI =
 	(
-		removeSubRollout lux_main.lx0 lux_external
-		removeSubRollout lux_main.lx0 lux_LuxRenderEnginePresets
 		removeSubRollout lux_main.lx0 lux_Renderer
 		removeSubRollout lux_main.lx0 lux_Sampler
 		removeSubRollout lux_main.lx0 lux_SurfaceIntegrator
 		removeSubRollout lux_main.lx0 lux_VolumeIntegrator
 		removeSubRollout lux_main.lx0 lux_Filter
 		removeSubRollout lux_main.lx0 lux_Accelerator
-		--removeSubRollout lux_main.lx0 lux_LuxRenderNetwork
 		removeSubRollout lux_main.lx0 lux_Tonemapping
 		removeSubRollout lux_main.lx0 lux_Film
-		removeSubRollout lux_main.lx0 lux_Output
-		removeSubRollout lux_main.lx0 Slg_FilmRollout
-		removeSubRollout lux_main.lx0 sgl_telnetTest
 	)
+	
 	function SetUpLuxRenderUI =
 	(
-		AddSubRollout lux_main.lx0 lux_external
-		AddSubRollout lux_main.lx0 lux_LuxRenderEnginePresets
 		AddSubRollout lux_main.lx0 lux_Renderer
 		AddSubRollout lux_main.lx0 lux_Sampler
 		AddSubRollout lux_main.lx0 lux_SurfaceIntegrator
 		AddSubRollout lux_main.lx0 lux_VolumeIntegrator
 		AddSubRollout lux_main.lx0 lux_Filter
 		AddSubRollout lux_main.lx0 lux_Accelerator
-		--AddSubRollout lux_main.lx0 lux_LuxRenderNetwork
-		AddSubRollout lux_main.lx0 lux_Tonemapping
 		AddSubRollout lux_main.lx0 lux_Film
-		AddSubRollout lux_main.lx0 lux_Output
-	)
-	
-
-	
-
-	
-	( --// Presets
-		-- Add your own presets here
-		
-		--DimmensionsPreset #(name, x, y, ax, ay, fps, base)		
-		DimmensionsPresets = #(
-		#("DVCPRO HD 1080p", 1280, 1080, 3.0, 2.0, 24, 1.0),
-		#("DVCPRO HD 720p", 960, 720, 4.0, 3.0, 24, 1.0),
-		#("HDTV 1080p", 1920, 1080, 1.0, 1.0, 24, 1.0),
-		#("HDTV 720p", 1280, 720, 1.0, 1.0, 24, 1.0)
-		)
+		AddSubRollout lux_main.lx0 lux_Tonemapping
 	)
 	
 	include "luxmax\\fn_common.ms"
-	--include "luxmax\\fn_renderview.ms"
 	include "luxmax\\fn_ply.ms"
-	include "luxmax\\fn_ply_slg.ms"
 	include "luxmax\\fn_export_lxo.ms"
 	include "luxmax\\fn_export_camera.ms"
 	include "luxmax\\fn_export_material.ms"
 	include "luxmax\\fn_export_maxlights.ms"
 	include "luxmax\\fn_export_luxlights.ms"
 	include "luxmax\\fn_export.ms"
-	include "luxmax\\rollout_slg.ms"
 	include "luxmax\\rollout_sampler.ms"
 	include "luxmax\\rollout_filter.ms"
 	include "luxmax\\rollout_integrator.ms"
 	include "luxmax\\rollout_tonemapping.ms"
-	include "luxmax\\telnet.ms"
 	
-	function SetUpSLGPUUI =
+	RCmenu TopMenu
 	(
-		AddSubRollout lux_main.lx0 sgl_telnetTest
-		AddSubRollout lux_main.lx0 Slg_FilmRollout
-	)
-	
-	( --// Main rollouts
-		rollout lux_Credits "Credits" rolledup:true
-		(
-			bitmap bmp1 "Bitmap"  width:320 height:90 fileName:"luxmax\\res\\luxmax_credits.png" align:#center 
-			
-			label lb_code "LuxMax code by," align:#left
-			label lb0 "Konstantinos Mourelas"
-			label lb1 "Guillaume Plourde"
-			label lb2 "Stig Atle Steffensen"
-			
-			label lb3 "Additional thanks to," align:#left
-			label lb4 "Patro"
+		subMenu "LuxMax"
+			(
+				menuItem m1_1 "LuxRender Mode"
+				menuItem m1_2 "Exit"
+			)
+		subMenu "Presets"
+			(
+				menuItem m2_1 "Direct Lighting Preview, No GI"
+				menuItem m2_2 "Global Illumination Preview"
+				menuItem m2_3 "Metropolis Light Transport (unbiased recommented)"
+				menuItem m2_4 "OpenCL Path Tracing"
+				menuItem m2_5 "Photon Mapping (caustics off)"
+				menuItem m2_6 "Photon Mapping (caustics on)"		
+			)
+		/*	
+		subMenu "About"
+			(
+				menuItem m3_1 "Documentation"
+				menuItem m3_2 "Support Forum"
+				menuItem m3_3 "LuxRender"
+			)	
+		*/
+--Choose Mode
+	on m1_1 picked do
+		(	
+			SetUpLuxRenderUI()
+			fileIn "luxmax\\Presets\\Metropolis_unbiased_recommended.ms"
+			GetControlParams(lux_Renderer)
+			GetControlParams(lux_Sampler)
+			lux_Sampler.updateSamplerSubRollout()
+			GetControlParams(lux_SurfaceIntegrator)
+			lux_SurfaceIntegrator.updateSubRollout()
+			GetControlParams(lux_VolumeIntegrator)
+			GetControlParams(lux_Filter)
+			GetControlParams(lux_Accelerator)
+			ResetUI()
+			SetUpLuxRenderUI()
 		)
-		rollout lux_Dimmensions "Dimensions" rolledup:true
-		(
-			dropdownlist DimmensionsPresets_ui "Render Presets"
-			
-			group "Resolution"
-			(
-				spinner xresolution "X:" type:#integer range:[4, 10000, 1280] align:#right across:2
-				spinner yresolution "Y:" type:#integer range:[4, 10000, 720] align:#right
-				--spinner resolutionscale "Scale %:" type:#integer range:[1, 100, 100] align:#right width:95
-			)
-			/*
-			group "Aspect Ratio"
-			(
-				spinner spn_rwidth "X:" range:[1, 200, 1] align:#right across:2
-				spinner spn_rheight "Y:" range:[1, 200, 1] align:#right 
-			)
-			group "Frame Range:"
-			(
-				spinner spn_start "Start:" type:#integer range:[1, 9999999, 1] align:#right across:2
-				spinner spn_end "End:" type:#integer range:[1, 9999999, 100] align:#right
-				spinner spn_step "Step:" type:#integer range:[1, 100, 1] align:#right width:85
-			)
-			group "Frame Rate:"
-			(
-				spinner spn_fps "Fps:" type:#integer range:[1, 120, 30] align:#right across:2
-				spinner spn_base "Base:" range:[0.1, 120, 1] align:#right
-				spinner spn_map_old "Old:" type:#integer range:[1, 900, 100] align:#right across:2
-				spinner spn_map_new "new:" type:#integer range:[1, 900, 100] align:#right
-			)
-			
-			checkbox chk_border	"Border"
-			checkbox chk_crop		"Crop" enabled:false
-			*/
-			function applyPreset idx =
-			(
-				if idx < 1 then return false 
-					
-				p = DimmensionsPresets[idx]
-				xresolution.value = p[2] 
-				yresolution.value = p[3]
-				--spn_rwidth[3]ue = p[4]
-				--spn_rheight[3]ue = p[5]
-				--spn_fps[3]ue = p[6]
-				--spn_base[3]ue = p[7]
-				renderWidth = xresolution.value
-				renderHeight = yresolution.value
-				
-			)
-			on xresolution changed val  do renderWidth = xresolution.value
-			on yresolution changed val  do renderHeight = yresolution.value
-					
-			on lux_Dimmensions open do
-			(
-				items = #("Custom")
-				for o in DimmensionsPresets do (append items o[1])
-				DimmensionsPresets_ui.items = items
-				xresolution.value = renderWidth
-				yresolution.value = renderHeight	
-			)
-			on DimmensionsPresets_ui selected idx do (applyPreset (idx - 1))
+	on m1_2 picked do 
+		(	
+			cui.unRegisterDialogBar lux_main
+			destroydialog lux_main
 		)
-		rollout lux_LuxRenderEnginePresets "LuxRender Engine Presets" rolledup:true
-		(
-			dropdownlist luxrenderpresets "Render Presets:" items:#("Direct Lighting Preview, No GI", "Global Illumination Preview", "Metropolis Light Transport (unbiased recommented)", "OpenCL Path Tracing", "Photon Mapping (caustics off)", "Photon Mapping (caustics on)")
-			
-			on luxrenderpresets selected i do
-			(
-				--direct lighting
-				if luxrenderpresets.items[i] == "Direct Lighting Preview, No GI" then
-				(				
+--Presets
+	on m2_1 picked do 
+		(				
+
 					fileIn "luxmax\\Presets\\Direct_Lighting_NoGI.ms"
 					GetControlParams(lux_Renderer)
 					GetControlParams(lux_Sampler)
@@ -240,9 +166,11 @@ global lux_main = "LuxMax Starting..."
 					GetControlParams(lux_VolumeIntegrator)
 					GetControlParams(lux_Filter)
 					GetControlParams(lux_Accelerator)
-				)	
-				if luxrenderpresets.items[i] == "Global Illumination Preview" then
-				(				
+					ResetUI()
+					SetUpLuxRenderUI()
+		)
+	on m2_2 picked do	
+		(				
 					fileIn "luxmax\\Presets\\GI_preview.ms"
 					GetControlParams(lux_Renderer)
 					GetControlParams(lux_Sampler)
@@ -251,116 +179,79 @@ global lux_main = "LuxMax Starting..."
 					GetControlParams(lux_VolumeIntegrator)
 					GetControlParams(lux_Filter)
 					GetControlParams(lux_Accelerator)
-				)	
-				if luxrenderpresets.items[i] == "Metropolis Light Transport (unbiased recommented)" then
-				(				
-					fileIn "luxmax\\Presets\\Metropolis_unbiased_recommended.ms"
-					GetControlParams(lux_Renderer)
-					GetControlParams(lux_Sampler)
-					GetControlParams(lux_SurfaceIntegrator)
-					lux_SurfaceIntegrator.updateSubRollout()
-					GetControlParams(lux_VolumeIntegrator)
-					GetControlParams(lux_Filter)
-					GetControlParams(lux_Accelerator)
-				)	
-				if luxrenderpresets.items[i] == "OpenCL Path Tracing" then
-				(				
+					ResetUI()
+					SetUpLuxRenderUI()
+		)	
+	on m2_3 picked do
+		(
+		fileIn "luxmax\\Presets\\Metropolis_unbiased_recommended.ms"
+		GetControlParams(lux_Renderer)
+		GetControlParams(lux_Sampler)
+		lux_Sampler.updateSamplerSubRollout()
+		GetControlParams(lux_SurfaceIntegrator)
+		lux_SurfaceIntegrator.updateSubRollout()
+		GetControlParams(lux_VolumeIntegrator)
+		GetControlParams(lux_Filter)
+		GetControlParams(lux_Accelerator)
+		ResetUI()
+		SetUpLuxRenderUI()
+		)	
+	on m2_4 picked do
+		(				
 					fileIn "luxmax\\Presets\\OpenCL_path_tracing_unbiased.ms"
 					GetControlParams(lux_Renderer)
-					GetControlParams(lux_Sampler)
-					GetControlParams(lux_SurfaceIntegrator)
-					lux_SurfaceIntegrator.updateSubRollout()
-					GetControlParams(lux_VolumeIntegrator)
-					GetControlParams(lux_Filter)
-					GetControlParams(lux_Accelerator)
-				)		
-				if luxrenderpresets.items[i] == "Photon Mapping (caustics off)" then
-				(				
+		GetControlParams(lux_Sampler)
+		lux_Sampler.updateSamplerSubRollout()
+		GetControlParams(lux_SurfaceIntegrator)
+		lux_SurfaceIntegrator.updateSubRollout()
+		GetControlParams(lux_VolumeIntegrator)
+		GetControlParams(lux_Filter)
+		GetControlParams(lux_Accelerator)
+			ResetUI()
+					SetUpLuxRenderUI()
+		)	
+	on m2_5 picked do
+		(				
 					fileIn "luxmax\\Presets\\Photon_mapping_final_caustics_off.ms"
 					GetControlParams(lux_Renderer)
-					GetControlParams(lux_Sampler)
-					GetControlParams(lux_SurfaceIntegrator)
-					lux_SurfaceIntegrator.updateSubRollout()
-					GetControlParams(lux_VolumeIntegrator)
-					GetControlParams(lux_Filter)
-					GetControlParams(lux_Accelerator)
-				)		
-				if luxrenderpresets.items[i] == "Photon Mapping (caustics on)" then
-				(				
+		GetControlParams(lux_Sampler)
+		lux_Sampler.updateSamplerSubRollout()
+		GetControlParams(lux_SurfaceIntegrator)
+		lux_SurfaceIntegrator.updateSubRollout()
+		GetControlParams(lux_VolumeIntegrator)
+		GetControlParams(lux_Filter)
+		GetControlParams(lux_Accelerator)
+			ResetUI()
+					SetUpLuxRenderUI()
+		)		
+	on m2_6 picked do
+		(				
 					fileIn "luxmax\\Presets\\Photon_mapping_final_caustics_on.ms"
 					GetControlParams(lux_Renderer)
-					GetControlParams(lux_Sampler)
-					GetControlParams(lux_SurfaceIntegrator)
-					lux_SurfaceIntegrator.updateSubRollout()
-					GetControlParams(lux_VolumeIntegrator)
-					GetControlParams(lux_Filter)
-					GetControlParams(lux_Accelerator)
-				)		
-			)
-		)
-		rollout lux_LuxRenderEngineConfiguration "LuxRender Engine" rolledup:false
-		(
-			dropdownlist ddl_mode "Rendering Mode:" items:#("External", "smallluxGPU")
-			
-			on ddl_mode selected val do
-			(
-				ResetUI()
-				
-				if (val == 1) do
+		GetControlParams(lux_Sampler)
+		lux_Sampler.updateSamplerSubRollout()
+		GetControlParams(lux_SurfaceIntegrator)
+		lux_SurfaceIntegrator.updateSubRollout()
+		GetControlParams(lux_VolumeIntegrator)
+		GetControlParams(lux_Filter)
+		GetControlParams(lux_Accelerator)
+			ResetUI()
 					SetUpLuxRenderUI()
-				if (val == 2) do
-					SetUpSLGPUUI()
-			)
-			on lux_LuxRenderEngineConfiguration open do
-			(
-				GetControlParams(lux_LuxRenderEngineConfiguration)
-				
-				ResetUI()
-				
-				if (ddl_mode.selection == 1) do
-					SetUpLuxRenderUI()
-				if (ddl_mode.selection == 2) do
-					SetUpSLGPUUI()
-			)
 		)
-		rollout lux_external "LuxRender External Engine Configuration" rolledup:false
+--About	
+/*		
+	on m3_1 picked do
 		(
-			dropdownlist ddl_exttype "External type:" items:#("LuxRender GUI", "LuxConsole")
-			
-			checkbox chk_lxs "LXS" across:3 checked:true
-			checkbox chk_lxm "LXM" checked:true enabled:true
-			checkbox chk_lxo "LXO" checked:true enabled:true
-			checkbox chk_ply "PLY" checked:true
-			
-			group "LuxRender Engine"
-			(
-				checkbox chk_run "Run Renderer" checked:false
-				button btn_path "Path to LuxRender" width:260 align:#center enabled:true
-				checkbox chk_threads "Auto Threads" checked:true enabled:true
-			)
-			
-			group "Debug"
-			(
-				checkbox chk_scriptply "Debug: force maxscript export" checked:false
-			)
-			
-			on btn_path pressed do
-			(
-				lx_path = getSavePath caption:"LuxRender Path"
-				
-				if (lx_path != undefined) do
-				(
-					luxmaxcfg.SetLuxMaxSetting "Engine" "LuxRenderPath" lx_path 
-					btn_path.Text = lx_path
-				)
-			)
-
-			on lux_external open do
-			(
-				GetControlParams(lux_external)
-				 btn_path.Text = (luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") as string
-			)
+			ShellLaunch "C:\\LuxMax_Thread.URL" "" 
 		)
+	--on m3_2 picked do
+		--(
+		
+		--)	
+*/
+	)
+	
+	( --// Main rollouts
 		rollout lux_Renderer "Renderer" rolledup:true
 		(
 			dropdownlist ddl_renderer "Renderer" items:#("sampler", "hybrid", "sppm")
@@ -372,15 +263,25 @@ global lux_main = "LuxMax Starting..."
 				return str as string
 			)
 			on lux_Renderer open do (GetControlParams(lux_Renderer))
+			on lux_Renderer close do (CollectSettings(lux_Sampler))
 		)
 		rollout lux_Sampler "Sampler" rolledup:true
 		(
 			dropdownlist ddl_sampler "Sampler Type:" -- items:#("Random", "Low Discrepancy", "ERPT" ,"Metropolis")
-			subrollout lx0 "" width:280 height:200
+			subrollout lx0 "" width:280 height:120
 			
 			function GetLuxRenderString =
 			(
 				return SamplerRollouts[ddl_sampler.selection].GetLuxRenderString()
+			)
+			
+			function updateSamplerSubRollout =
+			(
+				for o in SamplerRollouts do
+				(
+					try (removeSubRollout lx0 o) catch()
+				)
+				AddSubRollout lux_Sampler.lx0 SamplerRollouts[ddl_sampler.selection]
 			)
 			
 			on ddl_sampler selected idx do
@@ -411,7 +312,7 @@ global lux_main = "LuxMax Starting..."
 		(
 			dropdownlist ddl_surface "Surface Integrator"
 			
-			subrollout lx0 "" width:280 height:200
+			subrollout lx0 "" width:280 height:100
 			
 			function GetLuxRenderString =
 			(
@@ -451,7 +352,7 @@ global lux_main = "LuxMax Starting..."
 		)
 		rollout lux_VolumeIntegrator "Volume Integrator" rolledup:true
 		(
-			dropdownlist ddl_volume "Volume Integrator" items:#("multi", "single", "emission")
+			dropdownlist ddl_volume "Volume Integrator" items:#("multi", "single", "emission") across:2
 			spinner stepsize "Step Size:" range:[0, 100, 1] type:#float fieldwidth:50
 			
 			function GetLuxRenderString =
@@ -467,7 +368,7 @@ global lux_main = "LuxMax Starting..."
 		(
 			dropdownlist ddl_filter "Filter:"
 			
-			subrollout lx0 "" width:280 height:140
+			subrollout lx0 "" width:280 height:100
 
 			function GetLuxRenderString =
 			(
@@ -512,6 +413,8 @@ global lux_main = "LuxMax Starting..."
 			
 			on lux_Accelerator open do (GetControlParams(lux_Accelerator))
 		)
+		--lux_LuxRenderNetwork 
+		/*
 		rollout lux_LuxRenderNetwork "LuxRender Network"
 		(
 			-- edittext edt_addIp "" pos:[8,24] width:176 height:24 -- This line corrupt the max scene
@@ -521,6 +424,7 @@ global lux_main = "LuxMax Starting..."
 			button btn_add_server "add" pos:[192,24] width:72 height:24
 			on btn_add_server pressed  do ()
 		)
+		*/
 		rollout lux_Tonemapping "Tonemapping" rolledup:true
 		(
 			dropdownlist ddl_tonemapper "Tonemapper:"
@@ -643,11 +547,53 @@ global lux_main = "LuxMax Starting..."
 			outlierrejection_k.enabled = effr.state
 			)
 		)
-		rollout lux_Output "Output"
+		rollout lux_main "LuxRender Parameters"
 		(
-			label lbl1 "Output Directory:" align:#left
-			button btn_outputpath "c:\\tmp" align:#center  width:270
+			group "LuxRender Parameters"
+			(
+			--bitmap bmp1 "Bitmap"  width:300 height:70 fileName:"luxmax\\res\\luxmax_credits.bmp" align:#center 	
+			dropdownlist ddl_exttype "Render Type:" items:#("LuxRender GUI", "LuxConsole") width:100
+			label lbl1_1 "LuxRender Directory....:" align:#left across:2
+			button btn_path "Path to LuxRender" width:150 enabled:true	
+			label lbl1 "Output Directory........:" align:#left across:2
+			button btn_outputpath "c:\\tmp" width:150	
+			label lbres "Resolution................:" align:#left across:3
+			spinner xresolution "X:" type:#integer range:[4, 10000, 1280] align:#right 
+			spinner yresolution "Y:" type:#integer range:[4, 10000, 720] align:#right
+			checkbox chk_lxs "LXS" across:4 checked:true
+			checkbox chk_lxm "LXM" checked:true enabled:true
+			checkbox chk_lxo "LXO" checked:true enabled:true
+			checkbox chk_ply "PLY" checked:true
+			checkbox chk_run "Run Renderer" checked:false  across:2
+			checkbox chk_threads "Auto Threads" checked:true enabled:true
+			--checkbox chk_scriptply "Debug Mode" checked:false
+			label lb_camera "Render through Camera:" align:#left
+			dropdownList ddl_camera "" width:200 across:2
+			button btn_cam_refresh "Refresh" width:90 align:#right
+			button btn_image "Render Image" width:120 align:#left across:2
+			button btn_Animation "Render Animation" width:120 align:#right enabled:true
+			)
+			--group"Credits"
+			--(
+			--label lb_code "LuxMax code by," align:#left
+			--label lb_code1 "Konstantinos Mourelas, Guillaume Plourde, Stig Atle Steffensen" align:#left
+			--label lb3 "Additional thanks to Patro" align:#left
+			--)
+			subRollout lx0 "" width:320 height:700  pos:[0,270]
 			
+			
+			on xresolution changed val  do renderWidth = xresolution.value
+			on yresolution changed val  do renderHeight = yresolution.value
+			on btn_path pressed do
+			(
+				lx_path = getSavePath caption:"LuxRender Path"
+				
+				if (lx_path != undefined) do
+				(
+					luxmaxcfg.SetLuxMaxSetting "Engine" "LuxRenderPath" lx_path 
+					btn_path.Text = lx_path
+				)
+			)
 			on btn_outputpath pressed do
 			(
 				lx_outputpath = getSavePath caption:"Output Path"
@@ -657,33 +603,19 @@ global lux_main = "LuxMax Starting..."
 					btn_outputpath.Text = lx_outputpath
 				)
 			)
-			
-			on lux_Output open do
-			(
-				GetControlParams(lux_Output)
-				if ((GetLuxValue "btn_outputpath") != undefined) do btn_outputpath.Text = (GetLuxValue "btn_outputpath")
-			)
-		)
-		rollout lux_main "LuxRender Parameters"
-		(
-			subRollout lx0 "" width:320 height:520 pos:[0,0]
-			
-			label lb_camera "Camera:" align:#left
-			dropdownList ddl_camera "" width:200 across:2
-			button btn_cam_refresh "Refresh" width:90 align:#right
-			
-			label lb_render "Render:" align:#right across:3
-			button btn_image "Image" width:90 align:#right
-			button btn_Animation "Animation" width:90 align:#right enabled:false
-			
 			on lux_main open do
 			(
+				GetControlParams(lux_main)
+				btn_path.Text = (luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") as string
+				if ((GetLuxValue "btn_outputpath") != undefined) do btn_outputpath.Text = (GetLuxValue "btn_outputpath")
 				items = #()
 				for obj in cameras do
 				(
 					if (classof obj != Targetobject) then (append items obj.name)
 				)
 				ddl_camera.items = items
+				xresolution.value = renderWidth
+				yresolution.value = renderHeight	
 			)
 			on lux_main close do
 			(
@@ -695,14 +627,15 @@ global lux_main = "LuxMax Starting..."
 				SaveSettings()
 				success = false
 				
-				if (lux_LuxRenderEngineConfiguration.ddl_mode.selection == 2) do return false
+				--if (lux_LuxRenderEngineConfiguration.ddl_mode.selection == 2) do return false
 				
 				if (ddl_camera.selected == undefined) then success = luxWriteLxs undefined
 				else success = luxWriteLxs (GetNodeByName ddl_camera.selected)
 				
 				lxsFilename = stringStream ""
 				format "\"%/%_%.lxs\"" (getLuxValue "btn_outputpath") (getSceneName()) (GetFrame()) to:lxsFilename
-					
+				
+				
 				if (getLuxValue "ddl_exttype" == 1) then
 				(
 					if (((getLuxValue "chk_run")) == true and success == true) then
@@ -715,7 +648,6 @@ global lux_main = "LuxMax Starting..."
 						--lux_OpenRenderBuffer (getSceneName() + " Frame: " + GetFrame()) renderwidth renderheight (getLuxValue "displayinterval") (lxsFilename as string)
 					)
 				)
-				
 
 				
 				
@@ -782,10 +714,10 @@ global lux_main = "LuxMax Starting..."
 		)
 	)
 	
-	SetMrayAsDefault()
-	setRendApertureWidth 32
-	createDialog lux_main 320 600 style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu)
-	AddSubRollout lux_main.lx0 lux_Dimmensions
-	AddSubRollout lux_main.lx0 lux_LuxRenderEngineConfiguration
-	AddSubRollout lux_main.lx0 lux_Credits
+	SetVrayAsDefault()
+    	setRendApertureWidth 32
+	
+	createdialog lux_main width:320 lockWidth:true  style:#(#style_titlebar, #style_border, #style_sysmenu) menu:TopMenu
+	cui.RegisterDialogBar lux_main style:#(#cui_floatable,#cui_dock_left)
+	cui.DockDialogBar lux_main #cui_dock_left
 )
