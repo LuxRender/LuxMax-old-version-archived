@@ -29,7 +29,6 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 rollout Slg_FilmRollout "SLG Film"
 (
 	
-	
 	group "Basic Settings"
 	(
 	label lb_slg_path "Full path to SmallLuxGPU's executable:" align:#left
@@ -38,17 +37,21 @@ rollout Slg_FilmRollout "SLG Film"
 	label lb_export_path "Save location:" align:#left
 	button btn_export_path "c:\\tmp\\" width:280 height:20 
 	
-	button btn_Export_SLG "Export SLG" width:130 height:18 across:2 align:#left				
-	checkbox chk_slg_lauch "Lauch after export" width:152 height:16
+	button btn_Export_SLG "SLG Image" width:130 height:18 across:2	
+	button btn_Export_Animation_SLG "SLG Animation" width:130 height:18 			
+	checkbox chk_slg_lauch "Lauch after export" width:152 height:16 across:2
 	checkbox chk_slg_telnet "Enable Telnet" width:152 height:16
+	label lb_halttime "Halt time for animation in sec:" across:2 align:#left
+	spinner halttime "" scale:1 range:[0,3600,30] width:80 height:16 align:#left
 	label lbl7 "Export Progress Bar" align:#left width:296 height:16 across:1 
 	progressBar doit_prog "" width:280 height:14 color:(color 255 0 0) across:1
 	)
+	
 	group "Dof"
 	(
 		
-		spinner spn_lensradius "Lens Radius:" scale:0.01 range:[0,99999,0.01] align:#left width:120 height:16 fieldwidth:60 across:2 default:0.0
-		spinner spn_focaldistance "focaldistance:" scale:0.01 range:[0,9999999,0.01] align:#left width:120 height:16 fieldwidth:60 across:2 default:10
+		spinner spn_lensradius "Lens Radius:" scale:0.01 range:[0,99999,0] align:#left width:120 height:16 fieldwidth:60 across:2 default:0.0
+		spinner spn_focaldistance "focaldistance:" scale:0.01 range:[0,9999999,1] align:#left width:120 height:16 fieldwidth:60 across:2 default:10
 		pickbutton btn_dof_pick "Pick focus object" width:120 height:18 across:2 align:#left	
 	)
 	
@@ -64,7 +67,7 @@ rollout Slg_FilmRollout "SLG Film"
 	
 	group "Advanced Settings"
 	(
-	dropdownList ddl_render_engine "Render Engine Type" width:135 height:40 items:#("Path", "SPPM", "Direct", "PathGPU","PathGPU2") across:2 align:#left
+	dropdownList ddl_render_engine "Render Engine Type" width:135 height:40 items:#("Path", "SPPM", "Direct", "PathGPU", "PathGPU2") across:2 align:#left default:5
 	dropdownList ddl_accel_type "Accelerator Type" width:135 height:40 items:#("Default", "BVH","QBVH","QBVH (image stored disabled)", "MQBVH (instances support)")  align:#right
 	dropdownList ddl_film_filter_type "Film Filter Type" width:135 height:40 items:#("None", "Guassian") across:2 align:#left
 	dropdownList ddl_tonemapType "Tonemap Type:" width:135 height:40 items:#("Linear", "Reinhard '02") align:#right 
@@ -145,7 +148,19 @@ rollout Slg_FilmRollout "SLG Film"
 		)
 	)
 	
-	on btn_Export_SLG pressed do
+	on btn_export_path pressed do
+	(
+		
+		--set export path
+		f = getSavePath caption:"Choose Save dir"
+		if (f != undefined)do
+		(
+			btn_export_path.text = f as string
+		)
+	)
+
+	
+	function export_slg_scene  =
 	(
 		objectArray = objects as array
 		scnFilePath = stringStream ""
@@ -156,25 +171,21 @@ rollout Slg_FilmRollout "SLG Film"
 		cfgFileStr = stringstream ""
 		cfgFilePath = StringStream ""
 		
-		BatchFile = StringStream ""
-		batchfilePath = 	stringstream ""
-		BatchFileStr = stringstream ""
-		
 		outputFileStr = Stringstream ""
 		
 		SlgSun =#()
 		
 		--Create a cfg file
-		format "%%_%.cfg" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:cfgFilePath
+		format "%%_%.cfg" (btn_export_path.text + "\\" + (getSceneName()) + "\\" + (GetFrame()) + "\\") (getSceneName())  (GetFrame()) to:cfgFilePath
 		--create a scn file
-		format "%%_%.scn" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:scnFilePath
-		-- create a .bat file for launching SLG after export.
-		format "%%_%.bat" (btn_export_path.text + "\\") (getSceneName())  (GetFrame()) to:batchfilePath 
+		format "%%_%.scn" (btn_export_path.text + "\\" + (getSceneName()) + "\\" + (GetFrame()) + "\\") (getSceneName())  (GetFrame()) to:scnFilePath
+		
 	
 		-- set the variable to scene file name
-		scnFileName = ((getSceneName()) + "_" +  (GetFrame()) + ".scn" ) as string
+		scnFileName =((btn_export_path.text + "\\" + (getSceneName()) + "\\" + (GetFrame()) + "\\") + (getSceneName()) + "_" +  (GetFrame()) + ".scn"  as string)
 		--get the path for the path, fix //'s
 		FixedPath = fixWindowsPath (scnFilePath as string)
+		makedir (btn_export_path.text + "\\" + (getSceneName()) + "\\" + (GetFrame()) + "\\")
 		print "Exporting scn file to:"
 		print (FixedPath)
 		--Create output file.
@@ -185,10 +196,6 @@ rollout Slg_FilmRollout "SLG Film"
 			--cfgFile = createfile (fixWindowsPath (cfgFilePath as string))
 			cfgFile = dotNetObject "System.IO.StreamWriter" (fixWindowsPath (cfgFilePath as string))
 		
-			--BatchFile = createfile (fixWindowsPath (batchfilePath as string))
-			BatchFile = dotNetObject "System.IO.StreamWriter" (fixWindowsPath (batchfilePath as string))
-				
-				
 		--begin put all logic here....
 			
 			--scene.camera.lookat = 7.634103 -4.168197 1.421921 12.037415 4.713311 0.106751
@@ -254,7 +261,7 @@ rollout Slg_FilmRollout "SLG Film"
 									format "%" (test as string) to:OutputFileStr
 									format "scene.objects.%.% = %" (objectArray[c].material.name) (objectArray[c].name) (objectArray[c].name + ".ply\n") to:OutputFileStr
 									--Set the current item to undefined so that the next loop skips it.
-									SLG_ply_export_script objectArray[c] (btn_export_path.text + "\\" + objectArray[c].name + ".ply") (luxScaleUnit())
+									SLG_ply_export_script objectArray[c] (btn_export_path.text + "\\" + (getSceneName()) + "\\" + (GetFrame()) + "\\" + objectArray[c].name + ".ply") (luxScaleUnit())
 									objectArray[c] = undefined
 								)
 								else
@@ -290,7 +297,7 @@ rollout Slg_FilmRollout "SLG Film"
 										(									
 										CurrObjMatStr = CurrObj.material.GetLuxRenderString()
 										format "%" (CurrObjMatStr as string) to:OutputFileStr
-										format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (CurrObj.name + ".ply\n") to:OutputFileStr
+										format "scene.objects.%.% = %"(CurrObj.material.name) (CurrObj.name) (btn_export_path.text + "\\" + (getSceneName()) + "\\" + (GetFrame()) + "\\" + (CurrObj.name) + ".ply\n") to:OutputFileStr
 										format "scene.objects.%.%.useplynormals = 1\n" (CurrObj.material.name) (CurrObj.name) to:OutputFileStr
 										if 	(CurrObj.material.useMattemat == true and Currobj.material.MatteDifTexture != undefined) do
 											(
@@ -317,7 +324,7 @@ rollout Slg_FilmRollout "SLG Film"
 										
 										--Export geometry..
 									try(
-										SLG_ply_export_script CurrObj (btn_export_path.text + "\\" + CurrObj.name + ".ply") (luxScaleUnit())
+										SLG_ply_export_script CurrObj (btn_export_path.text + "\\" + (getSceneName()) + "\\" + (GetFrame()) + "\\" + CurrObj.name + ".ply") (luxScaleUnit())
 										--print "material"
 										--print CurrObj.material.GetLuxRenderString
 										)
@@ -343,7 +350,7 @@ rollout Slg_FilmRollout "SLG Film"
 				--SCENE SETTINGS
 				format "image.width = %\n" renderwidth to:cfgFileStr
 				format "image.height = %\n" renderheight to:cfgFileStr
-				format "image.filename = %_%.%\n" (getSceneName())  (GetFrame()) (ddl_image_format.selected as string)  to:cfgFileStr
+				format "image.filename = %%_%.%\n" (btn_export_path.text + "\\" + (getSceneName()) + "\\") (getSceneName()) (GetFrame()) (ddl_image_format.selected as string)  to:cfgFileStr
 				format "scene.file = %\n " (scnFileName) to:cfgFileStr
 				
 				--OPENCL
@@ -431,19 +438,6 @@ rollout Slg_FilmRollout "SLG Film"
 				
 					
 				--SETUP CFG FILES!!!!!!!
-				tempScnfileName = (getSceneName()) + "_" +  (GetFrame()) + ".cfg" 
-					
-					if (chk_slg_telnet.checked)then
-					(
-						format "\"%\" -T \"%\"" (btn_slg_EXE.text)(tempScnfileName) to:BatchFileStr
-					)
-					else
-					(
-							format "\"%\" \"%\"" (btn_slg_EXE.text)(tempScnfileName) to:BatchFileStr
-					)
-				
-					
-					
 				--flush cfgFile
 				--close cfgFile
 				--flush scnFilePath
@@ -453,31 +447,82 @@ rollout Slg_FilmRollout "SLG Film"
 				--flush BatchFile
 				--close BatchFile
 				
-					BatchFile.write(BatchFileStr as string)
-					BatchFile.Close()
+					
 					
 					cfgFile.write(cfgFileStr as string)
 					cfgFile.Close()
 					
 					outputFile.write(outputFileStr as string)
 					outputFile.Close()
-					
-		if (chk_slg_lauch.checked)do
+	)
+	
+	function create_batch_file_image =
+	(
+		BatchFile = StringStream ""
+		batchfilePath = 	stringstream ""
+		BatchFileStr = stringstream ""
+		format "%%_%.bat" (btn_export_path.text + "\\"+ (getSceneName()) + "\\") (getSceneName())  (GetFrame()) to:batchfilePath 	
+		BatchFile = dotNetObject "System.IO.StreamWriter" (fixWindowsPath (batchfilePath as string))
+		tempScnfileName = (btn_export_path.text + "\\" + (getSceneName()) + "\\" + (GetFrame()) + "\\") + (getSceneName()) + "_" +  (GetFrame()) + ".cfg" 
+		if (chk_slg_telnet.checked)then
+					(
+						format "\"%\" -T \"%\"" (btn_slg_EXE.text)(tempScnfileName) to:BatchFileStr
+					)
+					else
+					(
+							format "\"%\" \"%\"" (btn_slg_EXE.text)(tempScnfileName) to:BatchFileStr
+					)
+		BatchFile.write(BatchFileStr as string)
+		BatchFile.Close()
+	)
+	
+	function create_batch_file_animation =
+	(
+		BatchFile = StringStream ""
+		batchfilePath = 	stringstream ""
+		BatchFileStr = stringstream ""
+		format "%%_Animation.bat" (btn_export_path.text + "\\"+ (getSceneName()) + "\\") (getSceneName()) to:batchfilePath 	
+		BatchFile = dotNetObject "System.IO.StreamWriter" (fixWindowsPath (batchfilePath as string))
+		for t = animationrange.start to animationrange.end do
+					(
+						if (getProgressCancel() == true) then exit
+						
+						slidertime = t
+						tempScnfileName = (btn_export_path.text + "\\" + (getSceneName()) + "\\" + (GetFrame()) + "\\") + (getSceneName()) + "_" +  (GetFrame()) + ".cfg" 
+						format "\"%\" -t % \"%\"\n" (btn_slg_EXE.text) (halttime.value as integer) (tempScnfileName) to:BatchFileStr
+					)
+		BatchFile.write(BatchFileStr as string)
+		BatchFile.Close()
+	)
+
+	function launch_slg =
+	(
+	if (chk_slg_lauch.checked)do
 		(
-			templaunchPath = (btn_export_path.text+ "\\"+ (getSceneName()) + "_" +  (GetFrame()) + ".bat" )
+			templaunchPath = (btn_export_path.text+ "\\"+ (getSceneName()) + "\\" + (getSceneName()) + "_" + (GetFrame()) + ".bat" )
 			ShellLaunch  (templaunchPath ) ""
 		)
-		
 	)
---)
-	on btn_export_path pressed do
+	
+	on btn_Export_SLG pressed do
 	(
-		--set export path
-		f = getSavePath caption:"Choose Save dir"
-		if (f != undefined)do
-		(
-			btn_export_path.text = f as string
-		)
+		export_slg_scene()
+		create_batch_file_image()
+		launch_slg()
 	)
---)
+	
+	on btn_Export_Animation_SLG pressed do
+	(
+		for t = animationrange.start to animationrange.end do
+					(
+						if (getProgressCancel() == true) then exit
+						
+						slidertime = t
+						export_slg_scene()
+					)
+		create_batch_file_animation()
+	)
+	
+
+	
 )
