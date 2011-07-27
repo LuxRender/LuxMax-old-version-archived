@@ -236,7 +236,9 @@ global lux_main = "LuxMax Starting..."
 					fileIn "luxmax\\Presets\\Direct_Lighting_NoGI.ms"
 					GetControlParams(lux_Renderer)
 					GetControlParams(lux_Sampler)
+					lux_Sampler.updateSamplerSubRollout()
 					GetControlParams(lux_SurfaceIntegrator)
+					lux_SurfaceIntegrator.updateSubRollout()
 					GetControlParams(lux_VolumeIntegrator)
 					GetControlParams(lux_Filter)
 					GetControlParams(lux_Accelerator)
@@ -246,6 +248,7 @@ global lux_main = "LuxMax Starting..."
 					fileIn "luxmax\\Presets\\GI_preview.ms"
 					GetControlParams(lux_Renderer)
 					GetControlParams(lux_Sampler)
+					lux_Sampler.updateSamplerSubRollout()
 					GetControlParams(lux_SurfaceIntegrator)
 					lux_SurfaceIntegrator.updateSubRollout()
 					GetControlParams(lux_VolumeIntegrator)
@@ -257,6 +260,7 @@ global lux_main = "LuxMax Starting..."
 					fileIn "luxmax\\Presets\\Metropolis_unbiased_recommended.ms"
 					GetControlParams(lux_Renderer)
 					GetControlParams(lux_Sampler)
+					lux_Sampler.updateSamplerSubRollout()
 					GetControlParams(lux_SurfaceIntegrator)
 					lux_SurfaceIntegrator.updateSubRollout()
 					GetControlParams(lux_VolumeIntegrator)
@@ -268,6 +272,7 @@ global lux_main = "LuxMax Starting..."
 					fileIn "luxmax\\Presets\\OpenCL_path_tracing_unbiased.ms"
 					GetControlParams(lux_Renderer)
 					GetControlParams(lux_Sampler)
+					lux_Sampler.updateSamplerSubRollout()
 					GetControlParams(lux_SurfaceIntegrator)
 					lux_SurfaceIntegrator.updateSubRollout()
 					GetControlParams(lux_VolumeIntegrator)
@@ -279,6 +284,7 @@ global lux_main = "LuxMax Starting..."
 					fileIn "luxmax\\Presets\\Photon_mapping_final_caustics_off.ms"
 					GetControlParams(lux_Renderer)
 					GetControlParams(lux_Sampler)
+					lux_Sampler.updateSamplerSubRollout()
 					GetControlParams(lux_SurfaceIntegrator)
 					lux_SurfaceIntegrator.updateSubRollout()
 					GetControlParams(lux_VolumeIntegrator)
@@ -290,6 +296,7 @@ global lux_main = "LuxMax Starting..."
 					fileIn "luxmax\\Presets\\Photon_mapping_final_caustics_on.ms"
 					GetControlParams(lux_Renderer)
 					GetControlParams(lux_Sampler)
+					lux_Sampler.updateSamplerSubRollout()
 					GetControlParams(lux_SurfaceIntegrator)
 					lux_SurfaceIntegrator.updateSubRollout()
 					GetControlParams(lux_VolumeIntegrator)
@@ -381,6 +388,15 @@ global lux_main = "LuxMax Starting..."
 			function GetLuxRenderString =
 			(
 				return SamplerRollouts[ddl_sampler.selection].GetLuxRenderString()
+			)
+			
+			function updateSamplerSubRollout =
+			(
+				for o in SamplerRollouts do
+				(
+					try (removeSubRollout lx0 o) catch()
+				)
+				AddSubRollout lux_Sampler.lx0 SamplerRollouts[ddl_sampler.selection]
 			)
 			
 			on ddl_sampler selected idx do

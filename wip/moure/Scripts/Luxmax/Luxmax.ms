@@ -715,7 +715,7 @@ global lux_main = "LuxMax Starting..."
 	)
 	
 	SetVrayAsDefault()
-    	setRendApertureWidth 32
+	setRendApertureWidth 32
 	
 	createdialog lux_main width:320 lockWidth:true  style:#(#style_titlebar, #style_border, #style_sysmenu) menu:TopMenu
 	cui.RegisterDialogBar lux_main style:#(#cui_floatable,#cui_dock_left)

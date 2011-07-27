@@ -51,15 +51,17 @@ function slgtelnetWrite msg =
 	)
 )
 
+
 rollout sgl_telnetTest "SGL Telnet" width:216 height:104
 (
-	button btn_echo_on "Echo On" pos:[8,7] width:96 height:21
-	button btn_echo_off "Echo Off" pos:[112,8] width:96 height:21
-	button btn_render_start "Render Start" pos:[8,32] width:96 height:21
-	button btn_render_stop "Render Stop" pos:[112,32] width:96 height:21
-	button btn_image_reset "Image Reset" pos:[8,56] width:96 height:21
-	
-	
+	button btn_echo_on "Echo On"  width:96 height:21 across:2
+	button btn_echo_off "Echo Off"  width:96 height:21
+	button btn_render_start "Render Start"  width:96 height:21 across:2
+	button btn_render_stop "Render Stop"  width:96 height:21 
+	button btn_image_reset "Image Reset"  width:96 height:21 across:2
+	button btn_camera_update "Update Camera" width:96 height:21
+	Timer timerupdatecamera "" width:24 height:24 interval:1000 active:false
+		
 	on btn_echo_on pressed do
 		slgtelnetWrite "echocmd.on"
 	on btn_echo_off pressed do
@@ -70,6 +72,39 @@ rollout sgl_telnetTest "SGL Telnet" width:216 height:104
 		slgtelnetWrite "render.stop"
 	on btn_image_reset pressed do
 		slgtelnetWrite "image.reset"
+	on btn_camera_update pressed do
+	(
+		timerupdatecamera.active = false
+		timerupdatecamera.ticks = 0
+		timerupdatecamera.active = true
+		slgtelnetWrite "render.stop"
+	)
+	
+	on timerupdatecamera tick do
+	(
+		
+		if timerupdatecamera.ticks == 2 do
+		(	
+		newtm = Inverse(getViewTM())
+		newpos = newtm.row4
+		newup = normalize newtm.row2
+		newlook = (newtm.row4 + -(normalize newtm.row3))
+		newstring = "set scene.camera.lookat = " + ((newpos.x * luxScaleUnit()) as string) + " " + ((newpos.y * luxScaleUnit()) as string) + " " + ((newpos.z * luxScaleUnit()) as string) + " " + ((newlook.x * luxScaleUnit()) as string) + " " + ((newlook.y * luxScaleUnit()) as string) + " " + ((newlook.z * luxScaleUnit()) as string)  
+		print (newstring as string)	
+		slgtelnetWrite (newstring as string)
+
+		)	
+		if timerupdatecamera.ticks == 4 do
+		(	
+		slgtelnetWrite "render.start"
+		)
+		if timerupdatecamera.ticks == 5 do
+		(	
+		timerupdatecamera.active = false
+		timerupdatecamera.ticks = 0
+		)	
+	)
+	
 )
 
 --createdialog sgl_telnetTest 140 200 
