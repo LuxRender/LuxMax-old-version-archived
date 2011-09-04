@@ -313,22 +313,8 @@ function luxMaterialPreview mat =
 	format "\"integer xresolution\" [300] \"integer yresolution\" [300]" to:strout 
 	)
 	--Quality Params
-	if (mat.dd_preview_quality == 1) then
-	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [80] \"integer halttime\" [5] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
-	)
-	if (mat.dd_preview_quality == 2) then
-	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [120] \"integer halttime\" [10] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
-	)
-	if (mat.dd_preview_quality == 3) then
-	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [150] \"integer halttime\" [15] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
-	)
-	if (mat.dd_preview_quality == 4) then
-	(
-	format "\"string tonemapkernel\" [\"linear\"] \"integer haltspp\" [200] \"integer halttime\" [30] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" mat.name to:strout
-	)
+	format "\"string tonemapkernel\" [\"linear\"] \"integer halttime\" [%] \"integer reject_warmup\" [64] \"bool write_png\" [\"true\"] \"integer writeinterval\" [1] \"string filename\" [\"matpreview_%\"]\n" ((mat.preview_time - 3) as integer) mat.name to:strout
+
 		
 	format "PixelFilter \"mitchell\"\n" to:strout
 	format "Sampler \"metropolis\"\n" to:strout
@@ -409,7 +395,7 @@ function luxMaterialPreview mat =
 				format "AttributeBegin\n" to:strout
 				format "Transform [1.0 0.0 0.0 0.0  0.0 1.0 0.0 0.0  0.0 0.0 1.0 0.0  1.0 -1.0 4.0 1.0]\n" to:strout
 				format "Texture \"pL\" \"color\" \"blackbody\" \"float temperature\" [6500.0]\n" to:strout
-				format "LightSource \"point\" \"texture L\" [\"pL\"] \"float gain\" [0.002]\n" to:strout
+				format "LightSource \"point\" \"texture L\" [\"pL\"] \"float gain\" [0.004]\n" to:strout
 				format "AttributeEnd\n" to:strout
 				)
 			if (mat.dd_preview_light == 2) then
@@ -418,7 +404,7 @@ function luxMaterialPreview mat =
 				format "Transform [1.0 0.0 0.0 0.0  0.0 1.0 0.0 0.0  0.0 0.0 1.0 0.0  1.0 -4.0 1.0 1.0]\n" to:strout
 				format "ReverseOrientation\n" to:strout
 				format "AreaLightSource \"area\" \"color L\" [1.0 1.0 1.0]\n" to:strout
-				format "\"float gain\" [0.3]\n" to:strout
+				format "\"float gain\" [2.0]\n" to:strout
 				format "Shape \"disk\" \"float radius\" [1.0]\n" to:strout
 				format "AttributeEnd\n" to:strout
 				)
@@ -487,17 +473,18 @@ parameters preview_params rollout:preview
 	dd_preview_light type:#integer ui:m_dd_preview_light default:1
 	bzoom type:#boolean ui:m_bzoom default:false
     filename type:#string
-	preview_time type:#float default:3
+	preview_time type:#float default:3 ui:mpreview_time
 	teapotfilename type:#string
 )
 
 rollout preview "Preview" width:334 height:260
 (
 	dropdownList m_dd_preview_scene "Scene"  width:70 height:40 items:#("sphere", "torus", "teapot") across:4
-	dropdownList m_dd_preview_quality "Render Quality"  width:70 height:40 items:#("low", "medium", "high", "extra")
-	dropdownList m_dd_preview_size "Render Size"  width:70 height:40 items:#("small", "medium", "large", "extra") 
+	dropdownList m_dd_preview_quality "Quality"  width:70 height:40 items:#("low", "medium", "high", "extra")
+	dropdownList m_dd_preview_size "Size"  width:70 height:40 items:#("small", "medium", "large", "extra") 
 	dropdownList m_dd_preview_light "Lighting"  width:70 height:40 items:#("direct", "area", "direct+sky")
 	checkbox m_bzoom "Zoom"  width:80 height:19 across:2
+	spinner mpreview_time "PreviewTime" width:120 height:19
 	button m_preview "Make Preview" width:80 height:40 
 	
 
@@ -514,14 +501,22 @@ rollout preview "Preview" width:334 height:260
 		pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
 	)
 	
+	on m_dd_preview_quality selected val do 
+	(
+		if val == 1 then mpreview_time.value = 8
+		if val == 2 then mpreview_time.value = 13
+		if val == 3 then mpreview_time.value = 20
+		if val == 4 then mpreview_time.value = 30
+	)	
+	
 	on m_preview pressed do
 	(	
 		luxMaterialPreview this
 		
-		if dd_preview_quality == 1 then preview_time = 7
-		if dd_preview_quality == 2 then preview_time = 12
-		if dd_preview_quality == 3 then preview_time = 17
-		if dd_preview_quality == 4 then preview_time = 32
+		--if dd_preview_quality == 1 then preview_time = 7
+		--if dd_preview_quality == 2 then preview_time = 12
+		--if dd_preview_quality == 3 then preview_time = 17
+		--if dd_preview_quality == 4 then preview_time = 32
 		
 		if timer1.active == false then
 		(	
