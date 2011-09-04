@@ -32,7 +32,7 @@ plugin TextureMap Luxrenderfresnelcolor name:"LR Fresnelcolor" classID:#(0x17cc1
 	
 	function GetTextureMaps =
 	(
-		texturemaps = #()
+		texturemaps = #(this.tex)
 		return texturemaps
 	)
 		
@@ -41,7 +41,11 @@ plugin TextureMap Luxrenderfresnelcolor name:"LR Fresnelcolor" classID:#(0x17cc1
 	(
 		str = stringstream ""
 		format "Texture \"%\" \"fresnel\" \"fresnelcolor\"" this.name to:str
-		luxWriteColor "color"  this.Color str
+		if this.Tex != undefined then
+				format "\t\"texture Kr\" [\"%\"]\n" this.Tex.name to:str
+			else
+				luxWriteColor "Kr"  this.Color str
+		
 		return str as string
 	)
 	
@@ -52,12 +56,14 @@ plugin TextureMap Luxrenderfresnelcolor name:"LR Fresnelcolor" classID:#(0x17cc1
 parameters main rollout:rlfrequency
 (
 	Color type:#color ui:mColor default:[70,70,70]
+	Tex type:#textureMap ui: mTex
 )	
 	
 rollout rlfrequency "Frequency Parameters" width:314 height:399
 (
 	label lb1 "Color. . . . . . . . ."  align:#left across:3 default:#enabled 
 	colorpicker mColor "" align:#left width:80 height:16
+	mapbutton mTex "Texture" width:110 height:16 align:#right
 )
 	
 	
