@@ -29,7 +29,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804)extends:Standard replaceUI:true version:2
 (
 	include "luxmax\\fn_common.ms"
-	
+
 	function GetTextureMaps =
 	(
 		texturemaps = #()
@@ -145,7 +145,7 @@ plugin material SLGMaterial name:"SLG Material" classID:#(0x7dcb0657, 0x18c11804
 		bumpscale type:#float ui:mbumpscale default:0
 		bumpmap type:#texturemap ui:mbumpmap
 		
-		useMattemat type:#boolean ui:museMatteMat
+		useMattemat type:#boolean ui:museMatteMat default:true
 		MatteDifColor type:#color default:[90,90,90] ui:mMatteDifColor
 		MatteDifTexture type:#texturemap ui:mMatteDifTexture
 		
@@ -230,7 +230,7 @@ rollout params "SLG Material Parameters"
 --MATTE MATERIAL
 	group "Matte Material"
 	(	
-	checkbox museMatteMat "" align:#left across:1
+	checkbox museMatteMat "" align:#left across:1 checked:true
 	label lbMatteDif "Difuse Color . . . . . . ."  align:#left across:3
 	colorpicker mMatteDifColor "" align:#left width:80 height:16 across:2
 	mapbutton mMatteDifTexture "" width:110 height:16 align:#right	
@@ -305,8 +305,8 @@ rollout params "SLG Material Parameters"
 	for i = 1 to 8 where i != theIndex do thecheckboxArray[i].state = false
 	else
 		(
-	thecheckboxArray[1].state = true
-	for i = 2 to 8 do thecheckboxArray[i].state = false
+			thecheckboxArray[1].state = true
+			for i = 2 to 8 do thecheckboxArray[i].state = false
 		)
 	)
 	
@@ -319,13 +319,12 @@ rollout params "SLG Material Parameters"
 	on museAlloyMat changed state do updatecheckbox 7 state
 	on museMirrorMat changed state do updatecheckbox 8 state
 	
-	on ddl_ior selected val do
+		on ddl_ior selected val do
 		(
 			ior_presets = luxGetIORPresets()
 			if ior_presets[val].value == undefined do return false
 			mindex.value = ior_presets[val].value
 		)
-	
 		on params open do
 		(
 			mental_ray_Preferences.mrExtensionsActive = false
@@ -337,6 +336,5 @@ rollout params "SLG Material Parameters"
 			)
 			ddl_ior.items = items
 		)
-
 	)
 )
