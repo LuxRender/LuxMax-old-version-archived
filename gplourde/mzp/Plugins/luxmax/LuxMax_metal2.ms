@@ -133,7 +133,7 @@ plugin material LuxrenderMetal2 name:"LR Metal2" classID:#(0x22c677f3, 0x3ae402d
 		uroughnessTexture type:#textureMap ui:muroughnessTexture
 		vroughness type:#float ui:mvroughness default:0.0001
 		vroughnessTexture type:#textureMap ui:mvroughnessTexture
-
+		on fresnelcolorTexture set val do delegate.diffusemap = val
 		on roughness set val do 
 		(
 			if val < 0.1 then

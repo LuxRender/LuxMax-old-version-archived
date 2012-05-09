@@ -252,7 +252,7 @@ plugin material LuxrenderCarpaint name:"LR Carpaint" classID:#(0x164f1487, 0x3d0
 		dfloat type:#float ui:mdfloat 
 		on kdColor set val do delegate.diffuse_color = val	
 		on ks1Color set val do delegate.Specular_color = val
-		
+		on kdTexture set val do delegate.diffusemap = val
 	)
 	
 	rollout params "Carpaint Parameters"

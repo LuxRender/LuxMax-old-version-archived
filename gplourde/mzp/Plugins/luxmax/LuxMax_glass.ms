@@ -147,7 +147,7 @@ plugin material LuxrenderGlass name:"LR Glass" classID:#(0x1416e9d, 0x5f7312b0)e
 		filmindextexture type:#textureMap ui:mfilmindextexture
 		
 		on krColor set val do delegate.diffuse_color = val
-		
+		on krTexture set val do delegate.diffusemap = val
 	)
 	
 	rollout params "Glass Parameters"

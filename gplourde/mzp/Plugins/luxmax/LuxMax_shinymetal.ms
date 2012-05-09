@@ -198,7 +198,7 @@ plugin material LuxRenderShinyMetal name:"LR Shiny Metal" classID:#(0x24171fb3, 
 			if val >= 0.1 then
 			delegate.Specular_Level =  10 / val
 		)
-		
+		on krTexture set val do delegate.diffusemap = val
 		
 		
 	)
