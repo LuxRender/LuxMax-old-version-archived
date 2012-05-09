@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
-
+#include <maxscript.h>
 void CommaScan(TCHAR* buf)
 {
     for(; *buf; buf++) if (*buf == ',') *buf = '.';
@@ -14,7 +14,7 @@ TSTR Format(float value)
 {
 	TCHAR buf[40];
 	
-	sprintf(buf, "%f", value);
+	sprintf_s(buf, "%f", value);
 	CommaScan(buf);
 	return TSTR(buf);
 }
@@ -54,9 +54,9 @@ LuxMaxMesh::LuxMaxMesh(INode* p_node)
 			return;
 
 		Mesh *p_trimesh = &p_triobj->mesh;
-		p_trimesh->buildNormals();									// just make sure we have vertex normals
-		int i_faceCount = p_trimesh->getNumFaces();					// Check how many face we have to loop for
-		Matrix3 m3_nodeTransform = p_node->GetObjectTM(0);			// Get the node transform at frame 0
+		p_trimesh->buildNormals();									
+		int i_faceCount = p_trimesh->getNumFaces();
+		Matrix3 m3_nodeTransform = p_node->GetObjectTM(GetCOREInterface()->GetTime());
 		DWORD triIndex = 0;
 
 		if (i_faceCount < 1)
@@ -92,8 +92,6 @@ LuxMaxMesh::LuxMaxMesh(INode* p_node)
 		{
 			int vert;
 			Point3 v;
-
-			// fill face index
 			faces[i] = Point3(c , c + 1, c + 2);
 			
 			Face* p_face = &p_trimesh->faces[i];
@@ -151,7 +149,6 @@ void LuxMaxMesh::WritePoints(FILE* p_Stream)
 	for (i = 0; i < numvertices; i++)
 	{
 		Point3 v = vertices[i];
-//		v = ScaleVector(v, 100.0f);
 		v = ScaleVector(v, 1.0f);
 
 		fprintf(p_Stream, "%s %s %s\n", Format(v.x), Format(v.y), Format(v.z));
@@ -162,14 +159,10 @@ void LuxMaxMesh::WritePoints(FILE* p_Stream)
 void LuxMaxMesh::WriteNormals(FILE* p_Stream)
 {
 	int i;
-
-	// Vertex normals
-	
 	fprintf(p_Stream, "\"normal N\"[\n");
 	for (i = 0; i < numnormals; i++)
 	{
 		Point3 v = normals[i];
-
 		fprintf(p_Stream, "%s %s %s\n", Format(v.x), Format(v.y), Format(v.z));
 	}
 	fprintf(p_Stream, "]\n");
@@ -177,14 +170,10 @@ void LuxMaxMesh::WriteNormals(FILE* p_Stream)
 void LuxMaxMesh::WriteUvs(FILE* p_Stream)
 {
 	int i;
-	// UV
 	fprintf(p_Stream, "\"float uv\"[\n");
-	//for (i = 0; i < numuvs; i++)
 		for (i = 0; i < numuvs; i++)
 	{
 		Point3 v = uvs[i];
-//		fprintf(p_Stream, "%s %s\n", Format(v.x), Format(v.y));
-		//To fix this i turned the v.y to a negative number.
 		fprintf(p_Stream, "%s %s\n", Format(v.x), Format(-1 * v.y));
 	}
 	fprintf(p_Stream, "]\n");
@@ -225,32 +214,20 @@ void WriteMeshes(INode* p_node, FILE* s_pStream)
 			
 			if(lxmesh.isPortal)
 			{
-				fprintf(s_pStream, "#is PortalShape\n");
-				fprintf(s_pStream, "#is is now included with sun\sky.\n");
-		//		fprintf(s_pStream, "# %s\nObjectBegin\n\n", p_node->GetName());
 				fprintf(s_pStream, "PortalShape \"trianglemesh\" ");
 			}
 			
 			
 			if( !lxmesh.isPortal)
 			{
-				fprintf(s_pStream, "# %s\nAttributeBegin\n\n", p_node->GetName());
 				fprintf(s_pStream, "Shape \"trianglemesh\" ");
 			}
-	//		if(lxmesh.isPortal)
-	//		{
-		//		fprintf(s_pStream, "PortalShape \"trianglemesh\" ");
-			//}
 
 			lxmesh.WriteIndices(s_pStream);
 			lxmesh.WritePoints(s_pStream);
 			lxmesh.WriteNormals(s_pStream);
 			lxmesh.WriteUvs(s_pStream);
 
-	//		if( lxmesh.isPortal)
-	//		{
-	//			fprintf(s_pStream, "# %s\nObjectEnd\n\n", p_node->GetName());
-	//		}
 			if( !lxmesh.isPortal)
 			{
 				fprintf(s_pStream, "AttributeEnd\n\n");
@@ -313,8 +290,6 @@ void WritePLY(INode* p_node, FILE* file, bool ascii)
 					float temp;
 					temp = (-1 * lxmesh.uvs[i].y);
 					fwrite (&temp, 4, 1, file);
-					//fwrite (&lxmesh.uvs[i].y, 4, 1, file);
-					
 				}
 			}
 
