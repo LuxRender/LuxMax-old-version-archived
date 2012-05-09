@@ -172,6 +172,8 @@ plugin material LuxrenderGlossy name:"LR Glossy" classID:#(0x6eee3747, 0x278b3ac
 		dfloat type:#float ui:mdfloat
         on kdColor set val do delegate.diffuse_color = val	
         on ksColor set val do delegate.Specular_color = val
+		on kdTexture set val do delegate.diffusemap = val
+			
 		on roughness set val do 
 		(
 			if val < 0.1 then

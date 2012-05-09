@@ -102,6 +102,8 @@ plugin TextureMap LuxrenderBrick name:"LR Brick" classID:#(0x7e5627ee, 0x12e0734
 		
 		bond type:#integer default:1 ui:mbond
 		brickrun type:#float ui:mbrickrun default:0.5
+		
+	
 	)
 		
 	rollout params "Brick Parameters"
