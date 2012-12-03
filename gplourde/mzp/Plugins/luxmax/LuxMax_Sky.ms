@@ -89,7 +89,7 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 			if ddl_type.selection == 1 then
 			(
 				spn_turbidity.enabled = false
-				spn_skyscale.enabled = false
+				--spn_skyscale.enabled = false
 				spn_horizonbrightness.enabled = false
 				spn_horizonsize.enabled = false
 				spn_sunhalobrightness.enabled = false
@@ -99,7 +99,7 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 			if ddl_type.selection == 2 then
 			(
 				spn_turbidity.enabled = true
-				spn_skyscale.enabled = false
+				--spn_skyscale.enabled = false
 				spn_horizonbrightness.enabled = true
 				spn_horizonsize.enabled = true
 				spn_sunhalobrightness.enabled = false
@@ -109,7 +109,7 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 			if ddl_type.selection == 3 then
 			(
 				spn_turbidity.enabled = true
-				spn_skyscale.enabled = false
+				--spn_skyscale.enabled = false
 				spn_horizonbrightness.enabled = true
 				spn_horizonsize.enabled = true
 				spn_sunhalobrightness.enabled = true
