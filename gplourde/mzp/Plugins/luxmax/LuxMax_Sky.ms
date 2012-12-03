@@ -40,12 +40,14 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 	parameters pblock1 rollout:params1
 	(
 		type type:#integer ui:ddl_type default:3
+		--skyscale type:#float ui:spn_skyscale default:1.0
 		turbidity type:#float ui:spn_turbidity default:2.2
 		horizonbrightness type:#float ui:spn_horizonbrightness default:1
 		horizonsize type:#float ui:spn_horizonsize default:1
 		sunhalobrightness type:#float ui:spn_sunhalobrightness default:1
 		sunhalosize type:#float ui:spn_sunhalosize default:1
 		backscattering type:#float ui:spn_backscattering default:1
+		
 	)
 	
 	rollout params0 "LuxRender Lamps"
@@ -72,7 +74,8 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 	)
 	rollout params1 "LuxRender Sky"
 	(
-		dropdownlist ddl_type "Sky Type:" items:#("Sun Only","Sky Only","Sun & Sky")
+		dropdownlist ddl_type "Sky Type:" items:#("Sun Only","Sky Only","Sun & Sky","Sky 2")
+		--spinner spn_skyscale "Sky scale:" width:136 range:[0.0,9999,1] fieldwidth:40 align:#right
 		spinner spn_turbidity "Turbidity:" width:136 range:[0.70,50,0]  fieldwidth:40 align:#right
 		spinner spn_horizonbrightness "Horizon Brightness:" width:136 range:[0,1.32,1]  fieldwidth:40 align:#right
 		spinner spn_horizonsize "Horizon Size:" width:136 range:[1,10,1]  fieldwidth:40 align:#right
@@ -80,11 +83,13 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 		spinner spn_sunhalosize "Halo Size:" width:136 range:[1,10,0]  fieldwidth:40 align:#right
 		spinner spn_backscattering "Back Scattering:" width:136 range:[1,10,0]  fieldwidth:40 align:#right
 		
-		on ddl_type selected val do
+		--on ddl_type selected val do
+		on params1 open do
 		(
 			if ddl_type.selection == 1 then
 			(
 				spn_turbidity.enabled = false
+				spn_skyscale.enabled = false
 				spn_horizonbrightness.enabled = false
 				spn_horizonsize.enabled = false
 				spn_sunhalobrightness.enabled = false
@@ -94,6 +99,7 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 			if ddl_type.selection == 2 then
 			(
 				spn_turbidity.enabled = true
+				spn_skyscale.enabled = false
 				spn_horizonbrightness.enabled = true
 				spn_horizonsize.enabled = true
 				spn_sunhalobrightness.enabled = false
@@ -103,11 +109,24 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 			if ddl_type.selection == 3 then
 			(
 				spn_turbidity.enabled = true
+				spn_skyscale.enabled = false
 				spn_horizonbrightness.enabled = true
 				spn_horizonsize.enabled = true
 				spn_sunhalobrightness.enabled = true
 				spn_sunhalosize.enabled = true
 				spn_backscattering.enabled = true
+			)
+			if ddl_type.selection == 4 then
+			(
+				spn_turbidity.enabled = true
+				--spn_skyscale.enabled = true
+				spn_horizonbrightness.enabled = false
+				spn_horizonsize.enabled = false
+				spn_sunhalobrightness.enabled = false
+				spn_sunhalosize.enabled = false
+				spn_backscattering.enabled = false
+				
+				
 			)
 			
 		)
