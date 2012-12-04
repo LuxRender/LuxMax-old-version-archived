@@ -136,7 +136,7 @@ fn lux_export_luxsky obj =
 	)
 	if (obj.type == 4)then
 	(
-		luxWriteFloat "skyScale" obj.skyscale str
+		--luxWriteFloat "skyScale" obj.skyscale str
 		luxWriteFloat "turbidity" obj.turbidity str
 	)
 	
