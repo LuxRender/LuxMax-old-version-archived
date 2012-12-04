@@ -103,7 +103,7 @@ fn lux_export_luxAreaLight obj =
 
 fn lux_export_luxsky obj =
 (
-	types = #("sun","sky","sunsky")
+	types = #("sun","sky","sunsky","sky2")
 	
 	numlightsource += 1
 	str = stringstream ""
@@ -124,15 +124,20 @@ fn lux_export_luxsky obj =
 	
 	if (obj.type == 2 or obj.type == 3) then
 	(
-	luxWriteFloat "turbidity" obj.turbidity str
-	luxWriteFloat "horizonbrightness" obj.horizonbrightness str 
-	luxWriteFloat "horizonsize" obj.horizonsize str
+		luxWriteFloat "turbidity" obj.turbidity str
+		luxWriteFloat "horizonbrightness" obj.horizonbrightness str 
+		luxWriteFloat "horizonsize" obj.horizonsize str
 	)
 	if (obj.type == 3) then
 	(
-	luxWriteFloat "sunhalobrightness" obj.sunhalobrightness str 
-	luxWriteFloat "sunhalosize" obj.sunhalosize str 
-	luxWriteFloat "backscattering" obj.backscattering str
+		luxWriteFloat "sunhalobrightness" obj.sunhalobrightness str 
+		luxWriteFloat "sunhalosize" obj.sunhalosize str 
+		luxWriteFloat "backscattering" obj.backscattering str
+	)
+	if (obj.type == 4)then
+	(
+		luxWriteFloat "skyScale" obj.skyscale str
+		luxWriteFloat "turbidity" obj.turbidity str
 	)
 	
 	vec_dir = ([0, 0, 1] * obj.transform)
