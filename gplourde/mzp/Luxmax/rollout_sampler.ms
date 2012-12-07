@@ -153,6 +153,8 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 	(
 		spinner largemutationprob "Large Mutation Probability:" type:#float range:[0,1,0.4] width:150 align:#right fieldwidth:50
 		checkbox usevariance "Use Variance"
+		--noiseaware [true]
+		checkbox usenoiseaware "Use Noise Aware"
 		group "Advanced"
 		(
 			checkbox sampler_metropolis_adv ". . " across:2
@@ -165,6 +167,11 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 			format "\nSampler \"metropolis\"\n" to:str
 			format "\t\"float largemutationprob\" [%]\n" (getLuxValue "largemutationprob") to:str
 			format "\t\"bool usevariance\" [\"%\"]\n" (getLuxValue "usevariance") to:str
+			if (usenoiseaware.state == true)then
+			(
+				format "\t\"bool noiseaware\" [\"true\"]\n" to:str
+			)
+			
 			if (sampler_metropolis_adv.state == true) then
 			format "\t\"integer maxconsecrejects\" [%]\n"  (getLuxValue "maxconsecrejects") to:str
 			return (str as string)
