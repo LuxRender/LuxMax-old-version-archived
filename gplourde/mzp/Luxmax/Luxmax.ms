@@ -370,7 +370,7 @@ global lux_main = "LuxMax Starting..."
 		)
 		rollout lux_Renderer "Renderer" rolledup:true
 		(
-			dropdownlist ddl_renderer "Renderer" items:#("sampler", "hybrid", "sppm")
+			dropdownlist ddl_renderer "Renderer" items:#("sampler", "hybrid", "sppm", "slg")
 
 			function GetLuxRenderString =
 			(
@@ -710,8 +710,11 @@ global lux_main = "LuxMax Starting..."
 				-- Save setting
 				SaveSettings()
 				success = false
-				
+				--slg
 				if (lux_LuxRenderEngineConfiguration.ddl_mode.selection == 2) do return false
+				
+				--Frankenlux
+				if (lux_LuxRenderEngineConfiguration.ddl_mode.selection == 3) do return false
 				
 				if (ddl_camera.selected == undefined) then success = luxWriteLxs undefined
 				else success = luxWriteLxs (GetNodeByName ddl_camera.selected)
