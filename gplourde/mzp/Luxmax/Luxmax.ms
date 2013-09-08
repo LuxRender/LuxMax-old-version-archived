@@ -47,6 +47,7 @@ global lux_main = "LuxMax Starting..."
 	lux_VolumeIntegrator = undefined
 	lux_Filter = undefined
 	lux_Accelerator = undefined
+		lux_NetworkServers = undefined
 	--lux_LuxRenderNetwork = undefined
 	lux_Output = undefined
 	lux_Sampler_Random = undefined
