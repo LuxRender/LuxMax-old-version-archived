@@ -82,6 +82,7 @@ global lux_main = "LuxMax Starting..."
 	(
 		removeSubRollout lux_main.lx0 lux_external
 		removeSubRollout lux_main.lx0 lux_LuxRenderEnginePresets
+		removeSubRollout lux_main.lx0 lux_NetworkServers
 		removeSubRollout lux_main.lx0 lux_Renderer
 		removeSubRollout lux_main.lx0 lux_Sampler
 		removeSubRollout lux_main.lx0 lux_SurfaceIntegrator
@@ -99,6 +100,7 @@ global lux_main = "LuxMax Starting..."
 	(
 		AddSubRollout lux_main.lx0 lux_external
 		AddSubRollout lux_main.lx0 lux_LuxRenderEnginePresets
+		AddSubRollout  lux_main.lx0 lux_NetworkServers
 		AddSubRollout lux_main.lx0 lux_Renderer
 		AddSubRollout lux_main.lx0 lux_Sampler
 		AddSubRollout lux_main.lx0 lux_SurfaceIntegrator
@@ -131,6 +133,7 @@ global lux_main = "LuxMax Starting..."
 	--include "luxmax\\fn_renderview.ms"
 	include "luxmax\\fn_ply.ms"
 	include "luxmax\\fn_ply_slg.ms"
+	include "luxmax\\rollout_network_servers.ms"
 	include "luxmax\\fn_export_lxo.ms"
 	include "luxmax\\fn_export_camera.ms"
 	include "luxmax\\fn_export_material.ms"
@@ -690,7 +693,7 @@ global lux_main = "LuxMax Starting..."
 			
 			label lb_render "Render:" align:#right across:3
 			button btn_image "Image" width:90 align:#right
-			button btn_Animation "Animation" width:90 align:#right enabled:false
+			button btn_Animation "Animation" width:90 align:#right enabled:true
 			
 			on lux_main open do
 			(
@@ -725,7 +728,15 @@ global lux_main = "LuxMax Starting..."
 				if (getLuxValue "ddl_exttype" == 1) then
 				(
 					if (((getLuxValue "chk_run")) == true and success == true) then
-						shelllaunch ((getLuxValue "btn_path") + "\\luxrender.exe") (lxsFilename as string)
+					(
+						serverstring = ""
+						for servers in networkservers do
+						(
+							serverstring +=  " -u " + servers
+						)
+						print ("string for launching is: " + (getLuxValue "btn_path") as string + "\\luxrender.exe" + serverstring)
+						shelllaunch ((getLuxValue "btn_path") + "\\luxrender.exe") (lxsFilename as string + serverstring)
+					)
 				)
 				else
 				(
@@ -757,12 +768,16 @@ global lux_main = "LuxMax Starting..."
 						success = luxWriteLxs undefined
 						lxsFilename = stringStream ""
 						format "\"%/%_%.lxs\"" (getLuxValue "btn_outputpath") (getSceneName())  (GetFrame()) to:lxsFilename
-							
+							serverstring = ""
+						for servers in networkservers do
+						(
+							serverstring +=  " -u " + servers
+						)
 						if (getLuxValue "ddl_exttype" == 1) then
 						(
-							
+							print(serverstring)
 							if (((getLuxValue "chk_run")) == true and success == true) then
-								doscommand ((getLuxValue "btn_path") + "\\luxconsole.exe " + lxsFilename as string)
+								doscommand ((getLuxValue "btn_path") + "\\luxconsole.exe " + lxsFilename as string + serverstring)
 						)
 					)
 				)
@@ -777,12 +792,19 @@ global lux_main = "LuxMax Starting..."
 						
 						lxsFilename = stringStream ""
 						format "\"%/%_%.lxs\"" (getLuxValue "btn_outputpath") (getSceneName())  (GetFrame()) to:lxsFilename
-							
+						serverstring = ""
+						for servers in networkservers do
+						(
+							serverstring +=  " -u " + servers
+						)
 						if (getLuxValue "ddl_exttype" == 1) then
 						(
 							
 							if (((getLuxValue "chk_run")) == true and success == true) then
-								doscommand ((getLuxValue "btn_path") + "\\luxconsole.exe " + lxsFilename as string)
+							(
+								print serverstring
+								doscommand ((getLuxValue "btn_path") + "\\luxconsole.exe " + lxsFilename as string + serverstring )
+							)
 						)
 					)
 				)
