@@ -42,11 +42,13 @@ rollout lux_NetworkServers "Network Servers" width:320 height:240 rolledup:true
 	on lux_NetworkServers open do
 	(
 		print ("opened network render gui")
-		lbx1_networkServers.items = networkservers
+		
 		if (networkservers == undefined)do
 		(
 			networkservers = #()
 		)
+		
+		lbx1_networkServers.items = networkservers
 	)
 	on btn_networkserver_Add pressed do
 	(
