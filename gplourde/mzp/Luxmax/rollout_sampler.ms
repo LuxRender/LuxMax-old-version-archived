@@ -31,7 +31,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 	(
 		--spinner spn_haltspp "Halt SPP:" type:#integer range:[0,999999,0] width:100 align:#left across:2
 		--spinner spn_halttime "Halt Time:" type:#integer range:[0,999999,0] width:100 align:#right
-		dropdownlist ddlrandom_sampler "Pixel Sampler:" items:#("hilbert", "lowdiscrepancy", "vegas" , "random", "tile", "linear")
+		dropdownlist ddlrandom_sampler "Pixel Sampler:" items:#("hilbert", "lowdiscrepancy", "vegas" , "random", "tile", "linear", "sobol")
 		spinner spn_randomsamples "Pixel Samples:" type:#integer range:[1,999999,4]
 		
 		function GetLuxRenderString =
@@ -179,7 +179,19 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 	
 		on lux_Sampler_Metropolis open do (GetControlParams(lux_Sampler_Metropolis))
 	)
+	
+	rollout lux_Sampler_sobol "sobol"
+	(
+		function GetLuxRenderString =
+		(
+			str = stringstream ""
+			format "\nSampler \"sobol\"\n" to:str
+			return (str as string)
+		)
+	
+		on lux_Sampler_sobol open do (GetControlParams(lux_Sampler_sobol))
+	)
 	-- Add new sampler at the end of this list for compatibility reasons
 	--SamplerRollouts = #(lux_Sampler_Random, lux_Sampler_LowDiscrepancy, lux_Sampler_ERPT, lux_Sampler_Metropolis)
-	SamplerRollouts = #(lux_Sampler_Metropolis, lux_Sampler_Random, lux_Sampler_LowDiscrepancy, lux_Sampler_ERPT)
+	SamplerRollouts = #(lux_Sampler_Metropolis, lux_Sampler_Random, lux_Sampler_LowDiscrepancy, lux_Sampler_ERPT , lux_Sampler_sobol)
 )
