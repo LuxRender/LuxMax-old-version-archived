@@ -150,11 +150,38 @@ function export_lxo doMotionblur lxo =
 		--// Write objects definitions. This is only required if we support instances
 		if (supportInstances) then
 		(
+						deferred = false
+			for mods in obj.modifiers do
+			(
+				if (classof mods == lux_deferred )then
+				(
+					deferred = true
+				)
+				
+			)
+			
+			if (deferred)then
+			(
+				format "ObjectBegin  \"%\"\n" obj.name to:str
+				   
+				format "Shape \"deferred\" \"string filename\" [\"%\"]\n" n to:str
+				format "\"string shapename\" [\"plymesh\"]\n" to:str
+				--   "float shapebbox" [-1.33691 -1.07026 -0.518882  1.33691 0.947649 1.01478]
+				tempbb = nodeGetBoundingBox obj obj.transform
+				format "\"float shapebbox\" [% % % % % %]\n" tempbb[1][1] tempbb[1][2] tempbb[1][3] tempbb[2][1] tempbb[2][2] tempbb[2][3] to:str
+				luxWriteSubdivision obj.material str
+				format "ObjectEnd # \"%\"\n" obj.name to:str
+				luxWriteEmptyLine str
+			)
+			else
+			(
+				
 			format "ObjectBegin  \"%\"\n" obj.name to:str
 			format "Shape \"plymesh\" \"string filename\" [\"%\"]\n" n to:str
 			luxWriteSubdivision obj.material str
 			format "ObjectEnd # \"%\"\n" obj.name to:str
 			luxWriteEmptyLine str
+			)
 		)
 		
 		--// Write all instance of this object
