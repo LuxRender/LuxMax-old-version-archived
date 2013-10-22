@@ -182,10 +182,20 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 	
 	rollout lux_Sampler_sobol "sobol"
 	(
+		checkbox noiseaware "noiseaware" across:2
+		
 		function GetLuxRenderString =
 		(
+			
 			str = stringstream ""
 			format "\nSampler \"sobol\"\n" to:str
+			if (noiseaware.state == true)then
+			(
+				format "\t\"bool noiseaware\" [\"true\"]\n" to:str
+			)else
+			(
+				format "\t\"bool noiseaware\" [\"false\"]\n" to:str
+			)
 			return (str as string)
 		)
 	
