@@ -173,22 +173,27 @@ function luxTexturePreview tex =
 		destrydialog lux_renderBuffer
 	) catch ()
 	
-	if (lux_ConsoleProcess == undefined) then
+	if (lux_ConsoleProcess == undefined) do
+	(
 		global lux_ConsoleProcess = DotNetObject "System.Diagnostics.Process"
-	
-	lux_ConsoleProcess.StartInfo.UseShellExecute = false
-	lux_ConsoleProcess.StartInfo.FileName = ((luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") + "\\luxconsole.exe")
-	lux_ConsoleProcess.StartInfo.Arguments = ("\"" + lxsFilename as string + "\"")
-	lux_ConsoleProcess.StartInfo.CreateNoWindow = true
-	lux_ConsoleProcess.EnableRaisingEvents = false
-	
-	lux_ConsoleProcess.StartInfo.RedirectStandardInput = false
-	lux_ConsoleProcess.StartInfo.RedirectStandardOutput = false
-	lux_ConsoleProcess.StartInfo.RedirectStandardError = false	
+		--if (doesfileexist ((luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") + "\\luxconsole.exe"))then
+			--(
+				lux_ConsoleProcess.StartInfo.UseShellExecute = false
+				lux_ConsoleProcess.StartInfo.FileName = ((luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") + "\\luxconsole.exe")
+				lux_ConsoleProcess.StartInfo.Arguments = ("\"" + lxsFilename as string + "\"")
+				lux_ConsoleProcess.StartInfo.CreateNoWindow = true
+				lux_ConsoleProcess.EnableRaisingEvents = false
+				
+				lux_ConsoleProcess.StartInfo.RedirectStandardInput = false
+				lux_ConsoleProcess.StartInfo.RedirectStandardOutput = false
+				lux_ConsoleProcess.StartInfo.RedirectStandardError = false	
 
-	lux_ConsoleProcess.Start()
+				lux_ConsoleProcess.Start()
+		--	)else
+		--	(
+		--		messagebox "Error generating preview. make sure you have pointed the exporter main GUI to luxconsole.exe's directory."
+	)
 )
-
 parameters preview_params rollout:preview
 (
 	filename type:#string
