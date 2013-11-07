@@ -448,21 +448,28 @@ function luxMaterialPreview mat =
 		destrydialog lux_renderBuffer
 	) catch ()
 	
-	if (lux_ConsoleProcess == undefined) then
+	if (lux_ConsoleProcess == undefined) do 
+	(
+	--try
+	--(
 		global lux_ConsoleProcess = DotNetObject "System.Diagnostics.Process"
+		lux_ConsoleProcess.StartInfo.UseShellExecute = false
+		lux_ConsoleProcess.StartInfo.FileName = ((luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") + "\\luxconsole.exe")
+		lux_ConsoleProcess.StartInfo.Arguments = ("\"" + lxsFilename as string + "\"")
+		lux_ConsoleProcess.StartInfo.CreateNoWindow = true
+		lux_ConsoleProcess.EnableRaisingEvents = false
+		
+		lux_ConsoleProcess.StartInfo.RedirectStandardInput = false
+		lux_ConsoleProcess.StartInfo.RedirectStandardOutput = false
+		lux_ConsoleProcess.StartInfo.RedirectStandardError = false	
 	
-	lux_ConsoleProcess.StartInfo.UseShellExecute = false
-	lux_ConsoleProcess.StartInfo.FileName = ((luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") + "\\luxconsole.exe")
-	lux_ConsoleProcess.StartInfo.Arguments = ("\"" + lxsFilename as string + "\"")
-	lux_ConsoleProcess.StartInfo.CreateNoWindow = true
-	lux_ConsoleProcess.EnableRaisingEvents = false
-	
-	lux_ConsoleProcess.StartInfo.RedirectStandardInput = false
-	lux_ConsoleProcess.StartInfo.RedirectStandardOutput = false
-	lux_ConsoleProcess.StartInfo.RedirectStandardError = false	
-
-	lux_ConsoleProcess.Start()
+		lux_ConsoleProcess.Start()
+	--)catch
+	--(
+	--	messagebox "Error generating preview. make sure you have pointed the exporter main GUI to luxconsole.exe's directory."
+	)
 )
+--)
 
 parameters preview_params rollout:preview
 (
@@ -511,18 +518,25 @@ rollout preview "Preview" width:334 height:260
 	
 	on m_preview pressed do
 	(	
-		luxMaterialPreview this
 		
-		--if dd_preview_quality == 1 then preview_time = 7
-		--if dd_preview_quality == 2 then preview_time = 12
-		--if dd_preview_quality == 3 then preview_time = 17
-		--if dd_preview_quality == 4 then preview_time = 32
-		
-		if timer1.active == false then
-		(	
-		timer1.active = true
+		if (doesfileexist ((luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") + "\\luxconsole.exe"))then
+		(
+			luxMaterialPreview this
+			
+			--if dd_preview_quality == 1 then preview_time = 7
+			--if dd_preview_quality == 2 then preview_time = 12
+			--if dd_preview_quality == 3 then preview_time = 17
+			--if dd_preview_quality == 4 then preview_time = 32
+			
+			if timer1.active == false then
+			(	
+				timer1.active = true
+			)
+		)else
+		(
+			messagebox "Please point to folder with luxconsole.exe in main exporter GUI and try again."
+			return 0
 		)
-		
 	)
 	
 	on timer1 tick do
