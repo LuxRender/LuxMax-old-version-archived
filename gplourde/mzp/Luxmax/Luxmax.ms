@@ -126,7 +126,8 @@ global lux_main = "LuxMax Starting..."
 		#("DVCPRO HD 1080p", 1280, 1080, 3.0, 2.0, 24, 1.0),
 		#("DVCPRO HD 720p", 960, 720, 4.0, 3.0, 24, 1.0),
 		#("HDTV 1080p", 1920, 1080, 1.0, 1.0, 24, 1.0),
-		#("HDTV 720p", 1280, 720, 1.0, 1.0, 24, 1.0)
+		#("HDTV 720p", 1280, 720, 1.0, 1.0, 24, 1.0),
+		#("A4 300Dpi", 3507, 2480, 1.0, 1.0, 24, 1.0)
 		)
 	)
 	
@@ -666,7 +667,7 @@ global lux_main = "LuxMax Starting..."
 		rollout lux_Output "Output"
 		(
 			label lbl1 "Output Directory:" align:#left
-			button btn_outputpath "c:\\tmp" align:#center  width:270
+			button btn_outputpath "" align:#center  width:270
 			
 			on btn_outputpath pressed do
 			(
@@ -681,7 +682,14 @@ global lux_main = "LuxMax Starting..."
 			on lux_Output open do
 			(
 				GetControlParams(lux_Output)
-				if ((GetLuxValue "btn_outputpath") != undefined) do btn_outputpath.Text = (GetLuxValue "btn_outputpath")
+				if (doesFileExist (GetLuxValue "btn_outputpath"))then
+				(
+					if ((GetLuxValue "btn_outputpath") != undefined) do btn_outputpath.Text = (GetLuxValue "btn_outputpath")
+				)else
+				(
+					lx_outputpath = GetDir #export
+					btn_outputpath.Text = lx_outputpath
+				)
 			)
 		)
 		rollout lux_main "LuxRender Parameters"
