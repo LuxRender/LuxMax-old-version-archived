@@ -682,10 +682,14 @@ global lux_main = "LuxMax Starting..."
 			on lux_Output open do
 			(
 				GetControlParams(lux_Output)
-				if (doesFileExist (GetLuxValue "btn_outputpath"))then
+				if ( (GetLuxValue "btn_outputpath") !=undefined)then
 				(
-					if ((GetLuxValue "btn_outputpath") != undefined) do btn_outputpath.Text = (GetLuxValue "btn_outputpath")
-				)else
+					if (doesFileExist (GetLuxValue "btn_outputpath"))do
+					(
+						if ((GetLuxValue "btn_outputpath") != undefined) do btn_outputpath.Text = (GetLuxValue "btn_outputpath")
+					)	
+				)
+				else
 				(
 					lx_outputpath = GetDir #export
 					btn_outputpath.Text = lx_outputpath
