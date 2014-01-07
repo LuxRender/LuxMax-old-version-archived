@@ -833,12 +833,23 @@ global lux_main = "LuxMax Starting..."
 				)
 				ddl_camera.items = items
 			)
+			
+			on lux_main resized  size_ do
+			(
+				lx0.height = lux_main.height - 80
+				lb_camera.pos = [ddl_camera.pos[1], (lux_main.height - 75)]
+				ddl_camera.pos = [ddl_camera.pos[1], (lux_main.height - 55)]
+				btn_cam_refresh.pos = [btn_cam_refresh.pos[1], (lux_main.height - 55)]
+				lb_render.pos = [lb_render.pos[1], (lux_main.height - 30)]
+				btn_image.pos = [btn_image.pos[1], (lux_main.height - 30)]
+				btn_Animation.pos = [btn_Animation.pos[1], (lux_main.height - 30)]
+			)
 		)
 	)
 	
 	SetMrayAsDefault()
 	setRendApertureWidth 32
-	createDialog lux_main 320 600 style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu)
+	createDialog lux_main 320 600  lockWidth:true  lockHeight:false style:#(#style_border, #style_titlebar,#style_minimizebox, #style_sysmenu,#style_resizing)
 	AddSubRollout lux_main.lx0 lux_Dimmensions
 	AddSubRollout lux_main.lx0 lux_LuxRenderEngineConfiguration
 	AddSubRollout lux_main.lx0 lux_Credits
