@@ -108,15 +108,32 @@ function export_volumes =
 			_absorption[2] = (-log(amax #(obj.absorption.g / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
 			_absorption[3] = (-log(amax #(obj.absorption.b / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
 			
-			format "MakeNamedVolume \"%\" \"%\"\r\n" obj.name types[obj.type] to:str
-			luxWriteFloat "fresnel" obj.ior str
+			if (obj.fresnelPath != "") do
+			(
+				format "Texture \"%\" \"fresnel\" \"fresnelname\"\n" (obj.name + "_tex") to:str
+				format "\"string filename\" [\"%\"]\n\n"  (fixWindowsPath obj.fresnelPath) to:str
+				--format "MakeNamedVolume \"%\" \"clear\" \"texture fresnel\" [\"%\"]" obj.name (obj.name + "_tex") to:str
+			)
 			
-			if (obj.type == 1) then
+			if (obj.type == 1) do
+			(
+				if (obj.fresnelPath != "") then
+				(
+					format "MakeNamedVolume \"%\" \"%\" \"texture fresnel\" [\"%\"]\n" obj.name types[obj.type] (obj.name + "_tex") to:str
+				)else
+				(
+					format "MakeNamedVolume \"%\" \"%\"\r\n" obj.name types[obj.type] to:str
+					luxWriteFloat "fresnel" obj.ior str
+				)
+			)
+		
+			if (obj.type == 1) do
 			(
 				format "\t\"color absorption\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
 			)
-			else
-			(				
+			if (obj.type == 2) do
+			(
+				format "MakeNamedVolume \"%\" \"%\"\r\n" obj.name types[obj.type] to:str
 				format "\t\"color g\" [% % %]\r\n" obj.sasymmetryR obj.sasymmetryG obj.sasymmetryB to:str
 				format "\t\"color sigma_a\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
 				luxWriteColor "sigma_s" (obj.scattering * obj.scatteringscale) str

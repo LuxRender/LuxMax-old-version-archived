@@ -48,12 +48,17 @@ extends:dummy
 		sasymmetryR type:#float ui:masymmetryR default:0
 		sasymmetryG type:#float ui:masymmetryG default:0
 		sasymmetryB type:#float ui:masymmetryB default:0
-
-	)
 		
+		fresnelPath type:#string ui:edt_file_filepath
+	)
+	
 	rollout params "Volume Parameters"
 	(
-		dropdownlist mtype "Type:" items:#("clear", "homogeneous")
+		dropdownlist mtype "Type:" items:#("clear", "homogeneous","file")
+		
+		button btn_file_browse "Browse IOR file" align:#left width:140 height:16 
+		edittext edt_file_filepath "" width:140 height:24 align:#left
+		
 		spinner mior "ior:" range:[0.0, 25, 1.00293] scale:0.01 fieldwidth:50 align:#right
 		colorpicker mabsorption "Absoption:" color:white height:16 width:115 align:#right
 		spinner mdepth "Abs. at depth:" type:#worldunits range:[0.00001, 9999999, 1] align:#right fieldwidth:50 
@@ -65,6 +70,18 @@ extends:dummy
 		spinner masymmetryR "Asymmetry R:" range:[-1, 1, 0] align:#right fieldwidth:50
 		spinner masymmetryG "Asymmetry G:" range:[-1, 1, 0] align:#right fieldwidth:50
 		spinner masymmetryB "Asymmetry B:" range:[-1, 1, 0] align:#right fieldwidth:50
+		
+		on btn_file_browse pressed do
+		(
+			--browse file path
+			tmpfilepath = getOpenFileName caption:"" --types:""
+			--set it in edt_serialize_path textbox as well
+			if (tmpfilepath != undefined)do
+			(
+				--edt_serialize_filepath.text = tmpfilepath
+				fresnelPath = tmpfilepath
+			)
+		)
 		
 		function EnableScatter val =
 		(

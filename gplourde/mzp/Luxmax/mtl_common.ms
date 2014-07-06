@@ -72,10 +72,13 @@ rollout common "Common Parameters" rolledup:true
 		
 	group "Volume"
 	(
-		label lbinterior "Interior . . . . . . . . . . . . . . . . . . . . ." align:#left across:2
+		label lbinterior "Interior . . . . . . . . . . . . . . . . . . . . ." align:#left across:3
 		pickbutton mInterior "none" width:110 height:16 align:#right autoDisplay:true filter:volumeFilter
-		label lbexterior "Exterior . . . . . . . . . . . . . . . . . . . . ." align:#left across:2
+		button clearmInterior "X" align:#left width:64 height:16 align:#left across:2
+		
+		label lbexterior "Exterior . . . . . . . . . . . . . . . . . . . . ." align:#left across:3
 		pickbutton mExterior "none" width:110 height:16 align:#right autoDisplay:true filter:volumeFilter
+		button clearmExterior "X" align:#left width:64 height:16 align:#left across:2
 	)
 	
 	group "Bumpmap"
@@ -100,6 +103,16 @@ rollout common "Common Parameters" rolledup:true
 		
 		checkbox mdmnormalsmooth "Normal Smoothing"
 		checkbox mdmsharpboundary "Sharpen Bounds"
+	)
+	
+	on clearmInterior pressed do
+	(
+		interior = undefined
+	)
+	
+	on clearmExterior pressed do
+	(
+		exterior = undefined
 	)
 	
 	on museBumpmap changed s do
@@ -200,45 +213,6 @@ function GetTextureMapsProc m &tm =
 	)
 )
 
-function export_volumes =
-(
-	str = stringstream ""
-	
-	for obj in helpers do
-	(
-		if (classof obj == LuxRenderVolume) then
-		(
-			types = #("clear", "homogeneous")
-			
-			_absorption = #(0, 0, 0)
-			
-			_absorption[1] = (-log(amax #(obj.absorption.r / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
-			_absorption[2] = (-log(amax #(obj.absorption.g / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
-			_absorption[3] = (-log(amax #(obj.absorption.b / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
-			
-			format "MakeNamedVolume \"%\" \"%\"\r\n" obj.name types[obj.type] to:str
-			luxWriteFloat "fresnel" obj.ior str
-			
-			if (obj.type == 1) then
-			(
-				format "\t\"color absorption\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
-			)
-			else
-			(				
-				format "\t\"color g\" [% % %]\r\n" obj.sasymmetryR obj.sasymmetryG obj.sasymmetryB to:str
-				format "\t\"color sigma_a\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
-				luxWriteColor "sigma_s" (obj.scattering * obj.scatteringscale) str
-			)
-			
-			format "\r\n" to:str
-		)
-	)
-	
-	--mabsorption * -log(ceil i (1e-30) )/(mdepth * mscale) * 1
-	--depthed = (-math.log(max([(float(i)),1e-30]))/(self.depth*self.absorption_scale)) * ((float(i))==1.0 and -1 or 1)
-
-	return str as string
-)
 
 --UPDATERENDERBUFFER
 /*
