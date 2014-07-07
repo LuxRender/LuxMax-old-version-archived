@@ -57,7 +57,8 @@ extends:dummy
 		dropdownlist mtype "Type:" items:#("clear", "homogeneous","file")
 		
 		button btn_file_browse "Browse IOR file" align:#left width:140 height:16 
-		edittext edt_file_filepath "" width:140 height:24 align:#left
+		button btn_clear_file "Clear IOR file" align:#left width:140 height:16
+		edittext edt_file_filepath "" width:140 height:24 align:#left readonly:true
 		
 		spinner mior "ior:" range:[0.0, 25, 1.00293] scale:0.01 fieldwidth:50 align:#right
 		colorpicker mabsorption "Absoption:" color:white height:16 width:115 align:#right
@@ -82,7 +83,10 @@ extends:dummy
 				fresnelPath = tmpfilepath
 			)
 		)
-		
+		on btn_clear_file pressed do
+		(
+			fresnelPath = ""
+		)
 		function EnableScatter val =
 		(
 			mscattering.visible = val
