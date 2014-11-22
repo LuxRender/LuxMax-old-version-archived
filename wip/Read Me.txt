@@ -1,2 +1,0 @@
-This is not the currently supported LuxMax but a wip folder to work on the dockable LuxMax.
-The supported LuxMax scripts are on the gplourde folder of the repository.

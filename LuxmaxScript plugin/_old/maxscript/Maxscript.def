@@ -1,6 +1,0 @@
-LIBRARY	"maxscript"
-
-EXPORTS
-	LibDescription			@1
-	LibInit					@2
-	LibVersion				@3
