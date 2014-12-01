@@ -92,62 +92,63 @@ function export_texturemaps =
 	return str as string
 )
 
-function export_volumes =
-(
-	str = stringstream ""
-	
-	for obj in helpers do
-	(
-		if (classof obj == LuxRenderVolume) then
-		(
-			types = #("clear", "homogeneous")
-			
-			_absorption = #(0, 0, 0)
-			
-			_absorption[1] = (-log(amax #(obj.absorption.r / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
-			_absorption[2] = (-log(amax #(obj.absorption.g / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
-			_absorption[3] = (-log(amax #(obj.absorption.b / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
-			
-			if (obj.fresnelPath != "") do
-			(
-				format "Texture \"%\" \"fresnel\" \"fresnelname\"\n" (obj.name + "_tex") to:str
-				format "\"string filename\" [\"%\"]\n\n"  (fixWindowsPath obj.fresnelPath) to:str
-				--format "MakeNamedVolume \"%\" \"clear\" \"texture fresnel\" [\"%\"]" obj.name (obj.name + "_tex") to:str
-			)
-			
-			if (obj.type == 1) do
-			(
-				if (obj.fresnelPath != "") then
-				(
-					format "MakeNamedVolume \"%\" \"%\" \"texture fresnel\" [\"%\"]\n" obj.name types[obj.type] (obj.name + "_tex") to:str
-				)else
-				(
-					format "MakeNamedVolume \"%\" \"%\"\r\n" obj.name types[obj.type] to:str
-					luxWriteFloat "fresnel" obj.ior str
-				)
-			)
-		
-			if (obj.type == 1) do
-			(
-				format "\t\"color absorption\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
-			)
-			if (obj.type == 2) do
-			(
-				format "MakeNamedVolume \"%\" \"%\"\r\n" obj.name types[obj.type] to:str
-				format "\t\"color g\" [% % %]\r\n" obj.sasymmetryR obj.sasymmetryG obj.sasymmetryB to:str
-				format "\t\"color sigma_a\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
-				luxWriteColor "sigma_s" (obj.scattering * obj.scatteringscale) str
-			)
-			
-			format "\r\n" to:str
-		)
-	)
-	
-	--mabsorption * -log(ceil i (1e-30) )/(mdepth * mscale) * 1
-	--depthed = (-math.log(max([(float(i)),1e-30]))/(self.depth*self.absorption_scale)) * ((float(i))==1.0 and -1 or 1)
+--Function moved to fn_common.ms
+-- function export_volumes =
+-- (
+-- 	str = stringstream ""
+-- 	
+-- 	for obj in helpers do
+-- 	(
+-- 		if (classof obj == LuxRenderVolume) then
+-- 		(
+-- 			types = #("clear", "homogeneous")
+-- 			
+-- 			_absorption = #(0, 0, 0)
+-- 			
+-- 			_absorption[1] = (-log(amax #(obj.absorption.r / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
+-- 			_absorption[2] = (-log(amax #(obj.absorption.g / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
+-- 			_absorption[3] = (-log(amax #(obj.absorption.b / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
+-- 			
+-- 			if (obj.fresnelPath != "") do
+-- 			(
+-- 				format "Texture \"%\" \"fresnel\" \"fresnelname\"\n" (obj.name + "_tex") to:str
+-- 				format "\"string filename\" [\"%\"]\n\n"  (fixWindowsPath obj.fresnelPath) to:str
+-- 				--format "MakeNamedVolume \"%\" \"clear\" \"texture fresnel\" [\"%\"]" obj.name (obj.name + "_tex") to:str
+-- 			)
+-- 			
+-- 			if (obj.type == 1) do
+-- 			(
+-- 				if (obj.fresnelPath != "") then
+-- 				(
+-- 					format "MakeNamedVolume \"%\" \"%\" \"texture fresnel\" [\"%\"]\n" obj.name types[obj.type] (obj.name + "_tex") to:str
+-- 				)else
+-- 				(
+-- 					format "MakeNamedVolume \"%\" \"%\"\r\n" obj.name types[obj.type] to:str
+-- 					luxWriteFloat "fresnel" obj.ior str
+-- 				)
+-- 			)
+-- 		
+-- 			if (obj.type == 1) do
+-- 			(
+-- 				format "\t\"color absorption\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
+-- 			)
+-- 			if (obj.type == 2) do
+-- 			(
+-- 				format "MakeNamedVolume \"%\" \"%\"\r\n" obj.name types[obj.type] to:str
+-- 				format "\t\"color g\" [% % %]\r\n" obj.sasymmetryR obj.sasymmetryG obj.sasymmetryB to:str
+-- 				format "\t\"color sigma_a\" [% % %]\r\n" _absorption[1] _absorption[2] _absorption[3] to:str
+-- 				luxWriteColor "sigma_s" (obj.scattering * obj.scatteringscale) str
+-- 			)
+-- 			
+-- 			format "\r\n" to:str
+-- 		)
+-- 	)
+-- 	
+-- 	--mabsorption * -log(ceil i (1e-30) )/(mdepth * mscale) * 1
+-- 	--depthed = (-math.log(max([(float(i)),1e-30]))/(self.depth*self.absorption_scale)) * ((float(i))==1.0 and -1 or 1)
 
-	return str as string
-)
+-- 	return str as string
+-- )
 
 function export_lxm lxm =
 (

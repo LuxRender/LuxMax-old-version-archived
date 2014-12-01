@@ -296,7 +296,7 @@ function luxMaterialPreview mat =
 	format "VolumeIntegrator \"emission\"\n" to:strout
 	format "WorldBegin\n\n" to:strout
 	
-	format "%" (export_volumes()) to:strout
+	--format "%" (export_volumes()) to:strout
 	
 	texturemaps = #()
 	
@@ -479,7 +479,10 @@ rollout preview "Preview" width:334 height:260
 		teapotfilename = fixWindowsPath ((getdir #scripts) + "\Luxmax\Ply\Teapot.ply")
 		timer1.active = false
 		filename = this.name as string
-		pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
+		if (doesfileexist ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ))
+		(
+			pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
+		)
 	)
 	
 	on m_dd_preview_quality selected val do 
@@ -514,17 +517,16 @@ rollout preview "Preview" width:334 height:260
 	)
 	
 	on timer1 tick do
-		(
-			
+	(
 		if timer1.ticks == preview_time do
-		(	
-		print "updating preview"
-		pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" )
-		timer1.active = false
-		timer1.ticks = 0
+		(
+			print "updating preview"
+			if (doesfileexist ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ))
+			(
+				pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" )
+			)
+			timer1.active = false
+			timer1.ticks = 0
 		)
-		
-		)
-		
-	
+	)
 )
