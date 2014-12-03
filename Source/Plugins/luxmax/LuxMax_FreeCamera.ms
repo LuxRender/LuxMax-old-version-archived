@@ -222,7 +222,7 @@ plugin camera LuxrenderCamera name:"LR Camera" classID:#(0x3465725b, 0x7a7b54a6)
 		sw = #(0, 0, 0, 0)
 		
 		if cameratype == 2 then
-			_scale = 1.0 / 2.0
+			_scale = orthoscale / 2.0
 		else
 			_scale = 1.0
 		
