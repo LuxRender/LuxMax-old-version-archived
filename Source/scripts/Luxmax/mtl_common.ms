@@ -479,7 +479,7 @@ rollout preview "Preview" width:334 height:260
 		teapotfilename = fixWindowsPath ((getdir #scripts) + "\Luxmax\Ply\Teapot.ply")
 		timer1.active = false
 		filename = this.name as string
-		if (doesfileexist ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ))
+		if (doesfileexist ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ))then
 		(
 			pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
 		)
@@ -521,7 +521,7 @@ rollout preview "Preview" width:334 height:260
 		if timer1.ticks == preview_time do
 		(
 			print "updating preview"
-			if (doesfileexist ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ))
+			if (doesfileexist ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ))then
 			(
 				pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" )
 			)
