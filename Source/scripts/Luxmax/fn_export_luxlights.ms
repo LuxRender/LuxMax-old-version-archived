@@ -103,7 +103,7 @@ fn lux_export_luxAreaLight obj =
 
 fn lux_export_luxsky obj =
 (
-	types = #("sun","sky","sunsky","sky2")
+	types = #("sun","sky","sunsky","sky2","sunsky2")
 	
 	numlightsource += 1
 	str = stringstream ""
@@ -134,7 +134,7 @@ fn lux_export_luxsky obj =
 		luxWriteFloat "sunhalosize" obj.sunhalosize str 
 		luxWriteFloat "backscattering" obj.backscattering str
 	)
-	if (obj.type == 4)then
+	if (obj.type == 4 or obj.type == 5)then
 	(
 		--luxWriteFloat "skyScale" obj.skyscale str
 		luxWriteFloat "turbidity" obj.turbidity str
