@@ -74,7 +74,7 @@ plugin light LuxSky name:"LR Sky" classID:#(0x42905cfe, 0x20037237) extends:SkyL
 	)
 	rollout params1 "LuxRender Sky"
 	(
-		dropdownlist ddl_type "Sky Type:" items:#("Sun Only","Sky Only","Sun & Sky","Sky 2")
+		dropdownlist ddl_type "Sky Type:" items:#("Sun Only","Sky Only","Sun & Sky","Sky 2", "sunsky2")
 		--spinner spn_skyscale "Sky scale:" width:136 range:[0.0,9999,1] fieldwidth:40 align:#right
 		spinner spn_turbidity "Turbidity:" width:136 range:[0.70,50,0]  fieldwidth:40 align:#right
 		spinner spn_horizonbrightness "Horizon Brightness:" width:136 range:[0,1.32,1]  fieldwidth:40 align:#right
