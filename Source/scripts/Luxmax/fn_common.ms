@@ -26,6 +26,30 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 ***** END GPL LICENCE BLOCK *****
 */
 
+--// Given value in meters
+function luxScaleUnit = 
+(
+	_inches = 0.0254 * units.SystemScale
+	_feet = 0.3048 * units.SystemScale
+	_miles =  1609.344 * units.SystemScale
+	_millimeters =  0.001 * units.SystemScale
+	_centimeters =  0.01 * units.SystemScale
+	_kilometers =  1000 * units.SystemScale
+	
+	_u = units.SystemType
+	
+	ws = 1
+	
+	if _u == #Inches then ws = _inches
+	else if _u == #Feet then ws = _feet
+	else if _u == #Miles then ws = _miles
+	else if _u == #Millimeters then ws = _millimeters
+	else if _u == #Centimeters then ws = _centimeters
+	else if _u == #Kilometers then ws = _kilometers
+	
+	return ws
+)
+
 --Declare Export_volumes function
 function export_volumes =
 (
@@ -45,9 +69,12 @@ function export_volumes =
 			
 			if (obj.fresnelPath != "") do
 			(
+				if (obj.fresnelPath != undefined)do
+				(
 				format "Texture \"%\" \"fresnel\" \"fresnelname\"\n" (obj.name + "_tex") to:str
 				format "\"string filename\" [\"%\"]\n\n"  (fixWindowsPath obj.fresnelPath) to:str
 				--format "MakeNamedVolume \"%\" \"clear\" \"texture fresnel\" [\"%\"]" obj.name (obj.name + "_tex") to:str
+				)
 			)
 			
 			if (obj.type == 1) do
@@ -103,30 +130,6 @@ function FormatFloat n =
 	str = n as string
 	for i = 1 to str.count do (if (str[i] == ",") then str[i] = ".")
 	return str
-)
-
---// Given value in meters
-function luxScaleUnit = 
-(
-	_inches = 0.0254 * units.SystemScale
-	_feet = 0.3048 * units.SystemScale
-	_miles =  1609.344 * units.SystemScale
-	_millimeters =  0.001 * units.SystemScale
-	_centimeters =  0.01 * units.SystemScale
-	_kilometers =  1000 * units.SystemScale
-	
-	_u = units.SystemType
-	
-	ws = 1
-	
-	if _u == #Inches then ws = _inches
-	else if _u == #Feet then ws = _feet
-	else if _u == #Miles then ws = _miles
-	else if _u == #Millimeters then ws = _millimeters
-	else if _u == #Centimeters then ws = _centimeters
-	else if _u == #Kilometers then ws = _kilometers
-	
-	return ws
 )
 
 --// Generic functions to outpuf luxrender types
