@@ -30,6 +30,26 @@ function luxWritePoint key val f = (if (val != undefined) then format "\t\"point
 function luxWriteColor key val f = (if (val != undefined) then format "\t\"color %\" [% % %]\r\n" key (val.red / 255) (val.green / 255) (val.blue / 255) to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
 function luxWriteName key val strout = (format "% \"%\"\r\n" key val to:strout)
 function luxWriteEmptyLine strout = (format "\r\n" to:strout)
+--// change \ for /
+function fixWindowsPath str =
+(
+	for i = 1 to str.count do (if (str[i] == "\\") then str[i] = "/")
+	return str
+)
+
+function fixWindowsPathReverse str =
+(
+	for i = 1 to str.count do (if (str[i] == "/") then str[i] = "\\")
+	return str
+)
+
+--// change , for .
+function FormatFloat n =
+(
+	str = n as string
+	for i = 1 to str.count do (if (str[i] == ",") then str[i] = ".")
+	return str
+)
 
 --// Given value in meters
 function luxScaleUnit = 
@@ -72,21 +92,24 @@ function export_volumes =
 			_absorption[2] = (-log(amax #(obj.absorption.g / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
 			_absorption[3] = (-log(amax #(obj.absorption.b / 255, 1e-30) )/((obj.absdepth * luxScaleUnit()) * obj.absscale) * 1)
 			
-			if (obj.fresnelPath != "") do
+			if (obj.fresnelPath != "" and obj.fresnelPath != undefined) do
 			(
-				if (obj.fresnelPath != undefined)do
-				(
-				format "Texture \"%\" \"fresnel\" \"fresnelname\"\n" (obj.name + "_tex") to:str
-				format "\"string filename\" [\"%\"]\n\n"  (fixWindowsPath obj.fresnelPath) to:str
-				--format "MakeNamedVolume \"%\" \"clear\" \"texture fresnel\" [\"%\"]" obj.name (obj.name + "_tex") to:str
-				)
+				--if ()do
+				--(
+					format "Texture \"%\" \"fresnel\" \"fresnelname\"\n" (obj.name + "_tex") to:str
+					format "\"string filename\" [\"%\"]\n\n"  (fixWindowsPath obj.fresnelPath) to:str
+					--format "MakeNamedVolume \"%\" \"clear\" \"texture fresnel\" [\"%\"]" obj.name (obj.name + "_tex") to:str
+				--)
 			)
 			
 			if (obj.type == 1) do
 			(
-				if (obj.fresnelPath != "") then
+				if (obj.fresnelPath != "" and obj.fresnelPath != undefined) then
 				(
-					format "MakeNamedVolume \"%\" \"%\" \"texture fresnel\" [\"%\"]\n" obj.name types[obj.type] (obj.name + "_tex") to:str
+					--if ()do
+					--(
+						format "MakeNamedVolume \"%\" \"%\" \"texture fresnel\" [\"%\"]\n" obj.name types[obj.type] (obj.name + "_tex") to:str
+					--)
 				)else
 				(
 					format "MakeNamedVolume \"%\" \"%\"\r\n" obj.name types[obj.type] to:str
@@ -116,26 +139,6 @@ function export_volumes =
 	return str as string
 )
 
---// change \ for /
-function fixWindowsPath str =
-(
-	for i = 1 to str.count do (if (str[i] == "\\") then str[i] = "/")
-	return str
-)
-
-function fixWindowsPathReverse str =
-(
-	for i = 1 to str.count do (if (str[i] == "/") then str[i] = "\\")
-	return str
-)
-
---// change , for .
-function FormatFloat n =
-(
-	str = n as string
-	for i = 1 to str.count do (if (str[i] == ",") then str[i] = ".")
-	return str
-)
 
 --// Generic functions to outpuf luxrender types
 function luxWriteString key val f = (if (val != undefined) then format "\t\"string %\" [\"%\"]\r\n" key val to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
