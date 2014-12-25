@@ -26,6 +26,11 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 ***** END GPL LICENCE BLOCK *****
 */
 
+function luxWritePoint key val f = (if (val != undefined) then format "\t\"point %\" [% % %]\r\n" key val.x val.y val.z to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
+function luxWriteColor key val f = (if (val != undefined) then format "\t\"color %\" [% % %]\r\n" key (val.red / 255) (val.green / 255) (val.blue / 255) to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
+function luxWriteName key val strout = (format "% \"%\"\r\n" key val to:strout)
+function luxWriteEmptyLine strout = (format "\r\n" to:strout)
+
 --// Given value in meters
 function luxScaleUnit = 
 (
@@ -147,10 +152,7 @@ function luxWriteFloat key val f =
 		(format "warning: writing value key:% val:%\r\n" key val to:listener)
 	)
 )
-function luxWritePoint key val f = (if (val != undefined) then format "\t\"point %\" [% % %]\r\n" key val.x val.y val.z to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
-function luxWriteColor key val f = (if (val != undefined) then format "\t\"color %\" [% % %]\r\n" key (val.red / 255) (val.green / 255) (val.blue / 255) to:f else (format "warning: writing value key:% val:%\r\n" key val to:listener))
-function luxWriteName key val strout = (format "% \"%\"\r\n" key val to:strout)
-function luxWriteEmptyLine strout = (format "\r\n" to:strout)
+
 function luxWriteLookAt tm strout =
 (
 	--// Generate camera look at
