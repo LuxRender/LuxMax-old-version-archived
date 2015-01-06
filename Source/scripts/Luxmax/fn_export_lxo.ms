@@ -162,25 +162,36 @@ function export_lxo doMotionblur lxo =
 			
 			if (deferred)then
 			(
-				format "ObjectBegin  \"%\"\n" obj.name to:str
-				   
-				format "Shape \"deferred\" \"string filename\" [\"%\"]\n" n to:str
-				format "\"string shapename\" [\"plymesh\"]\n" to:str
-				--   "float shapebbox" [-1.33691 -1.07026 -0.518882  1.33691 0.947649 1.01478]
-				tempbb = nodeGetBoundingBox obj obj.transform
-				format "\"float shapebbox\" [% % % % % %]\n" tempbb[1][1] tempbb[1][2] tempbb[1][3] tempbb[2][1] tempbb[2][2] tempbb[2][3] to:str
-				luxWriteSubdivision obj.material str
-				format "ObjectEnd # \"%\"\n" obj.name to:str
-				luxWriteEmptyLine str
+				if (obj.mesh.numverts > 0)then
+				(
+					format "ObjectBegin  \"%\"\n" obj.name to:str
+					   
+					format "Shape \"deferred\" \"string filename\" [\"%\"]\n" n to:str
+					format "\"string shapename\" [\"plymesh\"]\n" to:str
+					--   "float shapebbox" [-1.33691 -1.07026 -0.518882  1.33691 0.947649 1.01478]
+					tempbb = nodeGetBoundingBox obj obj.transform
+					format "\"float shapebbox\" [% % % % % %]\n" tempbb[1][1] tempbb[1][2] tempbb[1][3] tempbb[2][1] tempbb[2][2] tempbb[2][3] to:str
+					luxWriteSubdivision obj.material str
+					format "ObjectEnd # \"%\"\n" obj.name to:str
+					luxWriteEmptyLine str
+				)else
+				(
+					print("Object: " + obj.name + " has 0 verts, skipping this ply.")
+				)
 			)
 			else
 			(
-				
-			format "ObjectBegin  \"%\"\n" obj.name to:str
-			format "Shape \"plymesh\" \"string filename\" [\"%\"]\n" n to:str
-			luxWriteSubdivision obj.material str
-			format "ObjectEnd # \"%\"\n" obj.name to:str
-			luxWriteEmptyLine str
+				if (obj.mesh.numverts > 0)then
+				(
+					format "ObjectBegin  \"%\"\n" obj.name to:str
+					format "Shape \"plymesh\" \"string filename\" [\"%\"]\n" n to:str
+					luxWriteSubdivision obj.material str
+					format "ObjectEnd # \"%\"\n" obj.name to:str
+					luxWriteEmptyLine str
+				)else
+				(
+					print("Object: " + obj.name + " has 0 verts, skipping this ply.")
+				)
 			)
 		)
 		
@@ -194,11 +205,14 @@ function export_lxo doMotionblur lxo =
 			format "AttributeBegin # \"%\"\n" iobj.name to:str
 			
 			luxWriteTransform iobj.transform (slidertime.frame) str
-
+			--if (classof iobj.material != Autodesk_Material)do
+				
 			--// Write default material if none on the object
-			if (iobj.material == undefined or CheckLuxRenderCompat iobj.material == false) then
+			if (iobj.material == undefined or CheckLuxRenderCompat iobj.material == false ) then
 			(
+				
 				LuxWriteDefaultMaterial iobj.wirecolor str
+				
 			)
 			--// Write material properties
 			else
@@ -218,6 +232,12 @@ function export_lxo doMotionblur lxo =
 					numlightsource += 1
 					LuxWriteEmission _m str
 				)
+			)
+			
+			-- We just assign the named material to the node
+			if (classof iobj.material == autodesk_material)do
+			(
+				format "NamedMaterial \"%\"\n"iobj.material.name to:str
 			)
 			
 			--// Do this is we use motionblur on this object
