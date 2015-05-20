@@ -478,10 +478,13 @@ rollout preview "Preview" width:334 height:260
         FileInGamma = 1
 		teapotfilename = fixWindowsPath ((getdir #scripts) + "\Luxmax\Ply\Teapot.ply")
 		timer1.active = false
-		filename = this.name as string
-		if (doesfileexist ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ))then
+		if (this.name != undefined)do
 		(
-			pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
+			filename = this.name as string
+			if (doesfileexist ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ))then
+			(
+				pictureBox1.filename = ((getdir #temp) + "\matpreview_" + (filename as string) + ".png" ) 
+			)
 		)
 	)
 	
@@ -496,18 +499,21 @@ rollout preview "Preview" width:334 height:260
 	on m_preview pressed do
 	(	
 		
-		if (doesfileexist ((luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") + "\\luxconsole.exe"))then
+		if ((luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") != undefined)then
 		(
-			luxMaterialPreview this
-			
-			--if dd_preview_quality == 1 then preview_time = 7
-			--if dd_preview_quality == 2 then preview_time = 12
-			--if dd_preview_quality == 3 then preview_time = 17
-			--if dd_preview_quality == 4 then preview_time = 32
-			
-			if timer1.active == false then
-			(	
-				timer1.active = true
+			if (doesfileexist ((luxmaxcfg.GetLuxMaxSetting "Engine" "LuxRenderPath") + "\\luxconsole.exe"))then
+			(
+				luxMaterialPreview this
+				
+				--if dd_preview_quality == 1 then preview_time = 7
+				--if dd_preview_quality == 2 then preview_time = 12
+				--if dd_preview_quality == 3 then preview_time = 17
+				--if dd_preview_quality == 4 then preview_time = 32
+				
+				if timer1.active == false then
+				(	
+					timer1.active = true
+				)
 			)
 		)else
 		(
